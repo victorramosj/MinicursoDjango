@@ -16,9 +16,11 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
+from django.contrib.auth.views import LoginView, LogoutView
+from django.views.generic import TemplateView
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
-    path('usuarios/', include('usuarios.urls')),  # Inclui as rotas de login e logout
+    path('admin/', admin.site.urls),  # Django Admin
+    path('usuarios/', include('usuarios.urls')),  # Rotas do app 'usuarios'
+    path('', TemplateView.as_view(template_name='base.html')),
 ]
-
