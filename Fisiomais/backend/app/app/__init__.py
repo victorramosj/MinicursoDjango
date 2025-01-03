@@ -1,3 +1,3 @@
 #python manage.py makemigrations
 #python manage.py migrate
-#admin@teste.com ThunderC9@!
+#teste@teste.com Thunderc9@!

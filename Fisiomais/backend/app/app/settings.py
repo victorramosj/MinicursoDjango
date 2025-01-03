@@ -125,11 +125,17 @@ STATIC_URL = 'static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
+
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
+AUTHENTICATION_BACKENDS = [
+    'app.auth_backends.EmailBackend',  
+    'django.contrib.auth.backends.ModelBackend',  # Isso permite o login normal via username se necessário
+]
 
-# Configuração para modelo personalizado de usuário
-AUTH_USER_MODEL = 'usuarios.Colaborador'
+
+
+
 
 
