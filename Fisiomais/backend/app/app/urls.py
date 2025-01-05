@@ -18,7 +18,8 @@ from django.contrib import admin
 from django.urls import path, include
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
-    path('usuarios/', include('usuarios.urls')),  # Inclui as rotas de login e logout
+    path('admin/', admin.site.urls),  # Painel de administração
+    path('usuarios/', include('usuarios.urls')),  # Incluindo URLs do app 'usuarios'
 ]
+
 

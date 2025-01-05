@@ -1,61 +1,30 @@
-from django.contrib.auth import authenticate
-from rest_framework.response import Response
-from rest_framework.decorators import api_view
-from rest_framework_simplejwt.tokens import RefreshToken
-from django.contrib.auth.models import User
-from .models import Colaborador, Cliente
+from django.contrib.auth import authenticate, login, logout
+from django.shortcuts import render, redirect
+from django.contrib import messages
 
-@api_view(['POST'])
-def login(request):
-    email = request.data.get('email', '')
-    senha = request.data.get('senha', '')
-
-    # Autenticar o usuário utilizando o e-mail
-    user = authenticate(username=email, password=senha)
-    
-    if user is not None:
-        # Gerar o refresh token e access token
-        refresh_token = RefreshToken.for_user(user)
-        access_token = refresh_token.access_token
-
-        # Verificar se é um colaborador
-        colaborador = Colaborador.objects.filter(user=user).first()
-        if colaborador:
-            response_data = {
-                "access_token": str(access_token),
-                "refresh_token": str(refresh_token),
-                "userId": colaborador.id,
-                "name": colaborador.user.first_name,
-                "photo": colaborador.photo.url if colaborador.photo else "",
-                "role": "admin" if colaborador.user.is_staff else "colaborador",
-                "email_confirmado": True  # Colaboradores têm email confirmado
-            }
-            return Response(response_data, status=200)
-
-        # Verificar se é um cliente
-        cliente = Cliente.objects.filter(user=user).first()
-        if cliente:
-            email_confirmado = cliente.user.emailaddress_set.filter(verified=True).exists()
-            response_data = {
-                "access_token": str(access_token),
-                "refresh_token": str(refresh_token),
-                "userId": cliente.id,
-                "name": cliente.user.first_name,
-                "photo": cliente.photo.url if cliente.photo else "",
-                "role": "cliente",
-                "email_confirmado": email_confirmado
-            }
-            return Response(response_data, status=200)
-
-    return Response({"message": "Credenciais inválidas"}, status=401)
+def custom_login(request):
+    if request.method == 'POST':
+        username = request.POST['username']
+        password = request.POST['password']
+        user = authenticate(request, username=username, password=password)
+        if user is not None:
+            login(request, user)
+            if hasattr(user, 'colaborador'):
+                if user.colaborador.is_admin:
+                    return redirect('admin_dashboard')  # Dashboard de administrador
+                return redirect('colaborador_dashboard')  # Dashboard de colaborador
+            elif hasattr(user, 'cliente'):
+                return redirect('cliente_dashboard')  # Dashboard de cliente
+            else:
+                messages.error(request, "Usuário não possui permissões atribuídas.")
+        else:
+            messages.error(request, "Credenciais inválidas.")
+    return render(request, 'login.html')
 
 
-
-
-@api_view(['POST'])
-def logout(request):
-    """
-    Realiza o logout do usuário, invalidando a sessão.
-    """
+def custom_logout(request):
     logout(request)  # Realiza o logout do usuário
-    return Response({"message": "Logout realizado com sucesso"}, status=200)
+    return redirect('login')  # Redireciona para a página de login
+
+
+
