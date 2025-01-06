@@ -41,15 +41,20 @@ def custom_logout(request):
 from .forms import ClienteForm, ColaboradorForm  # Supondo que criemos formulários para ambos
 
 
-def cadastrar_usuario(request, tipo):
-    if tipo == 'cliente':
-        form = ClienteForm()  # Formulário de cliente
-    elif tipo == 'colaborador':
-        form = ColaboradorForm()  # Formulário de colaborador
-    else:
-        return render(request, 'erro.html')  # Redirecionar para uma página de erro, caso o tipo seja inválido
+def escolher_tipo_usuario(request):
+    """
+    Exibe a página para o usuário escolher entre Cliente ou Colaborador.
+    """
+    if request.method == "POST":
+        tipo = request.POST.get("tipo_usuario")
+        if tipo == "cliente":
+            return redirect('cadastrar_cliente')
+        elif tipo == "colaborador":
+            return redirect('cadastrar_colaborador')
+        else:
+            messages.error(request, "Escolha inválida. Por favor, selecione Cliente ou Colaborador.")
+    return render(request, 'usuarios/escolher_tipo.html')
 
-    return render(request, 'cadastro.html', {'form': form, 'tipo_usuario': tipo})
 
 
 # Cadastro de Cliente

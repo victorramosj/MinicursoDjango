@@ -1,0 +1,87 @@
+{% extends 'base.html' %}
+{% load widget_tweaks %}
+{% block content %}
+<div class="container my-5">
+    {% if errorMessage %}
+      <div class="alert alert-danger">{{ errorMessage }}</div>
+    {% endif %}
+    <div class="card shadow">
+      <div class="card-header">
+        <h2 class="text-center text-primary">Cadastro</h2>
+      </div>
+      <div class="card-body">
+        <form method="POST" id="asd">
+          {% csrf_token %}
+          
+          <div class="row mb-3">
+            <div class="col-12 col-md-6 col-lg-4">
+              <label for="id_nome" class="form-label text-secondary">Nome*</label>
+              {{ form.username|add_class:"form-control" }}
+            </div>
+            <div class="col-12 col-md-6 col-lg-2">
+              <label for="id_cpf" class="form-label text-secondary">CPF*</label>
+              {{ form.cpf|add_class:"form-control" }}
+            </div>
+            <div class="col-12 col-md-6 col-lg-3">
+              <label for="id_email" class="form-label text-secondary">Email*</label>
+              {{ form.email|add_class:"form-control" }}
+            </div>
+            <div class="col-12 col-md-6 col-lg-3">
+              <label for="id_confirmarEmail" class="form-label text-secondary">Confirme seu Email*</label>
+              {{ form.email2|add_class:"form-control" }}
+            </div>
+          </div>
+  
+          <div class="row mb-3">
+            <div class="col-12 col-md-6 col-lg-3">
+              <label for="id_senha" class="form-label text-secondary">Senha*</label>
+              {{ form.senha|add_class:"form-control" }}
+            </div>
+            <div class="col-12 col-md-6 col-lg-3">
+              <label for="id_confirmarSenha" class="form-label text-secondary">Confirme sua Senha*</label>
+              {{ form.senha2|add_class:"form-control" }}
+            </div>
+            <div class="col-12 col-md-6 col-lg-3">
+              <label for="id_dtNasc" class="form-label text-secondary">Data de Nascimento</label>
+              {{ form.dt_nasc|add_class:"form-control" }}
+            </div>
+            <div class="col-12 col-md-6 col-lg-3">
+              <label for="id_telefone" class="form-label text-secondary">Telefone*</label>
+              {{ form.telefone|add_class:"form-control" }}
+            </div>
+            <div class="col-12 col-md-6 col-lg-2">
+              <label for="id_sexo" class="form-label text-secondary">Sexo</label>
+              {{ form.sexo|add_class:"form-control" }}
+            </div>
+            <div class="col-12 col-md-6 col-lg-2">
+              <label for="id_estado" class="form-label text-secondary">Estado*</label>
+              {{ form.estado|add_class:"form-control" }}
+            </div>
+          </div>
+  
+          <div class="row mb-3">
+            <div class="col-12 col-md-6 col-lg-4">
+              <label for="id_endereco" class="form-label text-secondary">Logradouro</label>
+              {{ form.endereco|add_class:"form-control" }}
+            </div>
+            <div class="col-12 col-md-6 col-lg-4">
+              <label for="id_bairro" class="form-label text-secondary">Bairro</label>
+              {{ form.bairro|add_class:"form-control" }}
+            </div>
+            <div class="col-12 col-md-6 col-lg-4">
+              <label for="id_cidade" class="form-label text-secondary">Cidade*</label>
+              {{ form.cidade|add_class:"form-control" }}
+            </div>
+          </div>
+  
+          <div class="col-12 text-center">
+            <button type="submit" class="btn btn-signup w-auto mx-auto">
+              <i class="bi bi-person-plus"></i>
+               Inscrever-se
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+</div>
+{% endblock %}

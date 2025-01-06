@@ -19,8 +19,8 @@
   }
 
   .navbar-brand img {
-    height: 80px;
-    width: 220px;
+    height: 50px;
+    width: 200px;
     display: block;
   }
 
@@ -43,8 +43,8 @@
   }
 
   .navbar-brand img {
-    height: 80px;
-    width: 220px;
+    height: 50px;
+    width: 180px;
     margin-top: 0;
     margin-left: 90px;
     display: block;
@@ -162,17 +162,7 @@
     background-color: #2d9485;
   }
 
-  .btn-login {
-    background-color: #36ab9c;
-    color: white;
-    font-size: 0.85rem;
-    border-radius: 20px;
-    padding: 10px 20px;
-    /* Ajustado para maior largura */
-    transition: background-color 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
-    margin-right: 10px;
 
-  }
 
 
 
@@ -180,19 +170,7 @@
     justify-content: space-between;
   }
 
-  /* Novo estilo para o botão Inscrever-se */
-  .btn-signup {
-    background-color: #bc155b;
-    color: white;
-    font-size: 0.85rem;
-    border-radius: 20px;
-    padding: 10px 20px;
-    transition: background-color 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
-    margin-right: 0px;
-    border: none;
-    width: auto;
-    
-  }
+
 
   /* Estilização do botão do usuário logado */
   .btn-user {
