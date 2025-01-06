@@ -16,12 +16,13 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
-from django.contrib.auth.views import LoginView, LogoutView
-from django.views.generic import TemplateView
+from . import views  
 
 urlpatterns = [
-    path('admin/', admin.site.urls),  # Painel de administração
-    path('usuarios/', include('usuarios.urls')),  # Incluindo URLs do app 'usuarios'
+    path('admin/', admin.site.urls),
+    path('usuarios/', include('usuarios.urls')),  # Inclui as URLs do app 'usuarios'
+    path('', views.home, name='home'),  # Rota para a página inicial
+    path('sobrenos/', views.sobrenos, name='sobrenos'),  
+    path('especialidades/', views.especialidades_view, name='especialidades'),
 ]
-
 

@@ -1,0 +1,123 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container my-5 mt-5 text-center p-4 bg-light rounded shadow">
+  <!-- Título da Página -->
+  <h2 class="text-center text-primary mb-4">
+    Nossas <strong class="cor-pink">Especialidades</strong>
+  </h2>
+
+  <!-- Carrossel de Especialidades -->
+  <div id="carouselEspecialidades" class="carousel slide" data-bs-ride="carousel">
+    <div class="carousel-inner">
+      <!-- Slide 1 -->
+      <div class="carousel-item active">
+        <div class="row">
+          <div class="col-4">
+            <img src="/static/img/pilates1.jpg" class="d-block w-100 custom-image" alt="Pilates">
+            <h5 class="text-center fw-bold text-secondary">Pilates</h5>
+            <p class="text-center text-secondary">Melhore sua postura e flexibilidade com técnicas de Pilates personalizadas.</p>
+          </div>
+          <div class="col-4">
+            <img src="/static/img/pilates2.png" class="d-block w-100 custom-image" alt="Reabilitação Física">
+            <h5 class="text-center fw-bold text-secondary">Reabilitação Física</h5>
+            <p class="text-center text-secondary">Programas especializados para recuperação de lesões e cirurgias.</p>
+          </div>
+          <div class="col-4">
+            <img src="https://policonsultas.com.br/wp-content/uploads/2023/01/massoterapia-1.jpg" class="d-block w-100 custom-image" alt="Massoterapia">
+            <h5 class="text-center fw-bold text-secondary">Massoterapia</h5>
+            <p class="text-center text-secondary">Tratamentos de alívio para dores musculares e estresse.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 2 -->
+      <div class="carousel-item">
+        <div class="row">
+          <div class="col-4">
+            <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR4VWSjnFu2LvpsnTrGAnSUtkpFgeYXaTeSVw&s" class="d-block w-100 custom-image" alt="Acupuntura">
+            <h5 class="text-center fw-bold text-secondary">Acupuntura</h5>
+            <p class="text-center text-secondary">Tratamento terapêutico para equilíbrio energético e bem-estar.</p>
+          </div>
+          <div class="col-4">
+            <img src="https://static.wixstatic.com/media/0dac19_cb0b9eec411e458aa7a46e65c364402b~mv2.jpg/v1/fill/w_849,h_429,al_c,q_85/RPG_CHIBAFISIOMED.jpg" class="d-block w-100 custom-image" alt="RPG">
+            <h5 class="text-center fw-bold text-secondary">Reeducação Postural Global</h5>
+            <p class="text-center text-secondary">Correção postural e alívio de dores crônicas.</p>
+          </div>
+          <div class="col-4">
+            <img src="https://www.institutoreaction.com.br/wp-content/uploads/2020/06/beneficios-hidroterapia-miniatura.jpg" class="d-block w-100 custom-image" alt="Hidroterapia">
+            <h5 class="text-center fw-bold text-secondary">Hidroterapia</h5>
+            <p class="text-center text-secondary">Exercícios terapêuticos realizados em piscina para melhor recuperação.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Botões de navegação -->
+    <button class="carousel-control-prev" type="button" data-bs-target="#carouselEspecialidades" data-bs-slide="prev">
+      <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+      <span class="visually-hidden">Anterior</span>
+    </button>
+    <button class="carousel-control-next" type="button" data-bs-target="#carouselEspecialidades" data-bs-slide="next">
+      <span class="carousel-control-next-icon" aria-hidden="true"></span>
+      <span class="visually-hidden">Próximo</span>
+    </button>
+  </div>
+
+  <!-- Detalhes das Especialidades -->
+  <div class="row mt-5 g-4 text-justify">
+    {% for especialidade in especialidades %}
+    <div class="col-12 col-md-6 col-lg-4">
+      <div class="card shadow-sm rounded p-3">
+        <h4 class="text-primary fw-bold">{{ especialidade.title }}</h4>
+        <p>{{ especialidade.description }}</p>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+
+  <!-- Depoimentos -->
+  <div class="mt-5">
+    <h3 class="text-center text-primary mb-4">O que nossos colaboradores dizem</h3>
+    <div class="card shadow-lg bg-light p-3 mb-3 border-0">
+      <blockquote class="blockquote text-center">
+        <p class="mb-0">
+          <strong class="cor-pink fw-bold fs-1">&#8220;</strong>Nossa missão é ver cada paciente retornar às suas atividades com saúde e alegria.<strong class="cor-pink fw-bold fs-1">&#8220;</strong>
+        </p>
+        <footer class="blockquote-footer mt-2">João Silva, <cite title="Source Title">Fisioterapeuta</cite></footer>
+      </blockquote>
+    </div>
+    <div class="card shadow-lg p-3 bg-light border-0">
+        <blockquote class="blockquote text-center">
+          <p class="mb-0">
+            <strong class="cor-pink fw-bold fs-1">&#8220;</strong>
+            The quality of our service and programs sets us apart and delivers results.
+            <strong class="cor-pink fw-bold fs-1">&#8220;</strong>
+          </p>
+          <footer class="blockquote-footer mt-2">
+            Ana Oliveira, <cite title="Source Title">RPG Specialist</cite>
+          </footer>
+        </blockquote>
+      </div>
+      
+  </div>
+  
+  <!-- Convite para agendamento -->
+  <div class="mt-5 text-center p-4 bg-light rounded shadow">
+    <h3 class="fw-bold text-primary mb-3">Agende Sua Sessão!</h3>
+    <p class="fs-5 text-secondary">
+      Não perca tempo! Agende uma consulta e aproveite os benefícios dos nossos tratamentos.
+    </p>
+    <div class="mt-4 text-center">
+        <a href="{% if user.is_authenticated %}/criaragendamento{% else %}/cadastro{% endif %}" class="btn btn-signup gap-2">
+          {% if user.is_authenticated %}
+            <i class="bi bi-calendar-check"></i> Agendar Sessão
+          {% else %}
+            <i class="bi bi-person-plus"></i> Inscreva-se
+          {% endif %}
+        </a>
+      </div>
+  </div>
+</div>
+</div>
+{% endblock %}

@@ -20,7 +20,7 @@ def validar_cpf(value):
 # Modelo: Clínica
 class Clinica(models.Model):
     # Relacionamento de um para muitos com Colaboradores e Clientes
-    cnpj = models.CharField(max_length=18, unique=True)  # Identificador único da clínica
+    cnpj = models.CharField(max_length=18, unique=True)  
     nome = models.CharField(max_length=255)  
     telefone = models.CharField(max_length=20, unique=True, null=True, blank=True)
     endereco = models.CharField(max_length=255, null=True, blank=True)
@@ -63,6 +63,11 @@ class Colaborador(models.Model):
         """Verifica se o colaborador é administrador."""
         return self.user.is_staff or self.user.is_superuser
 
+    @property
+    def role(self):
+        """Retorna o role do usuário (colaborador)."""
+        return "colaborador" if not self.is_admin else "admin"
+
 
 # Modelo: Cliente
 class Cliente(models.Model):
@@ -87,3 +92,61 @@ class Cliente(models.Model):
 
     def __str__(self):
         return f"{self.user.username} - Cliente"
+    @property
+    def role(self):
+        """Retorna o role do usuário (cliente)."""
+        return "cliente"
+#Códigos sql
+""" Modelo: Clinica
+Criar
+INSERT INTO clinica (cnpj, nome, telefone, endereco, estado, cidade, bairro)
+VALUES ('12.345.678/0001-90', 'Clínica Exemplo', '1234-5678', 'Rua Exemplo, 123', 'São Paulo', 'São Paulo', 'Bairro Exemplo');
+
+Ler
+SELECT * FROM clinica;
+SELECT * FROM clinica WHERE cnpj = '12.345.678/0001-90';
+
+Atualizar
+UPDATE clinica
+SET nome = 'Clínica Atualizada', telefone = '9876-5432', endereco = 'Nova Rua, 456'
+WHERE cnpj = '12.345.678/0001-90';
+
+Deletar
+DELETE FROM clinica WHERE cnpj = '12.345.678/0001-90';
+"""
+
+""" Modelo: Colaborador
+Criar
+INSERT INTO colaborador (user_id, telefone, cargo, endereco, cpf, estado, cidade, bairro, photo, clinica_id)
+VALUES (1, '9876-5432', 'Fisioterapeuta', 'Rua Colaborador, 456', '12345678901', 'São Paulo', 'São Paulo', 'Bairro Colaborador', 'foto.jpg', 1);
+
+Ler
+SELECT * FROM colaborador;
+SELECT * FROM colaborador WHERE cpf = '12345678901';
+
+Atualizar
+UPDATE colaborador
+SET telefone = '9999-8888', cargo = 'Pilates Instrutor'
+WHERE cpf = '12345678901';
+
+Deletar
+DELETE FROM colaborador WHERE cpf = '12345678901';
+"""
+
+""" Modelo: Cliente
+Criar
+INSERT INTO cliente (user_id, telefone, dt_nasc, endereco, estado, cidade, bairro, cpf, photo, clinica_id)
+VALUES (2, '9876-1234', '1990-05-10', 'Rua Cliente, 123', 'São Paulo', 'São Paulo', 'Bairro Cliente', '98765432100', 'foto_cliente.jpg', 1);
+
+Ler
+SELECT * FROM cliente;
+SELECT * FROM cliente WHERE cpf = '98765432100';
+
+Atualizar
+UPDATE cliente
+SET telefone = '9876-4321', endereco = 'Nova Rua, 789'
+WHERE cpf = '98765432100';
+
+Deletar
+DELETE FROM cliente WHERE cpf = '98765432100';
+"""

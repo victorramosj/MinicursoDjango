@@ -1,26 +1,209 @@
+{% load static %}
 <!DOCTYPE html>
-<html lang="en">
+<html>
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}Fisiomais{% endblock %}</title>
-    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    {% load static %}
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <link rel="stylesheet" href="{% static 'css/Navbar.css' %}">
+    <link rel="stylesheet" href="{% static 'css/Estilos.css' %}">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
 </head>
+
 <body>
-    <header>
-        <h1>Meu Projeto</h1>
-        <nav>
-            <ul>
-                <li><a href="/">Home</a></li>
-                <li><a href="{% url 'login' %}">Login</a></li>
-            </ul>
-        </nav>
-    </header>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="/">
+                <img src="/static/img/fisiomais.png" alt="Logo" class="navbar-logo" />
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav mx-auto">
+                    <li class="nav-item"><a class="nav-link" href="/">Início</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/sobrenos">Sobre Nós</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/especialidades">Especialidades</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/contato">Fale Conosco</a></li>
+                    {% if user.is_authenticated %}
+                    {% if user.role != "cliente" %}
+                    <li class="nav-item"><a class="nav-link" href="/adminPage">Central de Controle</a></li>
+                    {% endif %}
+                    {% endif %}
+                </ul>
+
+                <ul class="navbar-nav ms-auto">
+                    {% if user.is_authenticated %}
+                    <li class="nav-item dropdown ">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
+                            data-bs-toggle="dropdown" aria-expanded="false">
+                            {% if user.profile_photo %}
+                            <img src="{{ user.profile_photo.url }}" alt="Foto de Perfil" class="user-photo" />
+                            {% else %}
+                            <i class="bi bi-person-circle"></i>
+                            {% endif %}
+                            {{ user.username }}
+                        </a>
+                        <ul class="dropdown-menu " aria-labelledby="navbarDropdown">
+                            <li><a class="dropdown-item" href="/perfil">Meu Perfil</a></li>
+                            <li><a class="dropdown-item" href="/criaragendamento">Agendar Atendimento</a></li>
+                            {% if user.role == "admin" %}
+                            <li><a class="dropdown-item" href="/adminPage">Página Administrador</a></li>
+                            {% elif user.role == "colaborador" %}
+                            <li><a class="dropdown-item" href="/adminPage">Central de Controle</a></li>
+                            {% endif %}
+                            <li><a class="dropdown-item" href="/visualizaragendamentos">Agendamentos</a></li>
+                            <form action="{% url 'logout' %}" method="post">
+                                {% csrf_token %}
+                                <button type="submit" class="dropdown-item">Sair</button>
+                            </form>
+                        </ul>
+                    </li>
+                    {% else %}
+                    <li class="nav-item">
+                        <a class="btn btn-login d-flex align-items-center gap-2" href="#" data-bs-toggle="modal"
+                            data-bs-target="#loginModal">
+                            <i class="bi bi-box-arrow-in-right"></i> Entrar
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="btn btn-signup" href="% url 'cadastrar_cliente' %">
+                            <i class="bi bi-person-plus"></i> Inscrever-se
+                        </a>
+                    </li>
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
+    </nav>
+    <!-- Modal -->
+    <div class="modal fade" id="loginModal" tabindex="-1" aria-labelledby="loginModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <!-- Header -->
+                <div class="modal-header text-center justify-content-center">
+                    <h5 class="modal-title d-flex align-items-center gap-2" id="loginModalLabel">
+                        <i class="bi bi-person-circle"></i> Login
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+
+                <!-- Body -->
+                <div class="modal-body">
+                    <form action="{% url 'login' %}" method="post">
+                        
+                        {% csrf_token %}
+                        <div class="mb-3">
+                            <label for="username" class="form-label">
+                                <i class="bi bi-envelope"></i> Usuário
+                            </label>
+                            <input type="text" class="form-control" id="username" name="username" required />
+                        </div>
+                        <div class="mb-3">
+                            <label for="password" class="form-label">
+                                <i class="bi bi-lock"></i> Senha
+                            </label>
+                            <div class="input-group">
+                                <input type="password" class="form-control" id="password" name="password" required />
+                                <button type="button" class="btn btn-outline-secondary" id="togglePassword">
+                                    <i class="bi bi-eye"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div id="loginError" class="text-danger mb-3"></div>
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <div>
+                                <input type="checkbox" id="rememberMe" name="remember_me" />
+                                <label for="rememberMe"> Lembre-me</label>
+                            </div>
+                            <a href="#" class="">
+                                <i class="bi bi-arrow-clockwise"></i> Esqueceu a senha?
+                            </a>
+                        </div>
+                        <button type="submit" class="btn btn-signup w-100">
+                            <i class="bi bi-box-arrow-in-right"></i> Entrar
+                        </button>
+                    </form>
+                </div>
+
+                <!-- Footer -->
+                <div class="modal-footer">
+                    <p>
+                        Não tem uma conta?
+                        <button class="btn text-white" data-bs-dismiss="modal" data-bs-target="#registerModal"
+                            data-bs-toggle="modal">
+                            Inscreva-se
+                        </button>
+                    </p>
+                    <div class="social-icons d-flex justify-content-center gap-2">
+                        <button class="btn btn-outline-primary btn-social">
+                            <i class="bi bi-facebook"></i>
+                        </button>
+                        <button class="btn btn-outline-danger btn-social">
+                            <i class="bi bi-google"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
     <main>
-        {% block content %}{% endblock %}
+        {% block content %}
+        {% endblock %}
     </main>
-    <footer>
-        <p>&copy; 2025 Meu Projeto</p>
+    {% load static %}
+
+    <footer class="text-center">
+        <div class="container">
+            <p class="text-secondary mb-2" style="font-size: 1rem;">Siga-nos nas redes sociais</p>
+            <div class="mb-3">
+                <a href="https://facebook.com" target="_blank" rel="noopener noreferrer"
+                    style="font-size: 1.5rem; margin: 0 10px; transition: transform 0.3s, color 0.3s; color: #1877F2;"
+                    onmouseover="this.style.transform='scale(1.2)'; this.style.color='#145DBF';"
+                    onmouseout="this.style.transform='scale(1)'; this.style.color='#1877F2';">
+                    <i class="bi bi-facebook"></i>
+                </a>
+                <a href="https://instagram.com" target="_blank" rel="noopener noreferrer"
+                    style="font-size: 1.5rem; margin: 0 10px; transition: transform 0.3s, color 0.3s; color: #E4405F;"
+                    onmouseover="this.style.transform='scale(1.2)'; this.style.color='#D32E50';"
+                    onmouseout="this.style.transform='scale(1)'; this.style.color='#E4405F';">
+                    <i class="bi bi-instagram"></i>
+                </a>
+                <a href="https://twitter.com" target="_blank" rel="noopener noreferrer"
+                    style="font-size: 1.5rem; margin: 0 10px; transition: transform 0.3s, color 0.3s; color: #1DA1F2;"
+                    onmouseover="this.style.transform='scale(1.2)'; this.style.color='#1488C6';"
+                    onmouseout="this.style.transform='scale(1)'; this.style.color='#1DA1F2';">
+                    <i class="bi bi-twitter"></i>
+                </a>
+                <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer"
+                    style="font-size: 1.5rem; margin: 0 10px; transition: transform 0.3s, color 0.3s; color: #0077B5;"
+                    onmouseover="this.style.transform='scale(1.2)'; this.style.color='#005582';"
+                    onmouseout="this.style.transform='scale(1)'; this.style.color='#0077B5';">
+                    <i class="bi bi-linkedin"></i>
+                </a>
+
+            </div>
+            <p class="text-secondary" style="font-size: 0.8rem;">
+                &copy; {{ current_year }} <b class="text-primary">Fisiomais</b>. Todos os direitos reservados.
+            </p>
+        </div>
     </footer>
+
+    <!-- Scripts do Bootstrap -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+        crossorigin="anonymous"></script>
+    
+
 </body>
+
 </html>

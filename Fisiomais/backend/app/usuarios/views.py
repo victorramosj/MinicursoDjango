@@ -1,30 +1,108 @@
-from django.contrib.auth import authenticate, login, logout
 from django.shortcuts import render, redirect
+from django.contrib.auth import authenticate, login, logout
+from .forms import LoginForm
+from django.contrib.auth.models import User
 from django.contrib import messages
 
-def custom_login(request):
-    if request.method == 'POST':
-        username = request.POST['username']
-        password = request.POST['password']
-        user = authenticate(request, username=username, password=password)
-        if user is not None:
-            login(request, user)
-            if hasattr(user, 'colaborador'):
-                if user.colaborador.is_admin:
-                    return redirect('admin_dashboard')  # Dashboard de administrador
-                return redirect('colaborador_dashboard')  # Dashboard de colaborador
-            elif hasattr(user, 'cliente'):
-                return redirect('cliente_dashboard')  # Dashboard de cliente
-            else:
-                messages.error(request, "Usuário não possui permissões atribuídas.")
-        else:
-            messages.error(request, "Credenciais inválidas.")
-    return render(request, 'login.html')
 
+
+def custom_login(request):
+    if request.method == "POST":
+        form = LoginForm(request.POST)
+        if form.is_valid():
+            # Autentica o usuário
+            user = authenticate(username=form.cleaned_data['username'], password=form.cleaned_data['password'])
+            if user is not None:
+                login(request, user)
+                # Verifica o tipo de usuário (role) e redireciona
+                if hasattr(user, 'colaborador'):  # Verifica se o usuário tem um colaborador associado
+                    if user.colaborador.is_admin:
+                        return redirect('/admin')  # Redireciona para a área de administração
+                    else:
+                        return redirect('home')  # Redireciona para a página inicial (colaborador)
+                elif hasattr(user, 'cliente'):  # Verifica se o usuário tem um cliente associado
+                    return redirect('home')  # Redireciona para a página inicial (cliente)
+                else:
+                    return redirect('home')  # Caso genérico
+            else:
+                # Erro de autenticação
+                form.add_error(None, 'Invalid username or password')
+    else:
+        form = LoginForm()
+
+    # Passando o tipo de usuário (role) para o template
+    return render(request, 'usuarios/login.html', {'form': form, 'role': None if not request.user.is_authenticated else ('cliente' if hasattr(request.user, 'cliente') else 'admin')})
 
 def custom_logout(request):
     logout(request)  # Realiza o logout do usuário
-    return redirect('login')  # Redireciona para a página de login
+    return redirect('/')  # Redireciona para a página inicial após logout
+
+
+from .forms import ClienteForm, ColaboradorForm  # Supondo que criemos formulários para ambos
+
+
+def cadastrar_usuario(request, tipo):
+    if tipo == 'cliente':
+        form = ClienteForm()  # Formulário de cliente
+    elif tipo == 'colaborador':
+        form = ColaboradorForm()  # Formulário de colaborador
+    else:
+        return render(request, 'erro.html')  # Redirecionar para uma página de erro, caso o tipo seja inválido
+
+    return render(request, 'cadastro.html', {'form': form, 'tipo_usuario': tipo})
+
+
+# Cadastro de Cliente
+def cadastrar_cliente(request):
+    if request.method == "POST":
+        form = ClienteForm(request.POST, request.FILES)
+        if form.is_valid():
+            cliente = form.save(commit=False)
+            user = User.objects.create_user(
+                username=form.cleaned_data["username"],
+                password=form.cleaned_data["password"]
+            )
+            cliente.user = user
+            cliente.save()
+            login(request, user)  # Faz o login automático após o cadastro
+            messages.success(request, "Cliente cadastrado com sucesso!")
+
+            # Passando o tipo de usuário (role) para o template de login
+            role = 'cliente' if hasattr(request.user, 'cliente') else 'admin' if request.user.is_staff else None
+            return render(request, 'usuarios/login.html', {'role': role})
+
+        else:
+            messages.error(request, "Erro ao cadastrar cliente. Verifique os dados fornecidos.")
+    else:
+        form = ClienteForm()
+    return render(request, "usuarios/cadastrar_cliente.html", {"form": form})
+
+# Cadastro de Colaborador
+def cadastrar_colaborador(request):
+    if request.method == "POST":
+        form = ColaboradorForm(request.POST, request.FILES)
+        if form.is_valid():
+            colaborador = form.save(commit=False)
+            user = User.objects.create_user(
+                username=form.cleaned_data["username"],
+                password=form.cleaned_data["password"]
+            )
+            colaborador.user = user
+            colaborador.save()
+            login(request, user)  # Faz o login automático após o cadastro
+            messages.success(request, "Colaborador cadastrado com sucesso!")
+
+            # Passando o tipo de usuário (role) para o template de login
+            role = 'colaborador' if hasattr(request.user, 'colaborador') else 'admin' if request.user.is_staff else None
+            return render(request, 'usuarios/login.html', {'role': role})
+
+        else:
+            messages.error(request, "Erro ao cadastrar colaborador. Verifique os dados fornecidos.")
+    else:
+        form = ColaboradorForm()
+    return render(request, "usuarios/cadastrar_colaborador.html", {"form": form})
+
+
 
 
 

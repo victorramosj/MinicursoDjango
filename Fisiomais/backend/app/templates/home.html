@@ -1,0 +1,148 @@
+{% extends 'base.html' %}
+
+{% block title %}Página Inicial - Meu Projeto{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+  <h1 class="text-center fw-bold text-primary mb-3">Bem-vindo à nossa clínica de Fisioterapia e Pilates!</h1>
+  <p class="text-center text-primary mb-3">
+    Na <strong class="cor-pink">FISIOMAIS</strong>, cuidamos de você com profissionalismo e dedicação.
+    Nossa missão é promover a sua saúde, reabilitação e qualidade de vida por meio de tratamentos personalizados, unindo as melhores práticas de <strong class="cor-pink">Fisioterapia</strong> e os benefícios do <strong class="cor-pink">Pilates</strong>.
+  </p>
+
+  <div class="mt-5 text-center p-4 bg-light rounded shadow">
+    <h3 class="fw-bold text-primary mb-3">Não perca tempo!</h3>
+    <p class="fs-5 text-secondary">
+      Agende uma sessão conosco para melhorar sua saúde e bem-estar.
+      Nossos profissionais estão prontos para ajudar você a alcançar seus objetivos!
+    </p>
+    <div class="mt-4 text-center">
+      <a href="{% if user.is_authenticated %}/criaragendamento{% else %}/cadastro{% endif %}" class="btn btn-signup gap-2">
+        {% if user.is_authenticated %}
+          <i class="bi bi-calendar-check"></i> Agendar Sessão
+        {% else %}
+          <i class="bi bi-person-plus"></i> Inscreva-se
+        {% endif %}
+      </a>
+    </div>
+  </div>
+
+  <!-- Carrossel de Colaboradores -->
+  <div class="mt-5">
+    <h2 class="text-center text-primary mb-3">Nossos Colaboradores</h2>
+    <p class="text-center text-primary mb-3">Sinta-se em casa e descubra como podemos ajudar você a se movimentar com mais <strong class="cor-pink">força</strong>, <strong class="cor-pink">equilíbrio</strong> e <strong class="cor-pink">bem-estar</strong>.</p>
+    
+    <div id="carouselColaboradores" class="carousel slide" data-bs-ride="carousel">
+      <div class="carousel-inner">
+        <div class="carousel-item active">
+          <div class="row">
+            <div class="col-4">
+              <img src="https://via.placeholder.com/150x100?text=Colaborador+1" class="d-block w-100" alt="Colaborador 1" />
+              <h5 class="text-center fw-bold text-secondary mb-3">Colaborador 1</h5>
+              <p class="text-center text-secondary mb-3">Fisioterapeuta especializado</p>
+            </div>
+            <div class="col-4">
+              <img src="https://via.placeholder.com/150x100?text=Colaborador+2" class="d-block w-100" alt="Colaborador 2" />
+              <h5 class="text-center fw-bold text-secondary mb-3">Colaborador 2</h5>
+              <p class="text-center text-secondary mb-3">Especialista em recuperação muscular</p>
+            </div>
+            <div class="col-4">
+              <img src="https://via.placeholder.com/150x100?text=Colaborador+3" class="d-block w-100" alt="Colaborador 3" />
+              <h5 class="text-center fw-bold text-secondary mb-3">Colaborador 3</h5>
+              <p class="text-center text-secondary mb-3">Instrutor de Pilates</p>
+            </div>
+          </div>
+        </div>
+        <div class="carousel-item">
+          <div class="row">
+            <div class="col-4">
+              <img src="https://via.placeholder.com/150x100?text=Colaborador+4" class="d-block w-100" alt="Colaborador 4" />
+              <h5 class="text-center fw-bold text-secondary mb-3">Colaborador 4</h5>
+              <p class="text-center text-secondary mb-3">Especialista em RPG</p>
+            </div>
+            <div class="col-4">
+              <img src="https://via.placeholder.com/150x100?text=Colaborador+5" class="d-block w-100" alt="Colaborador 5" />
+              <h5 class="text-center fw-bold text-secondary mb-3">Colaborador 5</h5>
+              <p class="text-center text-secondary mb-3">Instrutor de Alongamento</p>
+            </div>
+            <div class="col-4">
+              <img src="https://via.placeholder.com/150x100?text=Colaborador+6" class="d-block w-100" alt="Colaborador 6" />
+              <h5 class="text-center">Colaborador 6</h5>
+              <p class="text-center">Terapeuta ocupacional</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Botões de navegação -->
+      <button class="carousel-control-prev" type="button" data-bs-target="#carouselColaboradores" data-bs-slide="prev">
+        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+        <span class="visually-hidden">Anterior</span>
+      </button>
+      <button class="carousel-control-next" type="button" data-bs-target="#carouselColaboradores" data-bs-slide="next">
+        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+        <span class="visually-hidden">Próximo</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Carrossel de Serviços -->
+  <div class="mt-5">
+    <h2 class="text-center text-primary mb-3">Nossos Serviços</h2>
+    <p class="text-center text-primary mb-3">Sinta-se em casa e descubra como podemos ajudar você a se movimentar com mais <strong class="cor-pink">força</strong>, <strong class="cor-pink">equilíbrio</strong> e <strong class="cor-pink">bem-estar</strong>.</p>
+    
+    <div id="carouselServicos" class="carousel slide" data-bs-ride="carousel">
+      <div class="carousel-inner">
+        <div class="carousel-item active">
+          <div class="row">
+            <div class="col-4">
+              <img src="https://via.placeholder.com/150x100?text=Pilates" class="d-block w-100" alt="Pilates" />
+              <h5 class="text-center fw-bold text-secondary">Pilates</h5>
+              <p class="text-center text-secondary">Melhore sua postura e flexibilidade.</p>
+            </div>
+            <div class="col-4">
+              <img src="https://via.placeholder.com/150x100?text=Reabilitação+Física" class="d-block w-100" alt="Reabilitação Física" />
+              <h5 class="text-center fw-bold text-secondary">Reabilitação Física</h5>
+              <p class="text-center text-secondary">Recuperação após lesões ou cirurgias.</p>
+            </div>
+            <div class="col-4">
+              <img src="https://via.placeholder.com/150x100?text=Massoterapia" class="d-block w-100" alt="Massoterapia" />
+              <h5 class="text-center fw-bold text-secondary">Massoterapia</h5>
+              <p class="text-center text-secondary">Alívio do estresse e dores musculares.</p>
+            </div>
+          </div>
+        </div>
+        <div class="carousel-item">
+          <div class="row">
+            <div class="col-4">
+              <img src="https://via.placeholder.com/150x100?text=Acupuntura" class="d-block w-100" alt="Acupuntura" />
+              <h5 class="text-center fw-bold text-secondary">Acupuntura</h5>
+              <p class="text-center text-secondary">Equilíbrio energético e bem-estar.</p>
+            </div>
+            <div class="col-4">
+              <img src="https://via.placeholder.com/150x100?text=RPG" class="d-block w-100" alt="RPG" />
+              <h5 class="text-center fw-bold text-secondary">Reeducação Postural Global</h5>
+              <p class="text-center text-secondary">Correção postural e alívio de dores.</p>
+            </div>
+            <div class="col-4">
+              <img src="https://via.placeholder.com/150x100?text=Hidroterapia" class="d-block w-100" alt="Hidroterapia" />
+              <h5 class="text-center fw-bold text-secondary">Hidroterapia</h5>
+              <p class="text-center text-secondary">Terapia com exercícios na água.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Botões de navegação -->
+      <button class="carousel-control-prev" type="button" data-bs-target="#carouselServicos" data-bs-slide="prev">
+        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+        <span class="visually-hidden">Anterior</span>
+      </button>
+      <button class="carousel-control-next" type="button" data-bs-target="#carouselServicos" data-bs-slide="next">
+        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+        <span class="visually-hidden">Próximo</span>
+      </button>
+    </div>
+  </div>
+</div>
+{% endblock %}
