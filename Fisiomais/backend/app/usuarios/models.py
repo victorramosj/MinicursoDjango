@@ -21,7 +21,7 @@ def validar_cpf(value):
 class Clinica(models.Model):
     # Relacionamento de um para muitos com Colaboradores e Clientes
     cnpj = models.CharField(max_length=18, unique=True)  
-    nome = models.CharField(max_length=255)  
+    nome = models.CharField(max_length=150, null=True, blank=True)
     telefone = models.CharField(max_length=20, unique=True, null=True, blank=True)
     endereco = models.CharField(max_length=255, null=True, blank=True)
     estado = models.CharField(max_length=50, null=True, blank=True)
@@ -41,6 +41,13 @@ class Colaborador(models.Model):
     # Relacionamento de um para um com User
     # Relacionamento de muitos para um com Clinica
     user = models.OneToOneField(User, on_delete=models.CASCADE)  # Relacionamento com o modelo User
+    nome = models.CharField(max_length=150, null=True, blank=True)
+    sexo = models.CharField(
+        max_length=1,
+        choices=[('M', 'Masculino'), ('F', 'Feminino'), ('O', 'Outro')],
+        null=True,
+        blank=True
+    )  # Sexo do cliente
     telefone = models.CharField(max_length=20, unique=True, null=True, blank=True)
     cargo = models.CharField(max_length=100)  # Cargo do colaborador
     endereco = models.CharField(max_length=255, null=True, blank=True)
@@ -74,6 +81,13 @@ class Cliente(models.Model):
     # Relacionamento de um para um com User
     # Relacionamento de muitos para um com Clinica
     user = models.OneToOneField(User, on_delete=models.CASCADE)  # Relacionamento com o modelo User
+    nome = models.CharField(max_length=150, null=True, blank=True)
+    sexo = models.CharField(
+        max_length=1,
+        choices=[('M', 'Masculino'), ('F', 'Feminino'), ('O', 'Outro')],
+        null=True,
+        blank=True
+    )  # Sexo do cliente
     telefone = models.CharField(max_length=20, unique=True, null=True, blank=True)
     dt_nasc = models.DateField(null=True, blank=True)
     endereco = models.CharField(max_length=255, null=True, blank=True)
@@ -117,8 +131,9 @@ DELETE FROM clinica WHERE cnpj = '12.345.678/0001-90';
 
 """ Modelo: Colaborador
 Criar
-INSERT INTO colaborador (user_id, telefone, cargo, endereco, cpf, estado, cidade, bairro, photo, clinica_id)
-VALUES (1, '9876-5432', 'Fisioterapeuta', 'Rua Colaborador, 456', '12345678901', 'São Paulo', 'São Paulo', 'Bairro Colaborador', 'foto.jpg', 1);
+INSERT INTO colaborador (user_id, nome, sexo, telefone, cargo, endereco, cpf, estado, cidade, bairro, photo, clinica_id)
+VALUES (1, 'João Silva', 'Masculino', '9876-5432', 'Fisioterapeuta', 'Rua Colaborador, 456', '12345678901', 'São Paulo', 'São Paulo', 'Bairro Colaborador', 'foto.jpg', 1);
+
 
 Ler
 SELECT * FROM colaborador;
@@ -126,8 +141,9 @@ SELECT * FROM colaborador WHERE cpf = '12345678901';
 
 Atualizar
 UPDATE colaborador
-SET telefone = '9999-8888', cargo = 'Pilates Instrutor'
+SET telefone = '9999-8888', cargo = 'Pilates Instrutor', sexo = 'Masculino'
 WHERE cpf = '12345678901';
+
 
 Deletar
 DELETE FROM colaborador WHERE cpf = '12345678901';
@@ -135,8 +151,8 @@ DELETE FROM colaborador WHERE cpf = '12345678901';
 
 """ Modelo: Cliente
 Criar
-INSERT INTO cliente (user_id, telefone, dt_nasc, endereco, estado, cidade, bairro, cpf, photo, clinica_id)
-VALUES (2, '9876-1234', '1990-05-10', 'Rua Cliente, 123', 'São Paulo', 'São Paulo', 'Bairro Cliente', '98765432100', 'foto_cliente.jpg', 1);
+INSERT INTO cliente (user_id, nome, sexo, telefone, dt_nasc, endereco, estado, cidade, bairro, cpf, photo, clinica_id)
+VALUES (2, 'Maria Oliveira', 'Feminino', '9876-1234', '1990-05-10', 'Rua Cliente, 123', 'São Paulo', 'São Paulo', 'Bairro Cliente', '98765432100', 'foto_cliente.jpg', 1);
 
 Ler
 SELECT * FROM cliente;
@@ -144,8 +160,9 @@ SELECT * FROM cliente WHERE cpf = '98765432100';
 
 Atualizar
 UPDATE cliente
-SET telefone = '9876-4321', endereco = 'Nova Rua, 789'
+SET telefone = '9876-4321', endereco = 'Nova Rua, 789', sexo = 'Feminino'
 WHERE cpf = '98765432100';
+
 
 Deletar
 DELETE FROM cliente WHERE cpf = '98765432100';

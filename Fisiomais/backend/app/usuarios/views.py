@@ -3,7 +3,7 @@ from django.contrib.auth import authenticate, login, logout
 from .forms import LoginForm
 from django.contrib.auth.models import User
 from django.contrib import messages
-
+import requests
 
 
 def custom_login(request):
@@ -57,7 +57,6 @@ def escolher_tipo_usuario(request):
 
 
 
-# Cadastro de Cliente
 def cadastrar_cliente(request):
     if request.method == "POST":
         form = ClienteForm(request.POST, request.FILES)
@@ -65,7 +64,7 @@ def cadastrar_cliente(request):
             cliente = form.save(commit=False)
             user = User.objects.create_user(
                 username=form.cleaned_data["username"],
-                password=form.cleaned_data["password"]
+                password=form.cleaned_data["senha"]
             )
             cliente.user = user
             cliente.save()
@@ -75,14 +74,14 @@ def cadastrar_cliente(request):
             # Passando o tipo de usuário (role) para o template de login
             role = 'cliente' if hasattr(request.user, 'cliente') else 'admin' if request.user.is_staff else None
             return render(request, 'usuarios/login.html', {'role': role})
-
         else:
             messages.error(request, "Erro ao cadastrar cliente. Verifique os dados fornecidos.")
     else:
         form = ClienteForm()
     return render(request, "usuarios/cadastrar_cliente.html", {"form": form})
 
-# Cadastro de Colaborador
+
+
 def cadastrar_colaborador(request):
     if request.method == "POST":
         form = ColaboradorForm(request.POST, request.FILES)
@@ -90,7 +89,7 @@ def cadastrar_colaborador(request):
             colaborador = form.save(commit=False)
             user = User.objects.create_user(
                 username=form.cleaned_data["username"],
-                password=form.cleaned_data["password"]
+                password=form.cleaned_data["senha"]
             )
             colaborador.user = user
             colaborador.save()
@@ -106,6 +105,42 @@ def cadastrar_colaborador(request):
     else:
         form = ColaboradorForm()
     return render(request, "usuarios/cadastrar_colaborador.html", {"form": form})
+
+
+
+
+from django.http import JsonResponse
+
+
+def estados_view(request):
+    try:
+        # Faz a requisição para obter a lista de estados
+        response = requests.get("https://servicodados.ibge.gov.br/api/v1/localidades/estados")
+        response.raise_for_status()  # Verifica se a resposta foi bem-sucedida
+        
+        # Ordena os estados pelo nome
+        estados = response.json()
+        estados_ordenados = sorted(estados, key=lambda x: x['nome'])
+
+        # Retorna a lista de estados em formato JSON
+        return JsonResponse(estados_ordenados, safe=False)
+    
+    except requests.exceptions.RequestException as e:
+        # Retorna um erro em caso de falha na requisição
+        return JsonResponse({"error": str(e)}, status=500)
+
+# Função para obter cidades de um estado específico
+def cidades(request, estado):
+    try:
+        url = f"https://servicodados.ibge.gov.br/api/v1/localidades/estados/{estado}/municipios"
+        response = requests.get(url)
+        response.raise_for_status()  # Verifica se a resposta foi bem-sucedida
+        cidades = response.json()
+        cidades_ordenadas = sorted(cidades, key=lambda x: x['nome'])
+        return JsonResponse(cidades_ordenadas, safe=False)
+    except requests.exceptions.RequestException as e:
+        return JsonResponse({"error": str(e)}, status=500)
+
 
 
 
