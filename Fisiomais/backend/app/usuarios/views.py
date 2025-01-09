@@ -6,6 +6,14 @@ from django.contrib import messages
 import requests
 
 
+from django.contrib.auth import authenticate, login
+from django.shortcuts import render, redirect
+from django.contrib.auth.forms import AuthenticationForm
+
+from django.contrib.auth import authenticate, login
+from django.shortcuts import render, redirect
+from .forms import LoginForm
+
 def custom_login(request):
     if request.method == "POST":
         form = LoginForm(request.POST)
@@ -25,13 +33,19 @@ def custom_login(request):
                 else:
                     return redirect('home')  # Caso genérico
             else:
-                # Erro de autenticação
-                form.add_error(None, 'Invalid username or password')
+                # Adiciona o erro de autenticação ao formulário
+                form.add_error(None, 'Usuário ou senha incorretos')
+        else:
+            # Em caso de erro de formulário, podemos também adicionar um erro genérico
+            form.add_error(None, 'Erro no formulário.')
+
     else:
         form = LoginForm()
 
-    # Passando o tipo de usuário (role) para o template
-    return render(request, 'usuarios/login.html', {'form': form, 'role': None if not request.user.is_authenticated else ('cliente' if hasattr(request.user, 'cliente') else 'admin')})
+    # Passando o formulário com erro para o template para exibir no modal
+    return render(request, 'home.html', {'form': form})
+
+
 
 def custom_logout(request):
     logout(request)  # Realiza o logout do usuário

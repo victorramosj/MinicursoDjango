@@ -1,12 +1,165 @@
 {% extends 'base.html' %}
+{% load widget_tweaks %}
 
 {% block content %}
-<div class="container mt-4">
-    <h2>Cadastrar Colaborador</h2>
-    <form method="post" enctype="multipart/form-data">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit" class="btn btn-primary mt-2">Cadastrar</button>
-    </form>
+<div class="container my-5">
+    <div class="card shadow">
+        <div class="card-header">
+            <h2 class="text-center text-primary">Cadastrar Colaborador</h2>
+        </div>
+        <div class="card-body">
+            <form method="post" enctype="multipart/form-data" action="{% url 'cadastrar_colaborador' %}">
+                {% csrf_token %}
+                <div class="row mb-3">
+                    <div class="col-12 col-md-6">
+                        <label for="id_username" class="form-label text-secondary">Nome de Usuário*</label>
+                        {{ form.username|add_class:"form-control" }}
+                    </div>
+                    <div class="col-12 col-md-6">
+                        <label for="id_nome" class="form-label text-secondary">Nome*</label>
+                        {{ form.nome|add_class:"form-control" }}
+                    </div>
+                </div>
+
+                <div class="row mb-3">
+                    <div class="col-12 col-md-4">
+                        <label for="id_sexo" class="form-label text-secondary">Sexo*</label>
+                        {{ form.sexo|add_class:"form-control" }}
+                    </div>
+                    <div class="col-12 col-md-4">
+                        <label for="id_email" class="form-label text-secondary">Email*</label>
+                        {{ form.email|add_class:"form-control" }}
+                    </div>
+                    <div class="col-12 col-md-4">
+                        <label for="id_email2" class="form-label text-secondary">Confirmar E-mail*</label>
+                        {{ form.email2|add_class:"form-control" }}
+                    </div>
+                </div>
+
+                <div class="row mb-3">
+                    <div class="col-12 col-md-6">
+                        <label for="id_senha" class="form-label text-secondary">Senha*</label>
+                        {{ form.senha|add_class:"form-control" }}
+                    </div>
+                    <div class="col-12 col-md-6">
+                        <label for="id_senha2" class="form-label text-secondary">Confirmar Senha*</label>
+                        {{ form.senha2|add_class:"form-control" }}
+                    </div>
+                </div>
+
+                <div class="row mb-3">
+                    <div class="col-12 col-md-4">
+                        <label for="id_telefone" class="form-label text-secondary">Telefone*</label>
+                        {{ form.telefone|add_class:"form-control" }}
+                    </div>
+                    <div class="col-12 col-md-4">
+                        <label for="id_cargo" class="form-label text-secondary">Cargo*</label>
+                        {{ form.cargo|add_class:"form-control" }}
+                    </div>
+                    <div class="col-12 col-md-4">
+                        <label for="id_bairro" class="form-label text-secondary">Bairro</label>
+                        {{ form.bairro|add_class:"form-control" }}
+                    </div>
+                </div>
+
+                <div class="row mb-3">
+                    <div class="col-12 col-md-6">
+                        <label for="id_endereco" class="form-label text-secondary">Endereço</label>
+                        {{ form.endereco|add_class:"form-control" }}
+                    </div>
+                    <div class="col-6 col-md-2">
+                        <label for="id_estado" class="form-label text-secondary">Estado*</label>
+                        <select id="id_estado" class="form-control" onchange="handleEstadoChange(event)">
+                            <option value="">Selecione o Estado</option>
+                            <!-- Estados serão populados dinamicamente -->
+                        </select>
+                    </div>
+
+                    <div class="col-6 col-md-2 ">
+                        <label for="id_cidade" class="form-label text-secondary">Cidade*</label>
+                        <select id="id_cidade" class="form-control">
+                            <option value="">Selecione a Cidade</option>
+                            <!-- Cidades serão populadas dinamicamente -->
+                        </select>
+                    </div>
+                </div>
+
+                <div class="row mb-3">
+                    <div class="col-12">
+                        <label for="id_cpf" class="form-label text-secondary">CPF*</label>
+                        {{ form.cpf|add_class:"form-control" }}
+                    </div>
+                </div>
+
+                <div class="row mb-3">
+                    <div class="col-12 text-center">
+                        <button type="submit" class="btn btn-login w-auto mx-auto">
+                            <i class="bi bi-person-plus"></i> Cadastrar
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
 </div>
+
+
+<script>
+    // Função para carregar os estados no select
+    async function carregarEstados() {
+        try {
+            const response = await fetch('/usuarios/estados/');  // Atualizado para /usuarios/estados/
+            const estados = await response.json();
+
+            const estadoSelect = document.getElementById('id_estado');
+            estadoSelect.innerHTML = '<option value="">Selecione o Estado</option>';  // Limpa as opções
+
+            estados.forEach(estado => {
+                const option = document.createElement('option');
+                option.value = estado.sigla;
+                option.textContent = estado.nome;
+                estadoSelect.appendChild(option);
+            });
+        } catch (error) {
+            console.error('Erro ao carregar estados:', error);
+        }
+    }
+
+    // Função para carregar as cidades com base no estado selecionado
+    async function carregarCidades(estado) {
+        try {
+            const response = await fetch(`/usuarios/cidades/${estado}/`);  // Atualizado para /usuarios/cidades/${estado}/
+            const cidades = await response.json();
+
+            const cidadeSelect = document.getElementById('id_cidade');
+            cidadeSelect.innerHTML = '<option value="">Selecione a Cidade</option>';  // Limpa as opções
+
+            cidades.forEach(cidade => {
+                const option = document.createElement('option');
+                option.value = cidade.nome;
+                option.textContent = cidade.nome;
+                cidadeSelect.appendChild(option);
+            });
+        } catch (error) {
+            console.error('Erro ao carregar cidades:', error);
+        }
+    }
+
+    // Carregar os estados ao carregar a página
+    document.addEventListener('DOMContentLoaded', function () {
+        carregarEstados();
+
+        // Adicionar listener para o select de estado
+        const estadoSelect = document.getElementById('id_estado');
+        estadoSelect.addEventListener('change', function (event) {
+            const estado = event.target.value;
+            if (estado) {
+                carregarCidades(estado);
+            }
+        });
+    });
+
+</script>
+
+
 {% endblock %}

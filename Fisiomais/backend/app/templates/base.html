@@ -69,15 +69,15 @@
                     </li>
                     {% else %}
                     <li class="nav-item">
-                        <a class="btn btn-login " href="#" data-bs-toggle="modal"
-                            data-bs-target="#loginModal">
+                        <a class="btn btn-login " href="#" data-bs-toggle="modal" data-bs-target="#loginModal">
                             <i class="bi bi-box-arrow-in-right"></i> Entrar
                         </a>
                     </li>
-                    <li class="nav-item"> 
-                        <a href="{% url 'escolher_tipo_usuario' %}" class="btn btn-signup" > <i class="bi bi-person-plus"></i> Inscrever-se</a>
+                    <li class="nav-item">
+                        <a href="{% url 'escolher_tipo_usuario' %}" class="btn btn-signup"> <i
+                                class="bi bi-person-plus"></i> Inscrever-se</a>
 
-                            
+
                         </a>
                     </li>
                     {% endif %}
@@ -85,77 +85,86 @@
             </div>
         </div>
     </nav>
-    <!-- Modal -->
-    <div class="modal fade" id="loginModal" tabindex="-1" aria-labelledby="loginModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <!-- Header -->
-                <div class="modal-header text-center justify-content-center">
-                    <h5 class="modal-title d-flex align-items-center gap-2" id="loginModalLabel">
-                        <i class="bi bi-person-circle"></i> Login
-                    </h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
+        <!-- Modal -->
+        <div class="modal fade" id="loginModal" tabindex="-1" aria-labelledby="loginModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <!-- Header -->
+                    <div class="modal-header text-center justify-content-center">
+                        <h5 class="modal-title d-flex align-items-center gap-2" id="loginModalLabel">
+                            <i class="bi bi-person-circle"></i> Login
+                        </h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
 
-                <!-- Body -->
-                <div class="modal-body">
-                    <form action="{% url 'login' %}" method="post">
-                        
-                        {% csrf_token %}
-                        <div class="mb-3">
-                            <label for="username" class="form-label">
-                                <i class="bi bi-envelope"></i> Usuário
-                            </label>
-                            <input type="text" class="form-control" id="username" name="username" required />
-                        </div>
-                        <div class="mb-3">
-                            <label for="password" class="form-label">
-                                <i class="bi bi-lock"></i> Senha
-                            </label>
-                            <div class="input-group">
-                                <input type="password" class="form-control" id="password" name="password" required />
-                                <button type="button" class="btn btn-outline-secondary" id="togglePassword">
-                                    <i class="bi bi-eye"></i>
-                                </button>
+                    <!-- Body -->
+                    <div class="modal-body">
+                        <form action="{% url 'login' %}" method="post">
+                            <!-- Exibição de erros -->
+                            {% if form.non_field_errors %}
+                            <div class="alert alert-danger text-center py-1" role="alert">
+                                {% for error in form.non_field_errors %}
+                                <p>{{ error }}</p>
+                                {% endfor %}
                             </div>
-                        </div>
-                        <div id="loginError" class="text-danger mb-3"></div>
-                        <div class="d-flex justify-content-between align-items-center mb-3">
-                            <div>
-                                <input type="checkbox" id="rememberMe" name="remember_me" />
-                                <label for="rememberMe"> Lembre-me</label>
-                            </div>
-                            <a href="#" class="">
-                                <i class="bi bi-arrow-clockwise"></i> Esqueceu a senha?
-                            </a>
-                        </div>
-                        <button type="submit" class="btn btn-signup w-100">
-                            <i class="bi bi-box-arrow-in-right"></i> Entrar
-                        </button>
-                    </form>
-                </div>
+                            {% endif %}
 
-                <!-- Footer -->
-                <div class="modal-footer">
-                    <p>
-                        Não tem uma conta?
-                        <button class="btn text-white" data-bs-dismiss="modal" data-bs-target="#registerModal"
-                            data-bs-toggle="modal">
-                            Inscreva-se
-                        </button>
-                    </p>
-                    <div class="social-icons d-flex justify-content-center gap-2">
-                        <button class="btn btn-outline-primary btn-social">
-                            <i class="bi bi-facebook"></i>
-                        </button>
-                        <button class="btn btn-outline-danger btn-social">
-                            <i class="bi bi-google"></i>
-                        </button>
+                            {% csrf_token %}
+                            <div class="mb-3">
+                                <label for="username" class="form-label">
+                                    <i class="bi bi-envelope"></i> Usuário
+                                </label>
+                                <input type="text" class="form-control" id="username" name="username" required />
+                            </div>
+                            <div class="mb-3">
+                                <label for="password" class="form-label">
+                                    <i class="bi bi-lock"></i> Senha
+                                </label>
+                                <div class="input-group">
+                                    <input type="password" class="form-control" id="password" name="password" required />
+                                    <button type="button" class="btn btn-outline-secondary" id="togglePassword">
+                                        <i class="bi bi-eye"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div id="loginError" class="text-danger mb-3"></div>
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <div>
+                                    <input type="checkbox" id="rememberMe" name="remember_me" />
+                                    <label for="rememberMe"> Lembre-me</label>
+                                </div>
+                                <a href="#" class="">
+                                    <i class="bi bi-arrow-clockwise"></i> Esqueceu a senha?
+                                </a>
+                            </div>
+                            
+                            <button type="submit" class="btn btn-signup w-100">
+                                <i class="bi bi-box-arrow-in-right"></i> Entrar
+                            </button>
+                        </form>
+                    </div>
+
+                    <!-- Footer -->
+                    <div class="modal-footer">
+                        <p>
+                            Não tem uma conta?
+                            <button class="btn text-white" data-bs-dismiss="modal" data-bs-target="#registerModal"
+                                data-bs-toggle="modal">
+                                Inscreva-se
+                            </button>
+                        </p>
+                        <div class="social-icons d-flex justify-content-center gap-2">
+                            <button class="btn btn-outline-primary btn-social">
+                                <i class="bi bi-facebook"></i>
+                            </button>
+                            <button class="btn btn-outline-danger btn-social">
+                                <i class="bi bi-google"></i>
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
 
 
     <main>
@@ -203,7 +212,29 @@
     <!-- Scripts do Bootstrap -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
         crossorigin="anonymous"></script>
-    
+        <script>
+            const form = document.querySelector('form');
+            const modal = new bootstrap.Modal(document.getElementById('loginModal'));
+            
+            form.addEventListener('submit', function (event) {
+                // Verifica se existe uma mensagem de erro
+                if (document.querySelector('.alert-danger') || document.querySelector('#loginError').innerText) {
+                    event.preventDefault();  // Impede o envio do formulário
+                    modal.show();  // Garante que o modal permaneça aberto
+                }
+            });
+        
+            // Evita que o modal seja fechado manualmente se houver erros
+            document.querySelector('.btn-close').addEventListener('click', function (event) {
+                if (document.querySelector('.alert-danger') || document.querySelector('#loginError').innerText) {
+                    event.preventDefault(); // Impede o fechamento do modal
+                    modal.show();  // Garante que o modal permaneça aberto
+                }
+            });
+        </script>
+        
+
+
 
 </body>
 

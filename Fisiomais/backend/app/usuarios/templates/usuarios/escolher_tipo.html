@@ -1,17 +1,25 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<div class="container mt-4">
-    <h2>Escolha o tipo de cadastro</h2>
-    
-    <!-- Opções para escolher o tipo de cadastro -->
-    <div class="row">
-        <div class="col-md-6">
-            <a href="{% url 'cadastrar_cliente'  %}" class="btn btn-login btn-lg btn-block">Cadastrar como Cliente</a>
+<div class="container mt-5">    
+
+    <div class="row justify-content-center">
+        <!-- Botão para Cliente -->
+        <div class="col-md-3 mb-4">
+            <a href="{% url 'cadastrar_cliente' %}" class="btn btn-login btn-block shadow-lg">
+                <i class="bi bi-person-fill"></i> Cadastrar como Cliente
+            </a>
         </div>
-        <div class="col-md-6">
-            <a href="{% url 'cadastrar_colaborador' %}" class="btn btn-btn-login btn-lg btn-block">Cadastrar como Colaborador</a>
+        <!-- Botão para Colaborador -->
+        <div class="col-md-3 mb-4">
+            <a href="{% url 'cadastrar_colaborador' %}" class="btn  btn-login btn-block shadow-lg">
+                <i class="bi bi-person-workspace"></i> Cadastrar como Colaborador
+            </a>
         </div>
     </div>
 </div>
+
 {% endblock %}
+
+
+
