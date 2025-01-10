@@ -5,13 +5,6 @@ from django.contrib.auth.models import User
 from django.contrib import messages
 import requests
 
-
-from django.contrib.auth import authenticate, login
-from django.shortcuts import render, redirect
-from django.contrib.auth.forms import AuthenticationForm
-
-from django.contrib.auth import authenticate, login
-from django.shortcuts import render, redirect
 from .forms import LoginForm
 
 def custom_login(request):
@@ -52,7 +45,7 @@ def custom_logout(request):
     return redirect('/')  # Redireciona para a página inicial após logout
 
 
-from .forms import ClienteForm, ColaboradorForm  # Supondo que criemos formulários para ambos
+from .forms import ClienteForm, ColaboradorForm  
 
 
 def escolher_tipo_usuario(request):
@@ -71,54 +64,70 @@ def escolher_tipo_usuario(request):
 
 
 
+import logging
+# Configuração do logger
+logger = logging.getLogger(__name__)
+
 def cadastrar_cliente(request):
     if request.method == "POST":
         form = ClienteForm(request.POST, request.FILES)
         if form.is_valid():
-            cliente = form.save(commit=False)
-            user = User.objects.create_user(
-                username=form.cleaned_data["username"],
-                password=form.cleaned_data["senha"]
-            )
-            cliente.user = user
-            cliente.save()
-            login(request, user)  # Faz o login automático após o cadastro
-            messages.success(request, "Cliente cadastrado com sucesso!")
-
-            # Passando o tipo de usuário (role) para o template de login
-            role = 'cliente' if hasattr(request.user, 'cliente') else 'admin' if request.user.is_staff else None
-            return render(request, 'usuarios/login.html', {'role': role})
+            try:
+                # Cria o cliente e associa o usuário (feito no save do formulário)
+                cliente = form.save(commit=False)
+                
+                # Realiza o login automático após salvar o cliente
+                login(request, cliente.user)
+                
+                messages.success(request, "Cliente cadastrado com sucesso!")
+                
+                # Passando o tipo de usuário (role) para o template de login
+                role = 'cliente' if hasattr(request.user, 'cliente') else 'admin' if request.user.is_staff else None
+                return render(request, 'home', {'role': role})
+            except Exception as e:
+                # Log detalhado do erro
+                logger.error(f"Erro ao cadastrar cliente: {str(e)}", exc_info=True)
+                messages.error(request, f"Erro ao cadastrar cliente: {str(e)}")
         else:
-            messages.error(request, "Erro ao cadastrar cliente. Verifique os dados fornecidos.")
+            # Exibe os erros detalhados de validação do formulário
+            for field, errors in form.errors.items():
+                for error in errors:
+                    messages.error(request, f"Erro no campo {field}: {error}")
     else:
         form = ClienteForm()
-    return render(request, "usuarios/cadastrar_cliente.html", {"form": form})
 
+    return render(request, "usuarios/cadastrar_cliente.html", {"form": form})
 
 
 def cadastrar_colaborador(request):
     if request.method == "POST":
         form = ColaboradorForm(request.POST, request.FILES)
         if form.is_valid():
-            colaborador = form.save(commit=False)
-            user = User.objects.create_user(
-                username=form.cleaned_data["username"],
-                password=form.cleaned_data["senha"]
-            )
-            colaborador.user = user
-            colaborador.save()
-            login(request, user)  # Faz o login automático após o cadastro
-            messages.success(request, "Colaborador cadastrado com sucesso!")
-
-            # Passando o tipo de usuário (role) para o template de login
-            role = 'colaborador' if hasattr(request.user, 'colaborador') else 'admin' if request.user.is_staff else None
-            return render(request, 'usuarios/login.html', {'role': role})
-
+            try:
+                # Cria o colaborador e associa o usuário (feito no save do formulário)
+                colaborador = form.save(commit=False)
+                
+                # Faz login automático do colaborador após salvar
+                login(request, colaborador.user)
+                
+                messages.success(request, "Colaborador cadastrado com sucesso!")
+                return redirect("home")  # Substitua "home" pela URL de destino desejada
+            except Exception as e:
+                # Log detalhado do erro
+                logger.error(f"Erro ao cadastrar colaborador: {str(e)}", exc_info=True)
+                messages.error(request, f"Erro ao cadastrar colaborador: {str(e)}")
         else:
-            messages.error(request, "Erro ao cadastrar colaborador. Verifique os dados fornecidos.")
+            # Exibe os erros detalhados de validação do formulário
+            for field, errors in form.errors.items():
+                for error in errors:
+                    messages.error(request, f"Erro no campo {field}: {error}")
     else:
         form = ColaboradorForm()
+
     return render(request, "usuarios/cadastrar_colaborador.html", {"form": form})
+
+
+
 
 
 

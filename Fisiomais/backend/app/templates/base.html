@@ -43,15 +43,15 @@
                 <ul class="navbar-nav ms-auto">
                     {% if user.is_authenticated %}
                     <li class="nav-item dropdown ">
-                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
-                            data-bs-toggle="dropdown" aria-expanded="false">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                             {% if user.profile_photo %}
                             <img src="{{ user.profile_photo.url }}" alt="Foto de Perfil" class="user-photo" />
                             {% else %}
-                            <i class="bi bi-person-circle"></i>
+                            <i class="bi bi-person-circle icon-photo"></i>
                             {% endif %}
                             {{ user.username }}
-                        </a>
+                          </a>
+                          
                         <ul class="dropdown-menu " aria-labelledby="navbarDropdown">
                             <li><a class="dropdown-item" href="/perfil">Meu Perfil</a></li>
                             <li><a class="dropdown-item" href="/criaragendamento">Agendar Atendimento</a></li>
@@ -138,9 +138,7 @@
                                 </a>
                             </div>
                             
-                            <button type="submit" class="btn btn-signup w-100">
-                                <i class="bi bi-box-arrow-in-right"></i> Entrar
-                            </button>
+                            
                         </form>
                     </div>
 
@@ -148,10 +146,11 @@
                     <div class="modal-footer">
                         <p>
                             Não tem uma conta?
-                            <button class="btn text-white" data-bs-dismiss="modal" data-bs-target="#registerModal"
-                                data-bs-toggle="modal">
-                                Inscreva-se
-                            </button>
+                            <a href="{% url 'escolher_tipo_usuario' %}" class=" text-white"> <i
+                                class="bi bi-person-plus"></i> Inscrever-se</a>
+
+
+                        </a>
                         </p>
                         <div class="social-icons d-flex justify-content-center gap-2">
                             <button class="btn btn-outline-primary btn-social">
@@ -232,6 +231,24 @@
                 }
             });
         </script>
+
+<script>
+    document.getElementById('togglePassword').addEventListener('click', function () {
+        const passwordInput = document.getElementById('password');
+        const icon = this.querySelector('i');
+
+        if (passwordInput.type === 'password') {
+            passwordInput.type = 'text'; // Exibe a senha
+            icon.classList.remove('bi-eye'); // Altera o ícone
+            icon.classList.add('bi-eye-slash');
+        } else {
+            passwordInput.type = 'password'; // Oculta a senha
+            icon.classList.remove('bi-eye-slash'); // Altera o ícone
+            icon.classList.add('bi-eye');
+        }
+    });
+</script>
+
         
 
 

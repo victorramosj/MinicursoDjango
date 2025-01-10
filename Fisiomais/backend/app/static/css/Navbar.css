@@ -150,10 +150,12 @@
   margin-right: 7px;
 }
 
+.nav-item.dropdown { position: relative; }
 
-/* Centralizar o dropdown à direita */
 .navbar-nav.ms-auto {
-  margin-left: auto;
+  
+  margin-right: 10px;
+  /* Ajuste para evitar rolagem horizontal */
 }
 
 
@@ -191,7 +193,7 @@
   margin-right: 0px;
   border: none;
   width: auto;
-  
+
 }
 
 
@@ -228,14 +230,20 @@
 .navbar-collapse {
   transition: height 0.3s ease;
 }
+
 .dropdown-menu {
   z-index: 1;
   right: 0;
-  background-color: #f8f9fa; /* Cor de fundo */
-  left: auto; /* Remove alinhamento automático à esquerda */
-  border-top: none; /* Remove a borda superior */    
-  padding: 0; /* Remove o padding interno */
-  border-radius: 0 0 0.25rem 0.25rem; /* Mantém o arredondamento das bordas inferiores */
+  background-color: #f8f9fa;
+  /* Cor de fundo */
+  left: auto;
+  /* Remove alinhamento automático à esquerda */
+  border-top: none;
+  /* Remove a borda superior */
+  padding: 0;
+  /* Remove o padding interno */
+  border-radius: 0 0 0.25rem 0.25rem;
+  /* Mantém o arredondamento das bordas inferiores */
 }
 
 
@@ -280,16 +288,36 @@
   margin-right: 10px;
   object-fit: cover;
   /* Evita distorção da imagem */
-
 }
+
+.icon-photo {
+  font-size: 90px;
+  /* Define o tamanho do ícone */
+  width: 70px;
+  /* Garante que a largura seja igual à da imagem */
+  height: 70px;
+  /* Garante que a altura seja igual à da imagem */
+  border-radius: 50%;
+  /* Adiciona borda arredondada para consistência */
+  margin-right: 10px;
+  /* Adiciona espaço à direita, como na imagem */
+  display: flex;
+  /* Alinha o ícone centralmente */
+  align-items: center;
+  /* Alinha o ícone centralmente */
+  justify-content: center;
+  /* Alinha o ícone centralmente */
+}
+
 
 
 /* Cor do fundo e botão de login */
 .modal-content {
-background: radial-gradient(circle, #ffffff, #eeeeee);
-color: #000000;
-border: none;
-box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Adiciona uma sombra leve para destacar o modal */
+  background: radial-gradient(circle, #ffffff, #eeeeee);
+  color: #000000;
+  border: none;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  /* Adiciona uma sombra leve para destacar o modal */
 
 }
 
@@ -417,22 +445,26 @@ box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Adiciona uma sombra leve para desta
   font-weight: bold;
   text-decoration: underline;
 }
+
 /* Estilos para o container dos botões sociais */
 .social-icons {
-display: flex; /* Adiciona layout flexível para alinhar horizontalmente */
-gap: 10px; /* Adiciona espaçamento entre os botões */
+  display: flex;
+  /* Adiciona layout flexível para alinhar horizontalmente */
+  gap: 10px;
+  /* Adiciona espaçamento entre os botões */
 }
+
 /* Botões de redes sociais */
 .social-icons .btn-social {
-width: 40px;
-height: 40px;
-font-size: 22px;
-border-radius: 50%;
-display: flex;
-align-items: center;
-justify-content: center;
-transition: all 0.3s ease;
-border: none;
+  width: 40px;
+  height: 40px;
+  font-size: 22px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+  border: none;
 }
 
 .social-icons .btn-outline-primary:hover {

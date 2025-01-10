@@ -4,14 +4,19 @@
 
 
 <div class="container my-5">
-    {% if errorMessage %}
-    <div class="alert alert-danger">{{ errorMessage }}</div>
-    {% endif %}
+    
     <div class="card shadow">
         <div class="card-header">
             <h2 class="text-center text-primary">Cadastro</h2>
         </div>
         <div class="card-body">
+            {% if messages %}
+                <div>
+                    {% for message in messages %}                    
+                    <div class="alert alert-danger">{{ message }}</div>
+                    {% endfor %}
+                </div>
+                {% endif %}
             <form method="post" id="cadastrar_cliente" action="{% url 'cadastrar_cliente' %}" enctype="multipart/form-data">
                 {% csrf_token %}
 
@@ -65,32 +70,26 @@
                     
                 </div>
 
-                <div class="row mb-3">
-                    
-                    
-                    <div class="col-12 col-md-4 col-lg-4">
-                        <label for="id_bairro" class="form-label text-secondary">Bairro</label>
-                        {{ form.bairro|add_class:"form-control" }}
-                    </div>
+                <div class="row mb-3">                    
                     <div class="col-12 col-md-6 col-lg-4">
                         <label for="id_endereco" class="form-label text-secondary">Logradouro</label>
                         {{ form.endereco|add_class:"form-control" }}
                     </div>
+                    <div class="col-12 col-md-4 col-lg-4">
+                        <label for="id_bairro" class="form-label text-secondary">Bairro</label>
+                        {{ form.bairro|add_class:"form-control" }}
+                    </div>
+                    
                     <div class="col-6 col-md-2">
                         <label for="id_estado" class="form-label text-secondary">Estado*</label>
-                        <select id="id_estado" class="form-control" onchange="handleEstadoChange(event)">
-                            <option value="">Selecione o Estado</option>
-                            <!-- Estados serão populados dinamicamente -->
-                        </select>
+                        {{ form.estado|add_class:"form-control" }}
                     </div>
-
-                    <div class="col-6 col-md-2 ">
+                    
+                    <div class="col-6 col-md-2">
                         <label for="id_cidade" class="form-label text-secondary">Cidade*</label>
-                        <select id="id_cidade" class="form-control">
-                            <option value="">Selecione a Cidade</option>
-                            <!-- Cidades serão populadas dinamicamente -->
-                        </select>
+                        {{ form.cidade|add_class:"form-control" }}
                     </div>
+                    
 
 
                     <div class="col-12 text-center">
@@ -103,62 +102,46 @@
         </div>
     </div>
 </div>
-<script>
-    // Função para carregar os estados no select
-    async function carregarEstados() {
-        try {
-            const response = await fetch('/usuarios/estados/');  // Atualizado para /usuarios/estados/
-            const estados = await response.json();
 
-            const estadoSelect = document.getElementById('id_estado');
-            estadoSelect.innerHTML = '<option value="">Selecione o Estado</option>';  // Limpa as opções
+   <script>
+    document.addEventListener("DOMContentLoaded", function() {
+    const estadoField = document.getElementById('id_estado');
+    const cidadeField = document.getElementById('id_cidade');
 
-            estados.forEach(estado => {
-                const option = document.createElement('option');
-                option.value = estado.sigla;
-                option.textContent = estado.nome;
-                estadoSelect.appendChild(option);
-            });
-        } catch (error) {
-            console.error('Erro ao carregar estados:', error);
+    estadoField.addEventListener('change', function() {
+        const estado = estadoField.value;
+
+        if (estado) {
+            // Requisição para o backend para obter as cidades do estado selecionado
+            fetch(`/usuarios/cidades/${estado}/`)
+                .then(response => response.json())
+                .then(data => {
+                    // Limpa as opções existentes
+                    cidadeField.innerHTML = '<option value="">Selecione a cidade</option>';
+
+                    // Adiciona as novas opções de cidades
+                    data.forEach(cidade => {
+                        const option = document.createElement('option');
+                        option.value = cidade.nome;
+                        option.textContent = cidade.nome;
+                        cidadeField.appendChild(option);
+                    });
+                })
+                .catch(error => {
+                    console.error('Erro ao carregar as cidades:', error);
+                    cidadeField.innerHTML = '<option value="">Erro ao carregar cidades</option>';
+                });
+        } else {
+            cidadeField.innerHTML = '<option value="">Selecione a cidade</option>';
         }
-    }
-
-    // Função para carregar as cidades com base no estado selecionado
-    async function carregarCidades(estado) {
-        try {
-            const response = await fetch(`/usuarios/cidades/${estado}/`);  // Atualizado para /usuarios/cidades/${estado}/
-            const cidades = await response.json();
-
-            const cidadeSelect = document.getElementById('id_cidade');
-            cidadeSelect.innerHTML = '<option value="">Selecione a Cidade</option>';  // Limpa as opções
-
-            cidades.forEach(cidade => {
-                const option = document.createElement('option');
-                option.value = cidade.nome;
-                option.textContent = cidade.nome;
-                cidadeSelect.appendChild(option);
-            });
-        } catch (error) {
-            console.error('Erro ao carregar cidades:', error);
-        }
-    }
-
-    // Carregar os estados ao carregar a página
-    document.addEventListener('DOMContentLoaded', function () {
-        carregarEstados();
-
-        // Adicionar listener para o select de estado
-        const estadoSelect = document.getElementById('id_estado');
-        estadoSelect.addEventListener('change', function (event) {
-            const estado = event.target.value;
-            if (estado) {
-                carregarCidades(estado);
-            }
-        });
     });
+});
+
+
+
 
 </script>
+
 
 
 {% endblock %}
