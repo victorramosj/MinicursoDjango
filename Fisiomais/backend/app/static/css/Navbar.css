@@ -278,7 +278,6 @@ navbar-nav.ms-auto {
 /* Centralizar o dropdown à direita */
 .navbar-nav.ms-auto {
   margin-left: auto;
-  
   /* Empurra o dropdown para a direita */
 }
 
@@ -292,13 +291,15 @@ navbar-nav.ms-auto {
 }
 
 .icon-photo {
-  font-size: 25px;
+  font-size: 90px;
   /* Define o tamanho do ícone */
- 
+  width: 70px;
+  /* Garante que a largura seja igual à da imagem */
+  height: 70px;
+  /* Garante que a altura seja igual à da imagem */
   border-radius: 50%;
   /* Adiciona borda arredondada para consistência */
-  
-  margin-bottom: 2px;
+  margin-right: 10px;
   /* Adiciona espaço à direita, como na imagem */
   display: flex;
   /* Alinha o ícone centralmente */
