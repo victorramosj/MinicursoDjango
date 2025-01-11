@@ -54,13 +54,13 @@
                           
                         <ul class="dropdown-menu " aria-labelledby="navbarDropdown">
                             <li><a class="dropdown-item" href="/perfil">Meu Perfil</a></li>
-                            <li><a class="dropdown-item" href="/criaragendamento">Agendar Atendimento</a></li>
+                            <li><a class="dropdown-item" href="/criaragendamento">Agendar </a></li>
                             {% if user.role == "admin" %}
-                            <li><a class="dropdown-item" href="/adminPage">Página Administrador</a></li>
+                            <li><a class="dropdown-item" href="/adminPage">Controle</a></li>
                             {% elif user.role == "colaborador" %}
-                            <li><a class="dropdown-item" href="/adminPage">Central de Controle</a></li>
+                            <li><a class="dropdown-item" href="/adminPage">Controle</a></li>
                             {% endif %}
-                            <li><a class="dropdown-item" href="/visualizaragendamentos">Agendamentos</a></li>
+                            <li><a class="dropdown-item" href="/visualizaragendamentos">Consultas</a></li>
                             <form action="{% url 'logout' %}" method="post">
                                 {% csrf_token %}
                                 <button type="submit" class="dropdown-item">Sair</button>

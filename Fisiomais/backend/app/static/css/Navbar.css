@@ -152,17 +152,15 @@
 
 .nav-item.dropdown { position: relative; }
 
-.navbar-nav.ms-auto {
-  
+navbar-nav.ms-auto { 
   margin-right: 10px;
+  
   /* Ajuste para evitar rolagem horizontal */
 }
 
 
 
-.nav-link:hover {
-  background-color: #2d9485;
-}
+
 
 .btn-login {
   background-color: #36ab9c;
@@ -233,14 +231,16 @@
 
 .dropdown-menu {
   z-index: 1;
-  right: 0;
+  margin-right: 30;
   background-color: #f8f9fa;
+  
+  max-width: 100vw;
   /* Cor de fundo */
   left: auto;
   /* Remove alinhamento automático à esquerda */
   border-top: none;
   /* Remove a borda superior */
-  padding: 0;
+  padding: 10px 15px;
   /* Remove o padding interno */
   border-radius: 0 0 0.25rem 0.25rem;
   /* Mantém o arredondamento das bordas inferiores */

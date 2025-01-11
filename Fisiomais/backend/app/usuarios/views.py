@@ -83,7 +83,7 @@ def cadastrar_cliente(request):
                 
                 # Passando o tipo de usuário (role) para o template de login
                 role = 'cliente' if hasattr(request.user, 'cliente') else 'admin' if request.user.is_staff else None
-                return render(request, 'home', {'role': role})
+                return render(request, 'home.html', {'role': role})
             except Exception as e:
                 # Log detalhado do erro
                 logger.error(f"Erro ao cadastrar cliente: {str(e)}", exc_info=True)
