@@ -35,53 +35,51 @@
                     <li class="nav-item"><a class="nav-link" href="/contato">Fale Conosco</a></li>
                     {% if user.is_authenticated %}
                     {% if user.role != "cliente" %}
-                    <li class="nav-item"><a class="nav-link" href="/adminPage">Central de Controle</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/admin">Central de Controle</a></li>
                     {% endif %}
                     {% endif %}
                 </ul>
 
                 <ul class="navbar-nav ms-auto">
                     {% if user.is_authenticated %}
-                    <li class="nav-item dropdown ">
-                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                            {% if user.profile_photo %}
+                      <li class="nav-item dropdown btn-user">
+                        <a class="nav-link dropdown-toggle btn-user" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                          {% if user.profile_photo %}
                             <img src="{{ user.profile_photo.url }}" alt="Foto de Perfil" class="user-photo" />
-                            {% else %}
-                            <i class="bi bi-person-circle icon-photo"></i>
-                            {% endif %}
-                            {{ user.username }}
-                          </a>
-                          
-                        <ul class="dropdown-menu " aria-labelledby="navbarDropdown">
-                            <li><a class="dropdown-item" href="/perfil">Meu Perfil</a></li>
-                            <li><a class="dropdown-item" href="/criaragendamento">Agendar </a></li>
-                            {% if user.role == "admin" %}
-                            <li><a class="dropdown-item" href="/adminPage">Controle</a></li>
-                            {% elif user.role == "colaborador" %}
-                            <li><a class="dropdown-item" href="/adminPage">Controle</a></li>
-                            {% endif %}
-                            <li><a class="dropdown-item" href="/visualizaragendamentos">Consultas</a></li>
-                            <form action="{% url 'logout' %}" method="post">
-                                {% csrf_token %}
-                                <button type="submit" class="dropdown-item">Sair</button>
-                            </form>
+                          {% else %}
+                            <i class="bi bi-person-circle" id="iconeuser"></i>
+                          {% endif %}
+                          {{ user.username }}
+                        </a>
+                        <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                          <li><a class="dropdown-item" href="/perfil">Meu Perfil</a></li>
+                          <li><a class="dropdown-item" href="/criaragendamento">Agendar Atendimento</a></li>
+                          {% if user.role == "admin" %}
+                            <li><a class="dropdown-item" href="/admin">Página Administrador</a></li>
+                          {% elif user.role == "colaborador" %}
+                            <li><a class="dropdown-item" href="/admin">Central de Controle</a></li>
+                          {% endif %}
+                          <li><a class="dropdown-item" href="/visualizaragendamentos">Agendamentos</a></li>
+                          <form action="{% url 'logout' %}" method="post">
+                            {% csrf_token %}
+                            <button type="submit" class="dropdown-item">Sair</button>
+                          </form>
                         </ul>
-                    </li>
+                      </li>
                     {% else %}
-                    <li class="nav-item">
-                        <a class="btn btn-login " href="#" data-bs-toggle="modal" data-bs-target="#loginModal">
-                            <i class="bi bi-box-arrow-in-right"></i> Entrar
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="{% url 'escolher_tipo_usuario' %}" class="btn btn-signup"> <i
-                                class="bi bi-person-plus"></i> Inscrever-se</a>
-
-
-                        </a>
-                    </li>
+                      <li class="nav-item">
+                        <button class="btn btn-login d-flex align-items-center gap-2" data-bs-toggle="modal" data-bs-target="#loginModal">
+                          <i class="bi bi-box-arrow-in-right"></i> Entrar
+                        </button>
+                      </li>
+                      <li class="nav-item">
+                        <button class="btn btn-signup align-items-center gap-2" data-bs-toggle="modal" data-bs-target="#signupModal">
+                          <i class="bi bi-person-plus"></i> Inscrever-se
+                        </button>
+                      </li>
                     {% endif %}
-                </ul>
+                  </ul>
+                  
             </div>
         </div>
     </nav>
@@ -137,20 +135,25 @@
                                     <i class="bi bi-arrow-clockwise"></i> Esqueceu a senha?
                                 </a>
                             </div>
+                            <button type="submit" class="btn btn-signup w-100">
+                                <i class="bi bi-box-arrow-in-right"></i> Entrar
+                            </button>
                             
                             
                         </form>
                     </div>
 
                     <!-- Footer -->
+                    
                     <div class="modal-footer">
+                        
                         <p>
                             Não tem uma conta?
                             <a href="{% url 'escolher_tipo_usuario' %}" class=" text-white"> <i
                                 class="bi bi-person-plus"></i> Inscrever-se</a>
 
-
                         </a>
+
                         </p>
                         <div class="social-icons d-flex justify-content-center gap-2">
                             <button class="btn btn-outline-primary btn-social">

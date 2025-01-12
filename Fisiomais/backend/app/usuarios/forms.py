@@ -104,21 +104,28 @@ class ClienteForm(forms.ModelForm):
         return cidade
 
     def save(self, commit=True):
-        # Criação do usuário
+        # Criação do usuário primeiro
         user_data = {
             'username': self.cleaned_data['username'],
             'email': self.cleaned_data['email'],
             'password': self.cleaned_data['senha'],
         }
         user = User.objects.create_user(**user_data)
+        
+        # Criação do cliente e associação do usuário
+        cliente = super().save(commit=False)
+        cliente.user = user  # Relaciona o usuário ao cliente
 
-        # Criação do cliente
-        cliente = super().save(commit=False)  # Obtem o cliente sem salvar no banco ainda
-        cliente.user = user  # Relaciona o cliente ao usuário criado
         if commit:
-            user.save()  # Salva o usuário no banco de dados
-            cliente.save()  # Salva o cliente no banco de dados
+            # Salva o cliente no banco de dados
+            user.save()
+            cliente.save()
+            print(f"Cliente salvo: {cliente.nome}, relacionado a {user.username}")
+            
         return cliente
+
+
+
 
 
 
@@ -197,21 +204,28 @@ class ColaboradorForm(forms.ModelForm):
         return cidade
 
     def save(self, commit=True):
-        # Criação do usuário
+        # Criação do usuário primeiro
         user_data = {
             'username': self.cleaned_data['username'],
             'email': self.cleaned_data['email'],
             'password': self.cleaned_data['senha'],
         }
         user = User.objects.create_user(**user_data)
+        
+        # Criação do colaborador e associação do usuário
+        colaborador = super().save(commit=False)
+        colaborador.user = user  # Relaciona o usuário ao colaborador
 
-        # Criação do colaborador
-        colaborador = super().save(commit=False)  # Obtem o colaborador sem salvar no banco ainda
-        colaborador.user = user  # Relaciona o colaborador ao usuário criado
         if commit:
-            user.save()  # Salva o usuário no banco de dados
-            colaborador.save()  # Salva o colaborador no banco de dados
+            # Salva o colaborador no banco de dados
+            user.save()
+            colaborador.save()
+            print(f"Colaborador salvo: {colaborador.nome}, relacionado a {user.username}")
+            
         return colaborador
+
+
+
 
 
 
