@@ -11,32 +11,33 @@ def custom_login(request):
     if request.method == "POST":
         form = LoginForm(request.POST)
         if form.is_valid():
-            # Autentica o usuário
             user = authenticate(username=form.cleaned_data['username'], password=form.cleaned_data['password'])
             if user is not None:
                 login(request, user)
+                
                 # Verifica o tipo de usuário (role) e redireciona
-                if hasattr(user, 'colaborador'):  # Verifica se o usuário tem um colaborador associado
+                if hasattr(user, 'colaborador'):
                     if user.colaborador.is_admin:
-                        return redirect('/admin')  # Redireciona para a área de administração
+                        role = "admin"
                     else:
-                        return redirect('home')  # Redireciona para a página inicial (colaborador)
-                elif hasattr(user, 'cliente'):  # Verifica se o usuário tem um cliente associado
-                    return redirect('home')  # Redireciona para a página inicial (cliente)
+                        role = "colaborador"  # Colaborador não administrador
+                elif hasattr(user, 'cliente'):
+                    role = "cliente"
                 else:
-                    return redirect('home')  # Caso genérico
+                    role = "desconhecido"
+
+                return render(request, 'home.html', {'form': form, 'role': role})
             else:
-                # Adiciona o erro de autenticação ao formulário
                 form.add_error(None, 'Usuário ou senha incorretos')
         else:
-            # Em caso de erro de formulário, podemos também adicionar um erro genérico
             form.add_error(None, 'Erro no formulário.')
 
     else:
         form = LoginForm()
 
-    # Passando o formulário com erro para o template para exibir no modal
     return render(request, 'home.html', {'form': form})
+
+
 
 
 

@@ -20,13 +20,14 @@
 
                 <div class="row mb-3">
                     <div class="col-12 col-md-4">
-                        <label for="id_username" class="form-label text-secondary">Nome de Usuário*</label>
-                        {{ form.username|add_class:"form-control" }}
-                    </div>
-                    <div class="col-12 col-md-4">
                         <label for="id_nome" class="form-label text-secondary">Nome*</label>
                         {{ form.nome|add_class:"form-control" }}
                     </div>
+                    <div class="col-12 col-md-4">
+                        <label for="id_username" class="form-label text-secondary">Nome de Usuário*</label>
+                        {{ form.username|add_class:"form-control" }}
+                    </div>
+                    
                     <div class="col-12 col-md-4">
                         <label for="id_cpf" class="form-label text-secondary">CPF* <small>(apenas números)</small></label>
                         {{ form.cpf|add_class:"form-control" }}
@@ -43,11 +44,16 @@
                         {% endfor %}
                     </select>
                 </div>
-                    <div class="col-12 col-md-4">
+                <div class="col-12 col-md-2">
+                    <label for="id_data_nascimento" class="form-label text-secondary">Data de Nascimento</label>
+                    {{ form.data_nascimento|add_class:"form-control" }}
+                </div>
+                
+                    <div class="col-12 col-md-3">
                         <label for="id_email" class="form-label text-secondary">Email*</label>
                         {{ form.email|add_class:"form-control" }}
                     </div>
-                    <div class="col-12 col-md-4">
+                    <div class="col-12 col-md-3">
                         <label for="id_email2" class="form-label text-secondary">Confirmar E-mail*</label>
                         {{ form.email2|add_class:"form-control" }}
                     </div>
@@ -59,53 +65,54 @@
                 </div>
 
                 <div class="row mb-3">
-                    <div class="col-12 col-md-6">
+                    <div class="col-12 col-md-3">
                         <label for="id_senha" class="form-label text-secondary">Senha*</label>
                         {{ form.senha|add_class:"form-control" }}
                     </div>
-                    <div class="col-12 col-md-6">
+                    <div class="col-12 col-md-3">
                         <label for="id_senha2" class="form-label text-secondary">Confirmar Senha*</label>
                         {{ form.senha2|add_class:"form-control" }}
+                    </div>
+                    <div class="col-12 col-md-3">
+                        <label for="id_telefone" class="form-label text-secondary">Telefone*</label>
+                        {{ form.telefone|add_class:"form-control" }}
+                    </div>
+                    <div class="col-6 col-md-3">
+                        <label for="id_estado" class="form-label text-secondary">Estado*</label>
+                        {{ form.estado|add_class:"form-control" }}
                     </div>
                 </div>
 
                 <div class="row mb-3">
-                    <div class="col-12 col-md-4">
-                        <label for="id_telefone" class="form-label text-secondary">Telefone*</label>
-                        {{ form.telefone|add_class:"form-control" }}
-                    </div>
-                    <div class="col-12 col-md-4">
+                    
+                    <div class="col-12 col-md-3">
                         <label for="id_cargo" class="form-label text-secondary">Cargo*</label>
                         {{ form.cargo|add_class:"form-control" }}
                     </div>
                     <div class="col-12 col-md-4">
-                        <label for="id_bairro" class="form-label text-secondary">Bairro</label>
-                        {{ form.bairro|add_class:"form-control" }}
-                    </div>
-                </div>
-
-                <div class="row mb-3">
-                    <div class="col-12 col-md-6">
                         <label for="id_endereco" class="form-label text-secondary">Lougradouro</label>
                         {{ form.endereco|add_class:"form-control" }}
                     </div>
-                    <div class="col-6 col-md-2">
-                        <label for="id_estado" class="form-label text-secondary">Estado*</label>
-                        {{ form.estado|add_class:"form-control" }}
+                    <div class="col-12 col-md-2">
+                        <label for="id_bairro" class="form-label text-secondary">Bairro</label>
+                        {{ form.bairro|add_class:"form-control" }}
                     </div>
                     
-                    <div class="col-6 col-md-2">
+                    
+                    
+                    <div class="col-6 col-md-3">
                         <label for="id_cidade" class="form-label text-secondary">Cidade*</label>
                         {{ form.cidade|add_class:"form-control" }}
                     </div>
-                    
                 </div>
+
+                
 
 
 
                 <div class="row mb-3">
                     <div class="col-12 text-center">
-                        <button type="submit" class="btn btn-login w-auto mx-auto">
+                        <button type="submit" class="btn btn-signup w-auto mx-auto">
                             <i class="bi bi-person-plus"></i> Cadastrar
                         </button>
                     </div>

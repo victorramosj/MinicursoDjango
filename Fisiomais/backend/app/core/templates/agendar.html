@@ -48,8 +48,8 @@
                             </select>
                         </div>
 
-
                         <!-- Colaborador -->
+                        {% if user.role != "colaborador" %}
                         <div class="mb-3">
                             <label for="colaborador" class="form-label">Colaborador</label>
                             <select id="colaborador" name="colaborador" class="form-select" required>
@@ -57,25 +57,32 @@
                                 <!-- Colaboradores serão populados via JavaScript -->
                             </select>
                         </div>
-
+                        {% else %}
+                        <input type="hidden" id="colaborador" name="colaborador" value="{{ user.id }}">
+                        {% endif %}
                         <!-- Data -->
-                        <div class="mb-3">
-                            <label for="data" class="form-label">Data</label>
-                            <input type="date" id="data" name="data" class="form-control" required min=""
-                                onchange="verificarDataValida()">
+                        <div class="row">
+                            <!-- Data -->
+                            <div class="col-md-6 mb-3">
+                                <label for="data" class="form-label">Data</label>
+                                <input type="date" id="data" name="data" class="form-control" required min=""
+                                    onchange="verificarDataValida()">
+                            </div>
+
+                            <!-- Hora -->
+                            <div class="col-md-6 mb-3">
+                                <label for="hora" class="form-label">Hora</label>
+                                <select id="hora" name="hora" class="form-select" required>
+                                    <option value="" disabled selected>Selecione um horário</option>
+                                    <!-- Horários disponíveis serão populados via JavaScript -->
+                                </select>
+                            </div>
                         </div>
 
-
-                        <!-- Hora -->
-                        <div class="mb-3">
-                            <label for="hora" class="form-label">Hora</label>
-                            <select id="hora" name="hora" class="form-select" required>
-                                <option value="" disabled selected>Selecione um horário</option>
-                                <!-- Horários disponíveis serão populados via JavaScript -->
-                            </select>
-                        </div>
 
                         <!-- Cliente -->
+                        {% if user.role == "admin" or user.role == "colaborador" %}
+
                         <div class="mb-3">
                             <label for="cliente" class="form-label">Cliente</label>
                             <select id="cliente" name="cliente" class="form-select" required>
@@ -83,6 +90,9 @@
                                 <!-- Clientes serão populados via JavaScript -->
                             </select>
                         </div>
+                        {% else %}
+                        <input type="hidden" id="cliente" name="cliente" value="{{ user.id }}">
+                        {% endif %}
 
                         <div class="mb-3 text-center">
                             <button type="submit" class="btn btn-signup w-100">Agendar</button>

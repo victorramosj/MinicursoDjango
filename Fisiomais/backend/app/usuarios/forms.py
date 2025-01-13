@@ -115,25 +115,27 @@ class ClienteForm(forms.ModelForm):
             }
             user = User.objects.create_user(**user_data)
 
-            # Criação do cliente
-            cliente = super().save(commit=False)
-            cliente.user = user  # Relaciona o usuário ao cliente
-
-            # Garantindo que campos obrigatórios do cliente sejam preenchidos
-            cliente.nome = self.cleaned_data.get('nome')
-            cliente.sexo = self.cleaned_data.get('sexo')
-            cliente.dt_nasc = self.cleaned_data.get('dt_nasc')
-            cliente.estado = self.cleaned_data.get('estado')
-            cliente.cidade = self.cleaned_data.get('cidade')
-            cliente.cpf = self.cleaned_data.get('cpf')  # Certifique-se de que o CPF foi fornecido
+            # Criação do cliente diretamente
+            cliente = Cliente.objects.create(
+                user=user,
+                nome=self.cleaned_data.get('nome'),
+                sexo=self.cleaned_data.get('sexo'),
+                dt_nasc=self.cleaned_data.get('dt_nasc'),
+                estado=self.cleaned_data.get('estado'),
+                cidade=self.cleaned_data.get('cidade'),
+                cpf=self.cleaned_data.get('cpf'),  # Certifique-se de que o CPF foi fornecido
+                telefone=self.cleaned_data.get('telefone'),
+                endereco=self.cleaned_data.get('endereco'),
+                bairro=self.cleaned_data.get('bairro'),
+                photo=self.cleaned_data.get('photo'),
+                clinica=self.cleaned_data.get('clinica')
+            )
 
             if commit:
-                # Salva o cliente no banco de dados
-                user.save()
-                cliente.save()
                 print(f"Cliente salvo: {cliente.nome}, relacionado a {user.username}")
 
             return cliente
+
         except Exception as e:
             print(f"Erro ao salvar cliente: {e}")
             # Se o usuário foi criado, apague-o para evitar inconsistências
@@ -168,9 +170,13 @@ class ColaboradorForm(forms.ModelForm):
         model = Colaborador
         fields = [
             'nome', 'sexo', 'telefone', 'cargo', 'endereco', 'estado', 'cidade',
-            'bairro', 'cpf', 'clinica'
+            'bairro', 'cpf', 'clinica', 'data_nascimento'
         ]
-
+    data_nascimento = forms.DateField(
+        required=False,
+        widget=forms.DateInput(attrs={'type': 'date'}),
+        label="Data de Nascimento"
+    )
     def clean_username(self):
         username = self.cleaned_data['username']
         if User.objects.filter(username=username).exists():
@@ -224,25 +230,45 @@ class ColaboradorForm(forms.ModelForm):
         return cidade
 
     def save(self, commit=True):
-        # Criação do usuário primeiro
-        user_data = {
-            'username': self.cleaned_data['username'],
-            'email': self.cleaned_data['email'],
-            'password': self.cleaned_data['senha'],
-        }
-        user = User.objects.create_user(**user_data)
-        
-        # Criação do colaborador e associação do usuário
-        colaborador = super().save(commit=False)
-        colaborador.user = user  # Relaciona o usuário ao colaborador
+        try:
+            print("Chamando save do ColaboradorForm")
 
-        if commit:
-            # Salva o colaborador no banco de dados
-            user.save()
-            colaborador.save()
-            print(f"Colaborador salvo: {colaborador.nome}, relacionado a {user.username}")
-            
-        return colaborador
+            # Criação do usuário
+            user_data = {
+                'username': self.cleaned_data['username'],
+                'email': self.cleaned_data['email'],
+                'password': self.cleaned_data['senha'],
+            }
+            user = User.objects.create_user(**user_data)
+
+            # Criação do colaborador diretamente
+            colaborador = Colaborador.objects.create(
+                user=user,
+                nome=self.cleaned_data.get('nome'),
+                sexo=self.cleaned_data.get('sexo'),
+                telefone=self.cleaned_data.get('telefone'),
+                cargo=self.cleaned_data.get('cargo'),
+                endereco=self.cleaned_data.get('endereco'),
+                estado=self.cleaned_data.get('estado'),
+                cidade=self.cleaned_data.get('cidade'),
+                bairro=self.cleaned_data.get('bairro'),
+                cpf=self.cleaned_data.get('cpf'),
+                clinica=self.cleaned_data.get('clinica'),
+                data_nascimento=self.cleaned_data.get('data_nascimento')  # Novo campo
+            )
+
+            if commit:
+                print(f"Colaborador salvo: {colaborador.nome}, relacionado a {user.username}")
+
+            return colaborador
+
+        except Exception as e:
+            print(f"Erro ao salvar colaborador: {e}")
+            # Se o usuário foi criado, apague-o para evitar inconsistências
+            if user and user.pk:
+                user.delete()
+            raise
+
 
 
 
