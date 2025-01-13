@@ -4,7 +4,7 @@ from .forms import LoginForm
 from django.contrib.auth.models import User
 from django.contrib import messages
 import requests
-
+from usuarios.models import Colaborador, Cliente
 from .forms import LoginForm
 
 def custom_login(request):
@@ -165,7 +165,40 @@ def cidades(request, estado):
         return JsonResponse({"error": str(e)}, status=500)
 
 
+from django.http import JsonResponse
+
+def get_colaboradores(request):
+    clinica_id = request.GET.get('clinica_id')
+    servico_id = request.GET.get('servico_id')
+    
+    if clinica_id and servico_id:
+        colaboradores = Colaborador.objects.filter(
+            clinica_id=clinica_id,
+            servicos_relacionados__servico_id=servico_id
+        ).distinct()
+        colaboradores_data = [
+            {'id': c.id, 'nome': c.nome} for c in colaboradores
+        ]
+        return JsonResponse({'colaboradores': colaboradores_data})
+    
+    return JsonResponse({'colaboradores': []})
 
 
+from django.http import JsonResponse
+from .models import Clinica
 
+def fetch_clinicas(request):
+    clinicas = Clinica.objects.all()
+    clinicas_data = [{'id': clinica.id, 'nome': clinica.nome} for clinica in clinicas]
+    return JsonResponse({'clinicas': clinicas_data})
 
+def get_clientes(request):
+    clientes = Cliente.objects.all()
+    clientes_data = [
+        {
+            'id': cliente.id,
+            'nome': cliente.nome
+        }
+        for cliente in clientes
+    ]
+    return JsonResponse({'clientes': clientes_data})

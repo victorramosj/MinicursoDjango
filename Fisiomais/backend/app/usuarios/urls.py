@@ -10,5 +10,7 @@ urlpatterns = [
     path('escolher_tipo/', escolher_tipo_usuario, name='escolher_tipo_usuario'),
     path('estados/', estados_view, name='estados'),
     path('cidades/<str:estado>/', cidades, name='cidades'),
-
+    path('colaboradores/', get_colaboradores, name='get_colaboradores'),  # API para buscar colaboradores
+    path('clinicas/', fetch_clinicas, name='fetch_clinicas'),
+    path('clientes/', get_clientes, name='get_clientes'),    
 ]

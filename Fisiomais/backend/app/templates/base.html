@@ -34,6 +34,7 @@
                     <li class="nav-item"><a class="nav-link" href="/especialidades">Especialidades</a></li>
                     <li class="nav-item"><a class="nav-link" href="/contato">Fale Conosco</a></li>
                     {% if user.is_authenticated %}
+                    <li class="nav-item"><a class="nav-link" href="/core/agendar">Agendar</a></li>
                     {% if user.role != "cliente" %}
                     <li class="nav-item"><a class="nav-link" href="/admin">Central de Controle</a></li>
                     {% endif %}
@@ -73,9 +74,9 @@
                         </button>
                       </li>
                       <li class="nav-item">
-                        <button class="btn btn-signup align-items-center gap-2" data-bs-toggle="modal" data-bs-target="#signupModal">
+                        <a class="btn btn-signup align-items-center gap-2" href="{% url 'escolher_tipo_usuario' %}">
                           <i class="bi bi-person-plus"></i> Inscrever-se
-                        </button>
+                        </a>
                       </li>
                     {% endif %}
                   </ul>
@@ -251,10 +252,6 @@
         }
     });
 </script>
-
-        
-
-
 
 </body>
 

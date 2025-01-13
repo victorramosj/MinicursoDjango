@@ -104,25 +104,45 @@ class ClienteForm(forms.ModelForm):
         return cidade
 
     def save(self, commit=True):
-        # Criação do usuário primeiro
-        user_data = {
-            'username': self.cleaned_data['username'],
-            'email': self.cleaned_data['email'],
-            'password': self.cleaned_data['senha'],
-        }
-        user = User.objects.create_user(**user_data)
-        
-        # Criação do cliente e associação do usuário
-        cliente = super().save(commit=False)
-        cliente.user = user  # Relaciona o usuário ao cliente
+        try:
+            print("Chamando save do ClienteForm")
 
-        if commit:
-            # Salva o cliente no banco de dados
-            user.save()
-            cliente.save()
-            print(f"Cliente salvo: {cliente.nome}, relacionado a {user.username}")
-            
-        return cliente
+            # Criação do usuário
+            user_data = {
+                'username': self.cleaned_data['username'],
+                'email': self.cleaned_data['email'],
+                'password': self.cleaned_data['senha'],
+            }
+            user = User.objects.create_user(**user_data)
+
+            # Criação do cliente
+            cliente = super().save(commit=False)
+            cliente.user = user  # Relaciona o usuário ao cliente
+
+            # Garantindo que campos obrigatórios do cliente sejam preenchidos
+            cliente.nome = self.cleaned_data.get('nome')
+            cliente.sexo = self.cleaned_data.get('sexo')
+            cliente.dt_nasc = self.cleaned_data.get('dt_nasc')
+            cliente.estado = self.cleaned_data.get('estado')
+            cliente.cidade = self.cleaned_data.get('cidade')
+            cliente.cpf = self.cleaned_data.get('cpf')  # Certifique-se de que o CPF foi fornecido
+
+            if commit:
+                # Salva o cliente no banco de dados
+                user.save()
+                cliente.save()
+                print(f"Cliente salvo: {cliente.nome}, relacionado a {user.username}")
+
+            return cliente
+        except Exception as e:
+            print(f"Erro ao salvar cliente: {e}")
+            # Se o usuário foi criado, apague-o para evitar inconsistências
+            if user and user.pk:
+                user.delete()
+            raise
+
+
+
 
 
 

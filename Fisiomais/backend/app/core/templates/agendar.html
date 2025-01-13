@@ -1,0 +1,333 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="card shadow">
+        <div class="card-header text-center bg-light text-white">
+            <h4 class="text-primary fw-bold">Agendar Serviço</h4>
+        </div>
+        <div class="card-body">
+            <form id="agendamento-form" method="post">
+                {% csrf_token %}
+                
+                <div class="mb-3">
+                    <label for="clinica" class="form-label">Clínica</label>
+                    <select id="clinica" name="clinica" class="form-select" required>
+                        <option value="" disabled selected>Selecione uma clínica</option>
+                        <!-- Clínicas serão populadas via JavaScript -->
+                    </select>
+                </div>
+                <div class="mb-3">
+                    <label for="servico" class="form-label">Serviço</label>
+                    <select id="servico" name="servico" class="form-select" required>
+                        <option value="" disabled selected>Selecione um serviço</option>
+                        <!-- Serviços serão populados via JavaScript -->
+                    </select>
+                </div>
+                <div class="mb-3">
+                    <label for="planos" class="form-label">Plano</label>
+                    <select id="planos" name="plano" class="form-select">
+                        <option value="" disabled selected>Selecione um plano</option>
+                        <!-- Os planos serão populados via JavaScript -->
+                    </select>
+                </div>
+                
+                <div class="mb-3">
+                    <label for="colaborador" class="form-label">Colaborador</label>
+                    <select id="colaborador" name="colaborador" class="form-select" required>
+                        <option value="" disabled selected>Selecione um colaborador</option>
+                        <!-- Colaboradores serão populados via JavaScript -->
+                    </select>
+                </div>
+                <div class="mb-3">
+                    <label for="data" class="form-label">Data</label>
+                    <input type="date" id="data" name="data" class="form-control" required>
+                </div>
+                
+                <div class="mb-3">
+                    <label for="hora" class="form-label">Hora</label>
+                    <select id="hora" name="hora" class="form-select" required>
+                        <option value="" disabled selected>Selecione um horário</option>
+                        <!-- Horários disponíveis serão populados via JavaScript -->
+                    </select>
+                </div>
+                <div class="mb-3">
+                    <label for="cliente" class="form-label">Cliente</label>
+                    <select id="cliente" name="cliente" class="form-select" required>
+                        <option value="" disabled selected>Selecione um cliente</option>
+                        <!-- Clientes serão populados via JavaScript -->
+                    </select>
+                </div>
+                             
+                <div class="mb-3 text-center">
+                    <button type="button" class="btn btn-signup w-100" id="agendar-button">Agendar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<script>
+    document.getElementById('agendar-button').addEventListener('click', async function() {
+        const form = document.getElementById('agendamento-form');
+        
+        // Coleta os dados do formulário
+        const formData = new FormData(form);
+        const data = {};
+        formData.forEach((value, key) => {
+            data[key] = value;
+        });
+
+        try {
+            // Envia os dados para o Django via fetch
+            const response = await fetch('/core/agendar/', {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value,
+                    'Content-Type': 'application/x-www-form-urlencoded'  // Alterado para o formato de envio do Django
+                },
+                body: new URLSearchParams(data)  // Converte para o formato correto de URL-encoded
+            });
+
+            if (response.ok) {
+                const result = await response.json();
+                if (result.success) {
+                    alert('Agendamento realizado com sucesso!');
+                    // Aqui você pode adicionar redirecionamento ou atualizar a página
+                } else {
+                    alert('Erro ao agendar serviço: ' + result.message);
+                }
+            } else {
+                alert('Falha ao enviar o agendamento.');
+            }
+        } catch (error) {
+            console.error('Erro ao agendar:', error);
+            alert('Ocorreu um erro ao tentar agendar.');
+        }
+    });
+</script>
+
+
+<script>
+    // Função para buscar serviços
+    async function fetchServicos() {
+        try {
+            const response = await fetch('/core/get_servicos/');
+            const data = await response.json();
+            const servicoSelect = document.getElementById('servico');
+            servicoSelect.innerHTML = '<option value="" disabled selected>Selecione um serviço</option>';
+            data.servicos.forEach(servico => {
+                const option = document.createElement('option');
+                option.value = servico.id;
+                option.textContent = servico.nome_servico;
+                servicoSelect.appendChild(option);
+            });
+        } catch (error) {
+            console.error('Erro ao buscar serviços:', error);
+        }
+    }
+
+    // Função para buscar clínicas
+    async function fetchClinicas() {
+        try {
+            const response = await fetch('/usuarios/clinicas/');
+            const data = await response.json();
+            const clinicaSelect = document.getElementById('clinica');
+            clinicaSelect.innerHTML = '<option value="" disabled selected>Selecione uma clínica</option>';
+            data.clinicas.forEach(clinica => {
+                const option = document.createElement('option');
+                option.value = clinica.id;
+                option.textContent = clinica.nome;
+                clinicaSelect.appendChild(option);
+            });
+        } catch (error) {
+            console.error('Erro ao buscar clínicas:', error);
+        }
+    }
+
+    // Função para buscar colaboradores
+    async function fetchColaboradores(servicoId, clinicaId) {
+        try {
+            const response = await fetch(`/usuarios/colaboradores/?servico_id=${servicoId}&clinica_id=${clinicaId}`);
+            const data = await response.json();
+            const colaboradorSelect = document.getElementById('colaborador');
+            colaboradorSelect.innerHTML = '<option value="" disabled selected>Selecione um colaborador</option>';
+            data.colaboradores.forEach(colaborador => {
+                const option = document.createElement('option');
+                option.value = colaborador.id;
+                option.textContent = colaborador.nome;
+                colaboradorSelect.appendChild(option);
+            });
+        } catch (error) {
+            console.error('Erro ao buscar colaboradores:', error);
+        }
+    }
+
+    // Função para buscar os dias permitidos para o colaborador
+    async function fetchDiasPermitidos(colaboradorId) {
+        try {
+            const response = await fetch(`/core/dias-permitidos/${colaboradorId}/`);
+            const data = await response.json();
+            return data.dias_permitidos;  // Retorna um array com os dias da semana permitidos
+        } catch (error) {
+            console.error('Erro ao buscar dias permitidos:', error);
+        }
+    }
+
+    // Função para buscar horários disponíveis para o colaborador
+async function fetchHorarios(colaboradorId, dataEscolhida) {
+    try {
+        const response = await fetch(`/core/horarios-disponiveis/${colaboradorId}/?data=${dataEscolhida}`);
+        const data = await response.json();
+        const horaSelect = document.getElementById('hora');
+        horaSelect.innerHTML = '<option value="" disabled selected>Selecione um horário</option>';
+
+        // Verifica se os horários existem
+        if (data.horarios_disponiveis && data.horarios_disponiveis.length > 0) {
+            // Usa Set para remover horários duplicados
+            const horariosUnicos = [...new Set(data.horarios_disponiveis)];
+
+            // Adiciona os horários únicos ao select
+            horariosUnicos.forEach(hora => {
+                const option = document.createElement('option');
+                option.value = hora;
+                option.textContent = hora;
+                horaSelect.appendChild(option);
+            });
+        } else {
+            const option = document.createElement('option');
+            option.value = '';
+            option.textContent = 'Nenhum horário disponível';
+            horaSelect.appendChild(option);
+        }
+    } catch (error) {
+        console.error('Erro ao buscar horários:', error);
+    }
+}
+
+
+
+    // Função para verificar se a data escolhida é válida
+async function verificarDataValida() {
+    const colaboradorId = document.getElementById('colaborador').value;
+    const dataEscolhida = document.getElementById('data').value;
+
+    if (!colaboradorId || !dataEscolhida) {
+        return; // Não faz nada se o colaborador ou data não forem selecionados
+    }
+
+    // Ajusta a data para o fuso horário local (São Paulo)
+    const dataLocal = new Date(dataEscolhida + 'T00:00:00-03:00'); // Força a data no fuso horário GMT-3
+    const diaSemana = dataLocal.getDay(); // Retorna o número do dia da semana (0 - domingo, 1 - segunda-feira, etc.)
+
+    // Busca os dias permitidos
+    const diasPermitidos = await fetchDiasPermitidos(colaboradorId);
+
+    // Verifica se o dia da semana é permitido
+    if (diasPermitidos.includes(diaSemana)) {
+        fetchHorarios(colaboradorId, dataEscolhida); // Data é enviada no formato ISO (YYYY-MM-DD)
+    } else {
+        alert('Este colaborador não está disponível nesta data.');
+        const horaSelect = document.getElementById('hora');
+        horaSelect.innerHTML = '<option value="" disabled selected>Selecione um horário</option>';
+    }
+}// Função para buscar planos para um serviço de Pilates
+async function fetchPlanos(servicoId) {
+    try {
+        const response = await fetch(`/core/planos/${servicoId}/`);
+        const data = await response.json();
+
+        const planosSelect = document.getElementById('planos');
+        planosSelect.innerHTML = '<option value="" disabled selected>Selecione um plano</option>';
+
+        if (data.planos && data.planos.length > 0) {
+            data.planos.forEach(plano => {
+                const option = document.createElement('option');
+                option.value = plano[0];  // Usar o valor do índice do plano
+                option.textContent = plano[1]; // Exibir a descrição do plano
+                planosSelect.appendChild(option);
+            });
+        } else {
+            const option = document.createElement('option');
+            option.value = '';
+            option.textContent = 'Nenhum plano disponível';
+            planosSelect.appendChild(option);
+        }
+    } catch (error) {
+        console.error('Erro ao buscar planos:', error);
+    }
+}
+
+// Chama a função de planos quando o serviço for selecionado
+document.getElementById('servico').addEventListener('change', function() {
+    const servicoId = this.value;
+    if (servicoId) {
+        fetchPlanos(servicoId); // Busca os planos para o serviço selecionado
+    }
+});
+
+
+// Adicione um listener no campo de data
+document.getElementById('data').addEventListener('change', verificarDataValida);
+    async function fetchClientes() {
+    try {
+        const response = await fetch('/usuarios/clientes/');
+        const data = await response.json();
+        const clienteSelect = document.getElementById('cliente');
+        clienteSelect.innerHTML = '<option value="" disabled selected>Selecione um cliente</option>';
+        data.clientes.forEach(cliente => {
+            const option = document.createElement('option');
+            option.value = cliente.id;
+            option.textContent = cliente.nome;
+            clienteSelect.appendChild(option);
+        });
+    } catch (error) {
+        console.error('Erro ao buscar clientes:', error);
+    }
+}
+
+// Chama a função para popular os clientes
+fetchClientes();
+
+
+    // Atualizar colaboradores ao mudar serviço ou clínica
+    document.getElementById('servico').addEventListener('change', function() {
+        const servicoId = this.value;
+        const clinicaId = document.getElementById('clinica').value;
+        if (servicoId && clinicaId) {
+            fetchColaboradores(servicoId, clinicaId);
+        }
+    });
+
+    document.getElementById('clinica').addEventListener('change', function() {
+        const servicoId = document.getElementById('servico').value;
+        const clinicaId = this.value;
+        if (servicoId && clinicaId) {
+            fetchColaboradores(servicoId, clinicaId);
+        }
+    });
+
+    document.getElementById('colaborador').addEventListener('change', function() {
+        const colaboradorId = this.value;
+        const dataEscolhida = document.getElementById('data').value;
+        if (colaboradorId && dataEscolhida) {
+            verificarDataValida(); // Verifica se o colaborador está disponível na data escolhida
+        }
+    });
+
+    document.getElementById('data').addEventListener('change', function() {
+        const colaboradorId = document.getElementById('colaborador').value;
+        const dataEscolhida = this.value;
+        if (colaboradorId && dataEscolhida) {
+            verificarDataValida(); // Verifica se a data escolhida é válida para o colaborador
+        }
+    });
+
+    // Inicializa os dados ao carregar a página
+    document.addEventListener('DOMContentLoaded', function() {
+        fetchServicos();
+        fetchClinicas();
+    });
+</script>
+
+
+{% endblock %}
