@@ -11,14 +11,17 @@
             <form method="get" class="row mb-4">
                 <div class="col-md-3">
                     <select class="form-select" name="pesquisa_tipo">
-                        <option value="agendamento" {% if pesquisa_tipo == 'agendamento' %}selected{% endif %}>Nº do Agendamento</option>
-                        <option value="cliente" {% if pesquisa_tipo == 'cliente' %}selected{% endif %}>Cliente</option>
-                        <option value="colaborador" {% if pesquisa_tipo == 'colaborador' %}selected{% endif %}>Colaborador</option>
-                        <option value="clinica" {% if pesquisa_tipo == 'clinica' %}selected{% endif %}>Clínica</option>
+                        <option value="agendamento" {% if pesquisa_tipo=='agendamento' %}selected{% endif %}>Nº do
+                            Agendamento</option>
+                        <option value="cliente" {% if pesquisa_tipo=='cliente' %}selected{% endif %}>Cliente</option>
+                        <option value="colaborador" {% if pesquisa_tipo=='colaborador' %}selected{% endif %}>Colaborador
+                        </option>
+                        <option value="clinica" {% if pesquisa_tipo=='clinica' %}selected{% endif %}>Clínica</option>
                     </select>
                 </div>
                 <div class="col-md-6">
-                    <input type="text" class="form-control" name="pesquisa_valor" value="{{ pesquisa_valor }}" placeholder="Pesquisar...">
+                    <input type="text" class="form-control" name="pesquisa_valor" value="{{ pesquisa_valor }}"
+                        placeholder="Pesquisar...">
                 </div>
                 <div class="col-md-3">
                     <button type="submit" class="btn btn-primary w-100">Pesquisar</button>
@@ -48,25 +51,34 @@
                         <td>{{ agendamento.data_e_hora|date:"d/m/Y" }}</td>
                         <td>{{ agendamento.data_e_hora|time:"H:i" }}</td>
                         <td>{{ agendamento.servico.nome_servico }}</td>
+                        <td>
+                            {% if agendamento.plano %}
+                            {{ agendamento.plano.valor|default:agendamento.servico.valor }}
+                            {% else %}
+                            {{ agendamento.servico.valor }}
+                            {% endif %}
+                        </td>
                         <td>{{ agendamento.plano.valor|default:agendamento.servico.valor }}</td>
                         <td>{{ agendamento.colaborador.nome }}</td>
-                        <td>{{ agendamento.colaborador.clinica.nome }} - {{ agendamento.colaborador.clinica.endereco }}</td> <!-- Exibe nome e endereço da clínica -->
+                        <td>{{ agendamento.colaborador.clinica.nome }} - {{ agendamento.colaborador.clinica.endereco }}
+                        </td> <!-- Exibe nome e endereço da clínica -->
                         <td>{{ agendamento.status }}</td>
                         <td>
-                            <a href="{% url 'detalhes_agendamento' agendamento.id %}" class="btn btn-info btn-sm">Ver</a>
+                            <a href="{% url 'detalhes_agendamento' agendamento.id %}"
+                                class="btn btn-info btn-sm">Ver</a>
                         </td>
                     </tr>
                     {% endfor %}
                 </tbody>
             </table>
-            
+
 
             <nav>
                 <ul class="pagination justify-content-center">
                     {% for page_num in page_obj.paginator.page_range %}
-                        <li class="page-item {% if page_obj.number == page_num %}active{% endif %}">
-                            <a class="page-link" href="?page={{ page_num }}">{{ page_num }}</a>
-                        </li>
+                    <li class="page-item {% if page_obj.number == page_num %}active{% endif %}">
+                        <a class="page-link" href="?page={{ page_num }}">{{ page_num }}</a>
+                    </li>
                     {% endfor %}
                 </ul>
             </nav>
