@@ -253,3 +253,43 @@ def horarios_disponiveis(request, colaborador_id):
             return JsonResponse({"message": "Nenhum horário disponível."}, status=200)
     except Exception as e:
         return JsonResponse({"message": f"Erro ao buscar horários disponíveis: {str(e)}"}, status=500)
+
+def visualizar_agendamentos(request):
+    agendamentos = Agendamento.objects.select_related('cliente', 'colaborador', 'servico', 'plano').all()
+
+    # Filtragem por campos
+    pesquisa_tipo = request.GET.get('pesquisa_tipo', 'agendamento')
+    pesquisa_valor = request.GET.get('pesquisa_valor', '')
+
+    if pesquisa_tipo == 'agendamento' and pesquisa_valor.isdigit():
+        agendamentos = agendamentos.filter(id=pesquisa_valor)
+    elif pesquisa_tipo == 'cliente':
+        agendamentos = agendamentos.filter(cliente__nome__icontains=pesquisa_valor)
+    elif pesquisa_tipo == 'colaborador':
+        agendamentos = agendamentos.filter(colaborador__nome__icontains=pesquisa_valor)
+    elif pesquisa_tipo == 'clinica':
+        agendamentos = agendamentos.filter(colaborador__clinica__nome__icontains=pesquisa_valor)
+
+    # Ordenação
+    sort_key = request.GET.get('sort_key', 'data_e_hora')
+    direction = request.GET.get('direction', 'asc')
+    if direction == 'desc':
+        sort_key = f'-{sort_key}'
+    agendamentos = agendamentos.order_by(sort_key)
+
+    # Paginação
+    paginator = Paginator(agendamentos, 9)  # 9 itens por página
+    page_number = request.GET.get('page', 1)
+    page_obj = paginator.get_page(page_number)
+
+    return render(request, 'agendamentos/visualizar_agendamentos.html', {
+        'page_obj': page_obj,
+        'pesquisa_tipo': pesquisa_tipo,
+        'pesquisa_valor': pesquisa_valor,
+        'sort_key': sort_key,
+        'direction': direction,
+    })
+
+def detalhes_agendamento(request, agendamento_id):
+    agendamento = get_object_or_404(Agendamento, id=agendamento_id)
+    return render(request, 'agendamentos/detalhes_agendamento.html', {'agendamento': agendamento})

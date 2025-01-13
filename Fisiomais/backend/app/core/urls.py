@@ -8,4 +8,6 @@ urlpatterns = [
     path('dias-permitidos/<int:colaborador_id>/', views.dias_permitidos, name='dias_permitidos'),
     path('horarios-disponiveis/<int:colaborador_id>/', views.horarios_disponiveis, name='horarios_disponiveis'),
     path('get_servicos/', views.get_servicos, name='get_servicos'),  # Rota para agendar
+     path('agendamentos/', views.visualizar_agendamentos, name='visualizar_agendamentos'),
+    path('agendamentos/<int:agendamento_id>/', views.detalhes_agendamento, name='detalhes_agendamento'),
 ]
