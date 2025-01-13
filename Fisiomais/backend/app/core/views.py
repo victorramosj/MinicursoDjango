@@ -4,27 +4,11 @@ from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 import logging
 from .models import Agendamento, Cliente, Colaborador, Servico
-
-logger = logging.getLogger(__name__)
-
-from datetime import datetime
-
-# Configuração do logger
-logger = logging.getLogger(__name__)
-
 from django.utils import timezone
 from datetime import datetime
-from django.shortcuts import render, redirect
 from django.http import JsonResponse
-import logging
-
 # Configuração do logger
 logger = logging.getLogger(__name__)
-
-from django.utils import timezone
-from datetime import datetime
-from django.shortcuts import render, redirect
-from django.http import JsonResponse
 
 @login_required
 def agendar(request):

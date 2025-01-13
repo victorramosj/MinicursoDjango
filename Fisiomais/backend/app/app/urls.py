@@ -25,5 +25,6 @@ urlpatterns = [
     path('sobrenos/', views.sobrenos, name='sobrenos'),  
     path('especialidades/', views.especialidades_view, name='especialidades'),
     path('core/', include('core.urls')),  # Inclui as URLs do app 'core'
+    path('contato/', views.contato, name='contato'),
 ]
 

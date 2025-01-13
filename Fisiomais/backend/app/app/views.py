@@ -43,3 +43,25 @@ def especialidades_view (request):
         },
     ]
     return render(request, 'especialidades.html', {"especialidades": especialidades})
+
+# core/views.py
+from django.shortcuts import render
+from django.http import JsonResponse
+from .forms import ContatoForm
+
+def contato(request):
+    if request.method == 'POST':
+        form = ContatoForm(request.POST)
+        if form.is_valid():
+            nome = form.cleaned_data['nome']
+            email = form.cleaned_data['email']
+            telefone = form.cleaned_data['telefone']
+            mensagem = form.cleaned_data['mensagem']
+            # Aqui você pode processar os dados ou enviar e-mail
+            # Por exemplo, enviar e-mail ou salvar no banco de dados
+            return JsonResponse({'success': 'Mensagem enviada com sucesso!'})
+        else:
+            return JsonResponse({'error': 'Erro ao enviar a mensagem.'}, status=400)
+    else:
+        form = ContatoForm()
+    return render(request, 'contato.html', {'form': form})

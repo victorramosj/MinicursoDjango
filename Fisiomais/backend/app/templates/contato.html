@@ -1,0 +1,75 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load widget_tweaks %}
+{% block content %}
+<div class="container my-5">
+    <div class="row d-flex justify-content-center align-items-center">
+        <!-- Bloco de Informações de Contato -->
+        <div class="col-md-4">
+            <div class="card shadow rounded">
+                <div class="card-header agendamento rounded info">
+                    <h3 class="mb-4 agendamento-titulo fw-bold text-center">Nossas Clínicas</h3>
+                    <div class="info-box border-bottom border-top mb-3">
+                        <i class="bi bi-geo-alt-fill cor-pink"></i>
+                        <div>
+                            <p class="mb-1 fw-bold agendamento-titulo">Floresta</p>
+                            <p>Rua 123, 372 - Centro, Floresta - PE</p>
+                            <p>Segunda a Sexta: 07:00–19:00</p>
+                            <p>Sábado e Domingo: Fechado</p>
+                        </div>
+                    </div>
+                    <div class="info-box mb-3 border-bottom">
+                        <i class="bi bi-geo-alt-fill cor-pink"></i>
+                        <div>
+                            <p class="mb-1 fw-bold">Serra Talhada</p>
+                            <p>Rua 123, 372 - Centro, Serra Talhada - PE</p>
+                            <p>Segunda a Sexta: 07:00–19:00</p>
+                            <p>Sábado e Domingo: Fechado</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Formulário de Contato -->
+        <div class="col-md-5">
+            <div class="card shadow">
+                <div class="card-header">
+                    <h2 class="text-center text-primary">Fale Conosco</h2>
+                </div>
+                <div class="card-body">
+                    <form method="POST" id="form-contato">
+                        {% csrf_token %}
+                        
+                        <div class="mb-3">
+                          <label for="id_nome" class="form-label text-secondary">Nome Completo*</label>
+                          {{ form.nome|add_class:"form-control" }}
+                        </div>
+                        
+                        <div class="mb-3">
+                          <label for="id_email" class="form-label text-secondary">Email*</label>
+                          {{ form.email|add_class:"form-control" }}
+                        </div>
+                        
+                        <div class="mb-3">
+                          <label for="id_telefone" class="form-label text-secondary">Telefone/WhatsApp*</label>
+                          {{ form.telefone|add_class:"form-control" }}
+                        </div>
+            
+                        <div class="mb-3">
+                          <label for="id_mensagem" class="form-label text-secondary">Mensagem*</label>
+                          {{ form.mensagem|add_class:"form-control" }}
+                        </div>
+            
+                        <button type="submit" class="btn btn-signup w-100">Enviar</button>
+                      </form>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <img src="{% static 'img/Atendimento.gif' %}" alt="Atendimento" class="img-fluid custom-img" />
+        </div>
+    </div>
+</div>
+{% endblock %}

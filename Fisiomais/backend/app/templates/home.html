@@ -17,7 +17,7 @@
       Nossos profissionais estão prontos para ajudar você a alcançar seus objetivos!
     </p>
     <div class="mt-4 text-center">
-      <a href="{% if user.is_authenticated %}{% url 'escolher_tipo_usuario' %}{% else %}{% url 'escolher_tipo_usuario' %}{% endif %}" class="btn btn-signup gap-2">       
+      <a href="{% if user.is_authenticated %}{% url 'agendar' %}{% else %}{% url 'escolher_tipo_usuario' %}{% endif %}" class="btn btn-signup gap-2">       
     
     
         {% if user.is_authenticated %}
