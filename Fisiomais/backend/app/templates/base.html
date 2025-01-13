@@ -38,9 +38,10 @@
                     <li class="nav-item"><a class="nav-link" href="/core/agendar">Agendar</a></li>
 
 
-                    {% if user.role == "admin" or user.role == "colaborador" %}
+                    {% if request.session.role == "admin" or request.session.role == "colaborador" %}
                     <li class="nav-item"><a class="nav-link" href="/admin">Central de Controle</a></li>
                     {% endif %}
+
                     {% endif %}
 
                 </ul>
@@ -60,12 +61,12 @@
                         <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
                             <li><a class="dropdown-item" href="/perfil">Meu Perfil</a></li>
                             <li><a class="dropdown-item" href="/core/agendar">Agendar Atendimento</a></li>
-                            {% if user.role == "admin" %}
+                            {% if request.session.role == "admin"  %}
                             <li><a class="dropdown-item" href="/admin">Página Administrador</a></li>
-                            {% elif user.role == "colaborador" %}
+                            {% elif request.session.role == "colaborador" %}
                             <li><a class="dropdown-item" href="/admin">Central de Controle</a></li>
                             {% endif %}
-                            <li><a class="dropdown-item" href="/visualizaragendamentos">Agendamentos</a></li>
+                            <li><a class="dropdown-item" href="/agendamentos">Agendamentos</a></li>
                             <form action="{% url 'logout' %}" method="post">
                                 {% csrf_token %}
                                 <button type="submit" class="dropdown-item">Sair</button>
@@ -221,27 +222,27 @@
     <!-- Scripts do Bootstrap -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
         crossorigin="anonymous"></script>
-        <script>
-            const form = document.querySelector('form');
-            const modal = new bootstrap.Modal(document.getElementById('loginModal'));
-        
-            form.addEventListener('submit', function (event) {
-                // Verifica se existe mensagem de erro e remove o impedimento do envio do formulário
-                if (document.querySelector('.alert-danger') || document.querySelector('#loginError').innerText) {
-                    modal.show();  // Garante que o modal permaneça aberto
-                    alert('A senha está incorreta, mas você será logado de qualquer forma.');
-                }
-            });
-        
-            // Permite que o modal seja fechado manualmente mesmo se houver erros
-            document.querySelector('.btn-close').addEventListener('click', function (event) {
-                if (document.querySelector('.alert-danger') || document.querySelector('#loginError').innerText) {
-                    alert('A senha está incorreta, mas você será logado de qualquer forma.');
-                }
-                modal.hide();  // Não impede mais o fechamento do modal
-            });
-        </script>
-        
+    <script>
+        const form = document.querySelector('form');
+        const modal = new bootstrap.Modal(document.getElementById('loginModal'));
+
+        form.addEventListener('submit', function (event) {
+            // Verifica se existe mensagem de erro e remove o impedimento do envio do formulário
+            if (document.querySelector('.alert-danger') || document.querySelector('#loginError').innerText) {
+                modal.show();  // Garante que o modal permaneça aberto
+                alert('A senha está incorreta, mas você será logado de qualquer forma.');
+            }
+        });
+
+        // Permite que o modal seja fechado manualmente mesmo se houver erros
+        document.querySelector('.btn-close').addEventListener('click', function (event) {
+            if (document.querySelector('.alert-danger') || document.querySelector('#loginError').innerText) {
+                alert('A senha está incorreta, mas você será logado de qualquer forma.');
+            }
+            modal.hide();  // Não impede mais o fechamento do modal
+        });
+    </script>
+
 
     <script>
         document.getElementById('togglePassword').addEventListener('click', function () {

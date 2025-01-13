@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container my-4">
+    <div class="card shadow">
+        <div class="card-header text-center text-primary fw-bold">
+            <h2>Detalhes do Agendamento</h2>
+        </div>
+
+        <div class="card-body">
+            <p><strong>Cliente:</strong> {{ agendamento.cliente.nome }}</p>
+            <p><strong>Serviço:</strong> {{ agendamento.servico.nome_servico }}</p>
+            <p><strong>Plano:</strong> {{ plano_nome }}</p>
+            <p><strong>Data e Hora:</strong> {{ agendamento.data_e_hora|date:"d/m/Y H:i" }}</p>
+            <p><strong>Colaborador:</strong> {{ agendamento.colaborador.nome }}</p>
+            <p><strong>Clínica:</strong> {{ agendamento.colaborador.clinica.nome }} - {{ agendamento.colaborador.clinica.endereco }}</p>
+            <p><strong>Status:</strong> {{ agendamento.status }}</p>
+
+            <form method="post">
+                {% csrf_token %}
+                <div class="form-group">
+                    <label for="status">Alterar Status:</label>
+                    <input type="text" name="status" class="form-control" value="{{ agendamento.status }}">
+                </div>
+                <button type="submit" class="btn btn-primary mt-3">Alterar Status</button>
+            </form>
+
+            <div class="mt-3">
+                <a href="{% url 'confirmar_agendamento' agendamento.id %}" class="btn btn-success btn-sm">Confirmar</a>
+                <a href="{% url 'cancelar_agendamento' agendamento.id %}" class="btn btn-danger btn-sm">Cancelar</a>
+                <a href="{% url 'remarcar_agendamento' agendamento.id %}" class="btn btn-warning btn-sm">Remarcar</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

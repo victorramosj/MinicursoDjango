@@ -7,6 +7,12 @@ from .models import Agendamento, Cliente, Colaborador, Servico
 from django.utils import timezone
 from datetime import datetime
 from django.http import JsonResponse
+from django.core.paginator import Paginator
+from django.shortcuts import get_object_or_404
+from django.contrib import messages  # Para exibir mensagens no redirecionamento
+
+
+
 # Configuração do logger
 logger = logging.getLogger(__name__)
 
@@ -77,9 +83,10 @@ def agendar(request):
             )
             print("Agendamento criado com sucesso:", agendamento)
 
-            # Redirecionar para a mesma página com mensagem de sucesso
-            return JsonResponse({'success': True, 'message': 'Agendamento realizado com sucesso!'})
-
+            # Adicionar mensagem de sucesso
+            messages.success(request, 'Agendamento realizado com sucesso!')
+            # Redirecionar para a página de visualizar agendamentos
+            return redirect('visualizar_agendamentos')
         except Exception as e:
             print("Erro inesperado ao criar agendamento:", str(e))
             return render(request, 'agendar.html', {'error_message': 'Ocorreu um erro ao criar o agendamento. Por favor, tente novamente.'})
@@ -255,7 +262,9 @@ def horarios_disponiveis(request, colaborador_id):
         return JsonResponse({"message": f"Erro ao buscar horários disponíveis: {str(e)}"}, status=500)
 
 def visualizar_agendamentos(request):
-    agendamentos = Agendamento.objects.select_related('cliente', 'colaborador', 'servico', 'plano').all()
+    agendamentos = Agendamento.objects.select_related(
+        'cliente', 'colaborador', 'servico', 'plano', 'colaborador__clinica'
+    ).all()
 
     # Filtragem por campos
     pesquisa_tipo = request.GET.get('pesquisa_tipo', 'agendamento')
@@ -290,6 +299,33 @@ def visualizar_agendamentos(request):
         'direction': direction,
     })
 
+
 def detalhes_agendamento(request, agendamento_id):
     agendamento = get_object_or_404(Agendamento, id=agendamento_id)
-    return render(request, 'agendamentos/detalhes_agendamento.html', {'agendamento': agendamento})
+    plano_nome = agendamento.plano.nome if agendamento.plano else 'N/A'
+
+    return render(request, 'agendamentos/detalhes_agendamento.html', {
+        'agendamento': agendamento,
+        'plano_nome': plano_nome,
+    })
+
+from django.shortcuts import redirect
+
+def confirmar_agendamento(request, agendamento_id):
+    agendamento = get_object_or_404(Agendamento, id=agendamento_id)
+    agendamento.status = 'Confirmado'
+    agendamento.save()
+    return redirect('detalhes_agendamento', agendamento_id=agendamento.id)
+
+def cancelar_agendamento(request, agendamento_id):
+    agendamento = get_object_or_404(Agendamento, id=agendamento_id)
+    agendamento.status = 'Cancelado'
+    agendamento.save()
+    return redirect('detalhes_agendamento', agendamento_id=agendamento.id)
+
+def remarcar_agendamento(request, agendamento_id):
+    agendamento = get_object_or_404(Agendamento, id=agendamento_id)
+    # Lógica para remarcar, como alterar a data ou colaborador
+    agendamento.save()
+    return redirect('detalhes_agendamento', agendamento_id=agendamento.id)
+

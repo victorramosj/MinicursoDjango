@@ -30,15 +30,12 @@
                     <tr>
                         <th>#</th>
                         <th>Cliente</th>
-                        <th>
-                            Data
-                            <a href="?sort_key=data_e_hora&direction=asc">↑</a>
-                            <a href="?sort_key=data_e_hora&direction=desc">↓</a>
-                        </th>
+                        <th>Data</th>
                         <th>Hora</th>
                         <th>Serviço</th>
                         <th>Valor (R$)</th>
                         <th>Colaborador</th>
+                        <th>Clínica</th> <!-- Nova coluna para exibir dados da clínica -->
                         <th>Status</th>
                         <th>Detalhes</th>
                     </tr>
@@ -53,6 +50,7 @@
                         <td>{{ agendamento.servico.nome_servico }}</td>
                         <td>{{ agendamento.plano.valor|default:agendamento.servico.valor }}</td>
                         <td>{{ agendamento.colaborador.nome }}</td>
+                        <td>{{ agendamento.colaborador.clinica.nome }} - {{ agendamento.colaborador.clinica.endereco }}</td> <!-- Exibe nome e endereço da clínica -->
                         <td>{{ agendamento.status }}</td>
                         <td>
                             <a href="{% url 'detalhes_agendamento' agendamento.id %}" class="btn btn-info btn-sm">Ver</a>
@@ -61,6 +59,7 @@
                     {% endfor %}
                 </tbody>
             </table>
+            
 
             <nav>
                 <ul class="pagination justify-content-center">

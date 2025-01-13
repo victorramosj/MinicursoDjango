@@ -15,27 +15,31 @@ def custom_login(request):
             if user is not None:
                 login(request, user)
                 
-                # Verifica o tipo de usuário (role) e redireciona
+                # Define o papel do usuário (role)
                 if hasattr(user, 'colaborador'):
                     if user.colaborador.is_admin:
                         role = "admin"
                     else:
-                        role = "colaborador"  # Colaborador não administrador
+                        role = "colaborador"
                 elif hasattr(user, 'cliente'):
                     role = "cliente"
                 else:
                     role = "desconhecido"
 
-                return render(request, 'home.html', {'form': form, 'role': role})
+                # Adiciona role no objeto user
+                user.role = role
+                request.session['role'] = role  # Armazena na sessão caso necessário
+
+                return redirect('/')  # Redireciona para a página inicial
             else:
                 form.add_error(None, 'Usuário ou senha incorretos')
         else:
             form.add_error(None, 'Erro no formulário.')
-
     else:
         form = LoginForm()
 
     return render(request, 'home.html', {'form': form})
+
 
 
 

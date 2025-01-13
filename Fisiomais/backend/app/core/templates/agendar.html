@@ -49,7 +49,7 @@
                         </div>
 
                         <!-- Colaborador -->
-                        {% if user.role != "colaborador" %}
+                        {% if request.session.role != "colaborador" %}
                         <div class="mb-3">
                             <label for="colaborador" class="form-label">Colaborador</label>
                             <select id="colaborador" name="colaborador" class="form-select" required>
@@ -81,8 +81,10 @@
 
 
                         <!-- Cliente -->
-                        {% if user.role == "admin" or user.role == "colaborador" %}
-
+                        {% if request.session.role == "cliente"  %}
+                        <input type="hidden" id="cliente" name="cliente" value="{{ user.id }}">
+                        
+                        {% else %}
                         <div class="mb-3">
                             <label for="cliente" class="form-label">Cliente</label>
                             <select id="cliente" name="cliente" class="form-select" required>
@@ -90,8 +92,6 @@
                                 <!-- Clientes serão populados via JavaScript -->
                             </select>
                         </div>
-                        {% else %}
-                        <input type="hidden" id="cliente" name="cliente" value="{{ user.id }}">
                         {% endif %}
 
                         <div class="mb-3 text-center">
