@@ -325,7 +325,7 @@ def cancelar_agendamento(request, agendamento_id):
 
 def remarcar_agendamento(request, agendamento_id):
     agendamento = get_object_or_404(Agendamento, id=agendamento_id)
-    # Lógica para remarcar, como alterar a data ou colaborador
+    agendamento.status = 'Remarcação'
     agendamento.save()
     return redirect('detalhes_agendamento', agendamento_id=agendamento.id)
 
