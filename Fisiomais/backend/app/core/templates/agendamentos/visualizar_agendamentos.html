@@ -11,14 +11,14 @@
             <form method="get" class="row mb-4">
                 <div class="col-md-3">
                     <select class="form-select" name="pesquisa_tipo">
-                        <option value="agendamento" {% if pesquisa_tipo=='agendamento' %}selected{% endif %}>Nº do
-                            Agendamento</option>
-                        <option value="cliente" {% if pesquisa_tipo=='cliente' %}selected{% endif %}>Cliente</option>
-                        <option value="colaborador" {% if pesquisa_tipo=='colaborador' %}selected{% endif %}>Colaborador
-                        </option>
-                        <option value="clinica" {% if pesquisa_tipo=='clinica' %}selected{% endif %}>Clínica</option>
+                        <option value="agendamento" {% if pesquisa_tipo == 'agendamento' or not pesquisa_tipo %}selected{% endif %}>Nº do Agendamento</option>
+                        <option value="cliente" {% if pesquisa_tipo == 'cliente' %}selected{% endif %}>Cliente</option>
+                        <option value="colaborador" {% if pesquisa_tipo == 'colaborador' %}selected{% endif %}>Colaborador</option>
+                        <option value="clinica" {% if pesquisa_tipo == 'clinica' %}selected{% endif %}>Clínica</option>
                     </select>
                 </div>
+                
+                
                 <div class="col-md-6">
                     <input type="text" class="form-control" name="pesquisa_valor" value="{{ pesquisa_valor }}"
                         placeholder="Pesquisar...">
@@ -53,12 +53,11 @@
                         <td>{{ agendamento.servico.nome_servico }}</td>
                         <td>
                             {% if agendamento.plano %}
-                            {{ agendamento.plano.valor|default:agendamento.servico.valor }}
+                            <strong>Plano:</strong> {{ agendamento.plano.nome }} - {{ agendamento.plano.valor }}
                             {% else %}
-                            {{ agendamento.servico.valor }}
+                            {{ agendamento.servico.valor }}                            
                             {% endif %}
-                        </td>
-                        <td>{{ agendamento.plano.valor|default:agendamento.servico.valor }}</td>
+                        </td>                        
                         <td>{{ agendamento.colaborador.nome }}</td>
                         <td>{{ agendamento.colaborador.clinica.nome }} - {{ agendamento.colaborador.clinica.endereco }}
                         </td> <!-- Exibe nome e endereço da clínica -->
