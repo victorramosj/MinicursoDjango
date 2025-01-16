@@ -1,0 +1,32 @@
+Professor, meu projeto é um sistema que estou desenvolvendo para uma clínica 
+de fisioterapia e pilates, e apliquei as operações CRUD (Create, Read, Update, Delete) 
+para gerenciar os recursos principais.
+Desenvolvi o sistema baseado num trabalho em flask que estou desenvolvendo simultaneamente,
+por isso já tinha algumas lógicas anteriormente produzidas, estou adaptando-a para 
+não me complicar muito com outra ideia do zero.
+
+Create (Criação):
+O sistema permite cadastrar novos clientes e colaboradores, além de criar agendamentos.
+Antes de salvar os dados, há validações no frontend com javascript e no backend também, 
+como horários disponíveis e planos associados. Para facilitar o cadastro de colaboradores, 
+usei a API do IBGE para a seleção de estados.
+
+Read (Leitura):
+É possível visualizar listas de agendamentos, clientes e colaboradores com filtros
+e paginação. Também mostro horários disponíveis para agendamentos
+com base nos dias e horários cadastrados dos colaboradores.
+
+Update (Atualização):
+No momento os dados de clientes e colaboradores podem ser editados diretamente, 
+como atualização de informações pessoais da página editar perfil, não adicionei o 
+bootstrap ainda nessa parte, pela questão do prazo apertado.
+Além disso o sistema permite cancelar, confirmar, remarcação ou seja, mudar o status
+do agendamento, que também é um update.
+
+Prentendo adicionar ajustes como troca de horários ou valores de serviços, porém 
+a página de administração padrão do django também já faz isso.
+
+Delete (Exclusão):
+Por ora o sistema permite excluir agendamentos.
+
+João Victor Ramos de Souza, 202224040018, GTI Floresta.
