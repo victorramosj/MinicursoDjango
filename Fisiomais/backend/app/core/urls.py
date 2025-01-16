@@ -14,6 +14,5 @@ urlpatterns = [
     path('agendamentos/cancelar/<int:agendamento_id>/', views.cancelar_agendamento, name='cancelar_agendamento'),
     path('agendamentos/remarcar/<int:agendamento_id>/', views.remarcar_agendamento, name='remarcar_agendamento'),
      # Rotas para cliente solicitar ações
-    path('agendamentos/solicitar_cancelamento/<int:agendamento_id>/', views.solicitar_cancelamento, name='solicitar_cancelamento'),
-    path('agendamentos/solicitar_remarcacao/<int:agendamento_id>/', views.solicitar_remarcacao, name='solicitar_remarcacao'),
+    
 ]

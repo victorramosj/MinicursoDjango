@@ -310,78 +310,20 @@ def detalhes_agendamento(request, agendamento_id):
     })
 
 
-# Confirmar agendamento - Cliente ou Colaborador
 def confirmar_agendamento(request, agendamento_id):
     agendamento = get_object_or_404(Agendamento, id=agendamento_id)
-
-    # Se for o cliente, apenas ele pode confirmar
-    if agendamento.cliente == request.user.cliente:
-        agendamento.status = 'Confirmado pelo Cliente'  # Status de confirmação do cliente
-    elif agendamento.colaborador == request.user.colaborador:
-        agendamento.status = 'Confirmado pelo Colaborador'  # Status de confirmação do colaborador
-    else:
-        messages.error(request, "Você não tem permissão para confirmar este agendamento.")
-        return redirect('visualizar_agendamentos')
-    
+    agendamento.status = 'Confirmado'
     agendamento.save()
     return redirect('detalhes_agendamento', agendamento_id=agendamento.id)
 
-# Solicitar cancelamento - Apenas o Cliente pode solicitar
-def solicitar_cancelamento(request, agendamento_id):
-    agendamento = get_object_or_404(Agendamento, id=agendamento_id)
-
-    # Verifica se o usuário é o cliente do agendamento
-    if agendamento.cliente != request.user.cliente:
-        messages.error(request, "Você não tem permissão para cancelar este agendamento.")
-        return redirect('visualizar_agendamentos')
-
-    # Marca o agendamento como "Cancelamento Solicitado"
-    agendamento.status = 'Cancelamento Solicitado'
-    agendamento.save()
-
-    messages.success(request, "Seu pedido de cancelamento foi enviado.")
-    return redirect('detalhes_agendamento', agendamento_id=agendamento.id)
-
-# Cancelar agendamento - Para Colaboradores ou Administradores
 def cancelar_agendamento(request, agendamento_id):
     agendamento = get_object_or_404(Agendamento, id=agendamento_id)
-
-    # Verifica se o usuário tem permissão para cancelar o agendamento
-    if request.user.role == 'admin' or request.user.role == 'colaborador':
-        agendamento.status = 'Cancelado'
-        agendamento.save()
-        messages.success(request, "Agendamento cancelado com sucesso.")
-    else:
-        messages.error(request, "Você não tem permissão para cancelar este agendamento.")
-    
-    return redirect('detalhes_agendamento', agendamento_id=agendamento.id)
-
-# Solicitar remarcação - Apenas o Cliente pode solicitar
-def solicitar_remarcacao(request, agendamento_id):
-    agendamento = get_object_or_404(Agendamento, id=agendamento_id)
-
-    # Verifica se o usuário é o cliente do agendamento
-    if agendamento.cliente != request.user.cliente:
-        messages.error(request, "Você não tem permissão para solicitar a remarcação deste agendamento.")
-        return redirect('visualizar_agendamentos')
-
-    # Marca o agendamento como "Remarcação Solicitada"
-    agendamento.status = 'Remarcação Solicitada'
+    agendamento.status = 'Cancelado'
     agendamento.save()
-
-    messages.success(request, "Seu pedido de remarcação foi enviado.")
     return redirect('detalhes_agendamento', agendamento_id=agendamento.id)
 
-# Remarcar agendamento - Para Colaboradores ou Administradores
 def remarcar_agendamento(request, agendamento_id):
     agendamento = get_object_or_404(Agendamento, id=agendamento_id)
-
-    # Verifica se o usuário é o colaborador ou administrador
-    if request.user.role == 'admin' or request.user.role == 'colaborador':
-        agendamento.status = 'Remarcado'
-        agendamento.save()
-        messages.success(request, "Agendamento remarcado com sucesso.")
-    else:
-        messages.error(request, "Você não tem permissão para remarcar este agendamento.")
-
+    agendamento.status = 'Remarcado'    
+    agendamento.save()
     return redirect('detalhes_agendamento', agendamento_id=agendamento.id)

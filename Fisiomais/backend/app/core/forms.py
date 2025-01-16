@@ -7,8 +7,7 @@ from datetime import datetime, date
 from .models import Clinica, Cliente, Servico
 from django.core.validators import MinValueValidator
 
-class AgendamentoForm(forms.Form):
-    # Campos iniciais permanecem os mesmos...
+class AgendamentoForm(forms.Form):    
     clinica_id = forms.ModelChoiceField(queryset=Clinica.objects.all(), required=True, label="Clínica", empty_label="Selecione a Clínica")
     cliente_id = forms.ModelChoiceField(queryset=Cliente.objects.all(), required=True, label="Cliente", empty_label="Selecione o Cliente")
     servico_id = forms.ModelChoiceField(queryset=Servico.objects.all(), required=True, label="Serviço", empty_label="Selecione o Serviço")
@@ -56,14 +55,14 @@ class AgendamentoForm(forms.Form):
             ('10:00', '10:00'),
             ('11:00', '11:00'),
             ('12:00', '12:00'),
-            # Adicione mais horários conforme necessário
+            
         ]
         
         # Adicionando planos conforme os serviços disponíveis
         self.fields['plano'].choices = [
             ('plano1', 'Plano 1'),
             ('plano2', 'Plano 2'),
-            # Adicione mais planos conforme os serviços disponíveis
+            
         ]
 
 
