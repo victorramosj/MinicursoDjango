@@ -1,5 +1,6 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.decorators import login_required
 from .forms import LoginForm
 from django.contrib.auth.models import User
 from django.contrib import messages
@@ -132,11 +133,6 @@ def cadastrar_colaborador(request):
     return render(request, "usuarios/cadastrar_colaborador.html", {"form": form})
 
 
-
-
-
-
-
 from django.http import JsonResponse
 
 
@@ -207,3 +203,35 @@ def get_clientes(request):
         for cliente in clientes
     ]
     return JsonResponse({'clientes': clientes_data})
+
+
+from django.shortcuts import render, redirect
+from .forms import EditarColaboradorForm, EditarClienteForm
+
+def editar_perfil(request):
+    user = request.user
+    perfil = None
+
+    try:
+        perfil = user.colaborador  # ou user.cliente dependendo do caso
+    except:
+        perfil = None
+
+    if request.method == 'POST':
+        # Verifique se você está incluindo request.FILES ao criar o formulário
+        if isinstance(perfil, Colaborador):
+            form = EditarColaboradorForm(request.POST, request.FILES, instance=perfil)
+        else:
+            form = EditarClienteForm(request.POST, request.FILES, instance=perfil)
+
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Perfil atualizado com sucesso!")
+            return redirect('editar_perfil')  # Ajuste conforme necessário
+    else:
+        if isinstance(perfil, Colaborador):
+            form = EditarColaboradorForm(instance=perfil)
+        else:
+            form = EditarClienteForm(instance=perfil)
+
+    return render(request, 'editar_perfil.html', {'form': form})

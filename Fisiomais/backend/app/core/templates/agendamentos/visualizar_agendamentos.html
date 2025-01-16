@@ -16,9 +16,11 @@
                         <option value="colaborador" {% if pesquisa_tipo == 'colaborador' %}selected{% endif %}>Colaborador</option>
                         <option value="clinica" {% if pesquisa_tipo == 'clinica' %}selected{% endif %}>Clínica</option>
                     </select>
+                    
+
                 </div>
-                
-                
+
+
                 <div class="col-md-6">
                     <input type="text" class="form-control" name="pesquisa_valor" value="{{ pesquisa_valor }}"
                         placeholder="Pesquisar...">
@@ -55,33 +57,77 @@
                             {% if agendamento.plano %}
                             <strong>Plano:</strong> {{ agendamento.plano.nome }} - {{ agendamento.plano.valor }}
                             {% else %}
-                            {{ agendamento.servico.valor }}                            
+                            {{ agendamento.servico.valor }}
                             {% endif %}
-                        </td>                        
+                        </td>
                         <td>{{ agendamento.colaborador.nome }}</td>
                         <td>{{ agendamento.colaborador.clinica.nome }} - {{ agendamento.colaborador.clinica.endereco }}
                         </td> <!-- Exibe nome e endereço da clínica -->
                         <td>{{ agendamento.status }}</td>
                         <td>
-                            <a href="{% url 'detalhes_agendamento' agendamento.id %}"
-                                class="btn btn-info btn-sm">Ver</a>
+                            <a href="{% url 'detalhes_agendamento' agendamento.id %}" class="btn btn-info btn-sm">
+                                <i class="bi bi-info-circle"></i>
+                            </a>
+                            {% if request.session.role == "admin" or request.session.role == "colaborador" %}
+
+                            <!-- Botão de excluir agendamento com dados para o modal -->
+                            <a href="#" data-bs-toggle="modal" data-bs-target="#confirmarExclusaoModal"
+                                data-id="{{ agendamento.id }}" class="btn btn-danger btn-sm">
+                                <i class="bi bi-trash"></i> 
+                            </a>                            
+
+                            {% endif %}
                         </td>
                     </tr>
                     {% endfor %}
                 </tbody>
             </table>
+            <!-- Modal de confirmação -->
+            <div class="modal fade" id="confirmarExclusaoModal" tabindex="-1"
+                aria-labelledby="confirmarExclusaoModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="confirmarExclusaoModalLabel">Confirmar Exclusão</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            Tem certeza que deseja excluir este agendamento?
+                        </div>
+                        <div class="modal-footer">
+                            <a href="{% url 'excluir_agendamento' 0 %}" id="confirmarExclusao"
+                                class="btn btn-danger text-dec text-decoration-none">Confirmar</a>
+                            <button type="button" class="btn btn-secondary " data-bs-dismiss="modal">Cancelar</button>
+                            
+
+                        </div>
+                    </div>
+                </div>
+
+                <script>
+                    var excluirLinks = document.querySelectorAll('[data-bs-toggle="modal"]');
+                    excluirLinks.forEach(function (link) {
+                        link.addEventListener('click', function () {
+                            var agendamentoId = link.getAttribute('data-id');
+                            var confirmLink = document.getElementById('confirmarExclusao');
+                            confirmLink.href = "{% url 'excluir_agendamento' 0 %}".replace('0', agendamentoId);
+                        });
+                    });
 
 
-            <nav>
-                <ul class="pagination justify-content-center">
-                    {% for page_num in page_obj.paginator.page_range %}
-                    <li class="page-item {% if page_obj.number == page_num %}active{% endif %}">
-                        <a class="page-link" href="?page={{ page_num }}">{{ page_num }}</a>
-                    </li>
-                    {% endfor %}
-                </ul>
-            </nav>
+                </script>
+
+
+                <nav>
+                    <ul class="pagination justify-content-center">
+                        {% for page_num in page_obj.paginator.page_range %}
+                        <li class="page-item {% if page_obj.number == page_num %}active{% endif %}">
+                            <a class="page-link" href="?page={{ page_num }}">{{ page_num }}</a>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                </nav>
+            </div>
         </div>
     </div>
-</div>
-{% endblock %}
+    {% endblock %}

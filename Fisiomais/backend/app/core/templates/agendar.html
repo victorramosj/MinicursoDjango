@@ -14,13 +14,14 @@
                 <div class="card-body p-4">
                     <form id="agendamento-form" method="post">
                         {% csrf_token %}
+                        <!-- Campos populados via JavaScript -->
 
                         <!-- Clínica -->
                         <div class="mb-3">
                             <label for="clinica" class="form-label">Clínica</label>
                             <select id="clinica" name="clinica" class="form-select" required>
                                 <option value="" disabled selected>Selecione uma clínica</option>
-                                <!-- Clínicas serão populadas via JavaScript -->
+                                
                             </select>
                         </div>
 
@@ -29,7 +30,7 @@
                             <label for="servico" class="form-label">Serviço</label>
                             <select id="servico" name="servico" class="form-select" required>
                                 <option value="" disabled selected>Selecione um serviço</option>
-                                <!-- Serviços serão populados via JavaScript -->
+                                
                             </select>
                         </div>
 
@@ -44,7 +45,7 @@
                             <label for="planos" class="form-label">Plano</label>
                             <select id="planos" name="plano" class="form-select">
                                 <option value="" disabled selected>Selecione um plano</option>
-                                <!-- Os planos serão populados via JavaScript -->
+                               
                             </select>
                         </div>
 
@@ -54,7 +55,7 @@
                             <label for="colaborador" class="form-label">Colaborador</label>
                             <select id="colaborador" name="colaborador" class="form-select" required>
                                 <option value="" disabled selected>Selecione um colaborador</option>
-                                <!-- Colaboradores serão populados via JavaScript -->
+                                
                             </select>
                         </div>
                         {% else %}
@@ -89,7 +90,7 @@
                             <label for="cliente" class="form-label">Cliente</label>
                             <select id="cliente" name="cliente" class="form-select" required>
                                 <option value="" disabled selected>Selecione um cliente</option>
-                                <!-- Clientes serão populados via JavaScript -->
+                                
                             </select>
                         </div>
                         {% endif %}
@@ -120,7 +121,6 @@
                 </div>
             </div>
         </div>
-
     </div>
 </div>
 
@@ -180,7 +180,9 @@
 <script src="{% static 'js/fetch_planos.js' %}"></script>
 <script src="{% static 'js/fetch_clientes.js' %}"></script>
 <script src="{% static 'js/atualizar_colaboradores.js' %}"></script>
+
 <script src="{% static 'js/inicializar.js' %}"></script>
+
 
 
 

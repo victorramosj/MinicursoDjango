@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+
+{% block title %}Editar Perfil{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="card shadow">
+        <div class="card-header">
+            <h2 class="text-center text-primary">Editar perfil</h2>
+        </div>
+        {% if form.photo.value %}
+        <div>
+            <label>Foto atual:</label>
+            <img src="{{ form.photo.value.url }}" alt="Foto do colaborador" style="width: 50px; height: 50px; object-fit: cover;">
+        </div>
+    {% endif %}
+    <form method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit" class="btn btn-primary">Salvar Alterações</button>
+    </form>
+</div>
+</div>
+{% endblock %}

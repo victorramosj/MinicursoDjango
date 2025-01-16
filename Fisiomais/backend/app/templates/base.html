@@ -51,17 +51,20 @@
                     <li class="nav-item dropdown btn-user">
                         <a class="nav-link dropdown-toggle btn-user" href="#" id="navbarDropdown" role="button"
                             data-bs-toggle="dropdown" aria-expanded="false">
-                            {% if user.profile_photo %}
-                            <img src="{{ user.profile_photo.url }}" alt="Foto de Perfil" class="user-photo" />
+                            {% if user.colaborador and user.colaborador.photo %}
+                            <img src="{{ user.colaborador.photo.url }}" alt="Foto de Perfil" class="user-photo" />
+                            {% elif user.cliente and user.cliente.photo %}
+                            <img src="{{ user.cliente.photo.url }}" alt="Foto de Perfil" class="user-photo" />
                             {% else %}
                             <i class="bi bi-person-circle" id="iconeuser"></i>
                             {% endif %}
+
                             {{ user.username }}
                         </a>
                         <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-                            <li><a class="dropdown-item" href="/perfil">Meu Perfil</a></li>
+                            <li><a class="dropdown-item" href="/usuarios/perfil/editar">Meu Perfil</a></li>
                             <li><a class="dropdown-item" href="/core/agendar">Agendar Atendimento</a></li>
-                            {% if request.session.role == "admin"  %}
+                            {% if request.session.role == "admin" %}
                             <li><a class="dropdown-item" href="/admin">Página Administrador</a></li>
                             {% elif request.session.role == "colaborador" %}
                             <li><a class="dropdown-item" href="/admin">Central de Controle</a></li>

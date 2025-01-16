@@ -128,9 +128,6 @@ def get_planos(request, servico_id):
         return JsonResponse({"error": "Serviço não encontrado"}, status=400)
 
 
-
-
-
 # API para buscar horários disponíveis para o colaborador
 def get_horarios(request, colaborador_id):
     horarios = Horario.objects.filter(colaborador_id=colaborador_id)
@@ -309,7 +306,6 @@ def detalhes_agendamento(request, agendamento_id):
         'plano_nome': plano_nome,
     })
 
-
 def confirmar_agendamento(request, agendamento_id):
     agendamento = get_object_or_404(Agendamento, id=agendamento_id)
     agendamento.status = 'Confirmado'
@@ -327,3 +323,28 @@ def remarcar_agendamento(request, agendamento_id):
     agendamento.status = 'Remarcado'    
     agendamento.save()
     return redirect('detalhes_agendamento', agendamento_id=agendamento.id)
+
+@login_required
+def excluir_agendamento(request, agendamento_id):
+    # Verificar se o usuário tem o papel de colaborador
+    if not hasattr(request.user, 'colaborador'):
+        messages.error(request, 'Você não tem permissão para excluir agendamentos.')
+        return redirect('visualizar_agendamentos')
+
+    try:
+        # Buscar o agendamento pelo ID
+        agendamento = get_object_or_404(Agendamento, id=agendamento_id)
+
+        # Excluir o agendamento
+        agendamento.delete()
+
+        # Adicionar mensagem de sucesso
+        messages.success(request, 'Agendamento excluído com sucesso!')
+
+    except Exception as e:
+        # Adicionar mensagem de erro em caso de exceção
+        messages.error(request, f'Ocorreu um erro ao excluir o agendamento: {str(e)}')
+
+    # Redirecionar para a página de visualização de agendamentos
+    return redirect('visualizar_agendamentos')
+

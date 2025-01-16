@@ -123,7 +123,7 @@ class ClienteForm(forms.ModelForm):
                 dt_nasc=self.cleaned_data.get('dt_nasc'),
                 estado=self.cleaned_data.get('estado'),
                 cidade=self.cleaned_data.get('cidade'),
-                cpf=self.cleaned_data.get('cpf'),  # Certifique-se de que o CPF foi fornecido
+                cpf=self.cleaned_data.get('cpf'),  
                 telefone=self.cleaned_data.get('telefone'),
                 endereco=self.cleaned_data.get('endereco'),
                 bairro=self.cleaned_data.get('bairro'),
@@ -272,6 +272,55 @@ class ColaboradorForm(forms.ModelForm):
 
 
 
+from django import forms
+from django.core.exceptions import ValidationError
+from django.contrib.auth.models import User
+from .models import Colaborador, Cliente
+
+class EditarColaboradorForm(forms.ModelForm):
+    class Meta:
+        model = Colaborador
+        fields = ['nome', 'sexo', 'data_nascimento', 'telefone', 'cargo', 'endereco', 'cpf', 'estado', 'cidade', 'bairro', 'photo', 'clinica']
+
+    def clean_telefone(self):
+        telefone = self.cleaned_data['telefone']
+        if Colaborador.objects.filter(telefone=telefone).exclude(id=self.instance.id).exists():
+            raise ValidationError("Este número de telefone já está cadastrado para outro colaborador.")
+        return telefone
+
+    def clean_cpf(self):
+        cpf = self.cleaned_data['cpf']
+        if Colaborador.objects.filter(cpf=cpf).exclude(id=self.instance.id).exists():
+            raise ValidationError("Este CPF já está cadastrado para outro colaborador.")
+        return cpf
+
+    def clean_user(self):
+        user = self.cleaned_data['user']
+        if User.objects.filter(username=user.username).exclude(id=self.instance.user.id).exists():
+            raise ValidationError("Este nome de usuário já está em uso.")
+        return user
+    
 
 
+class EditarClienteForm(forms.ModelForm):
+    class Meta:
+        model = Cliente
+        fields = ['nome', 'sexo', 'dt_nasc', 'telefone', 'endereco', 'cpf', 'estado', 'cidade', 'bairro', 'photo', 'clinica']
 
+    def clean_telefone(self):
+        telefone = self.cleaned_data['telefone']
+        if Cliente.objects.filter(telefone=telefone).exclude(id=self.instance.id).exists():
+            raise ValidationError("Este número de telefone já está cadastrado para outro cliente.")
+        return telefone
+
+    def clean_cpf(self):
+        cpf = self.cleaned_data['cpf']
+        if Cliente.objects.filter(cpf=cpf).exclude(id=self.instance.id).exists():
+            raise ValidationError("Este CPF já está cadastrado para outro cliente.")
+        return cpf
+
+    def clean_user(self):
+        user = self.cleaned_data['user']
+        if User.objects.filter(username=user.username).exclude(id=self.instance.user.id).exists():
+            raise ValidationError("Este nome de usuário já está em uso.")
+        return user

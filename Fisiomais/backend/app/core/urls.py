@@ -13,6 +13,6 @@ urlpatterns = [
     path('agendamentos/confirmar/<int:agendamento_id>/', views.confirmar_agendamento, name='confirmar_agendamento'),
     path('agendamentos/cancelar/<int:agendamento_id>/', views.cancelar_agendamento, name='cancelar_agendamento'),
     path('agendamentos/remarcar/<int:agendamento_id>/', views.remarcar_agendamento, name='remarcar_agendamento'),
-     # Rotas para cliente solicitar ações
-    
+    path('excluir_agendamento/<int:agendamento_id>/', views.excluir_agendamento, name='excluir_agendamento'),
+    path('editar_agendamento/<int:agendamento_id>/', views.excluir_agendamento, name='excluir_agendamento'),
 ]
