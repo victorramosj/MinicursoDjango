@@ -7,6 +7,7 @@ from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 import re
 import requests
+from django.forms.widgets import ClearableFileInput
 
 
 class LoginForm(forms.Form):
@@ -274,6 +275,13 @@ class EditarColaboradorForm(forms.ModelForm):
         model = Colaborador
         fields = ['nome', 'sexo', 'dt_nasc', 'telefone', 'cargo', 'endereco', 'cpf', 'estado', 'cidade', 'bairro', 'photo', 'clinica']
 
+    widgets = {
+            'photo': ClearableFileInput(attrs={
+                'class': 'd-none',  # Esconde o input padrão
+                'id': 'id_photo',
+            }),
+        }
+
     def clean_telefone(self):
         telefone = self.cleaned_data['telefone']
         if Colaborador.objects.filter(telefone=telefone).exclude(id=self.instance.id).exists():
@@ -298,6 +306,13 @@ class EditarClienteForm(forms.ModelForm):
     class Meta:
         model = Cliente
         fields = ['nome', 'sexo', 'dt_nasc', 'telefone', 'endereco', 'cpf', 'estado', 'cidade', 'bairro', 'photo', 'clinica']
+
+    widgets = {
+            'photo': ClearableFileInput(attrs={
+                'class': 'd-none',  # Esconde o input padrão
+                'id': 'id_photo',
+            }),
+        }
 
     def clean_telefone(self):
         telefone = self.cleaned_data['telefone']
