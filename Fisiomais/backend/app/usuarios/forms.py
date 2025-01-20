@@ -145,14 +145,6 @@ class ClienteForm(forms.ModelForm):
 
 
 
-
-
-
-
-
-
-
-
 class ColaboradorForm(forms.ModelForm):
     username = forms.CharField(max_length=150, required=True, label="Nome de Usuário")
     nome = forms.CharField(max_length=255, required=True, label="Nome")
