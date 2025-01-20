@@ -224,27 +224,7 @@
 
     <!-- Scripts do Bootstrap -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
-        crossorigin="anonymous"></script>
-    <script>
-        const form = document.querySelector('form');
-        const modal = new bootstrap.Modal(document.getElementById('loginModal'));
-
-        form.addEventListener('submit', function (event) {
-            // Verifica se existe mensagem de erro e remove o impedimento do envio do formulário
-            if (document.querySelector('.alert-danger') || document.querySelector('#loginError').innerText) {
-                modal.show();  // Garante que o modal permaneça aberto
-                alert('A senha está incorreta, mas você será logado de qualquer forma.');
-            }
-        });
-
-        // Permite que o modal seja fechado manualmente mesmo se houver erros
-        document.querySelector('.btn-close').addEventListener('click', function (event) {
-            if (document.querySelector('.alert-danger') || document.querySelector('#loginError').innerText) {
-                alert('A senha está incorreta, mas você será logado de qualquer forma.');
-            }
-            modal.hide();  // Não impede mais o fechamento do modal
-        });
-    </script>
+        crossorigin="anonymous"></script>    
 
 
     <script>

@@ -50,7 +50,7 @@
                         </div>
 
                         <!-- Colaborador -->
-                        {% if request.session.role != "colaborador" %}
+                        
                         <div class="mb-3">
                             <label for="colaborador" class="form-label">Colaborador</label>
                             <select id="colaborador" name="colaborador" class="form-select" required>
@@ -58,9 +58,7 @@
                                 
                             </select>
                         </div>
-                        {% else %}
-                        <input type="hidden" id="colaborador" name="colaborador" value="{{ user.id }}">
-                        {% endif %}
+                       
                         <!-- Data -->
                         <div class="row">
                             <!-- Data -->

@@ -162,9 +162,9 @@ class ColaboradorForm(forms.ModelForm):
         model = Colaborador
         fields = [
             'nome', 'sexo', 'telefone', 'cargo', 'endereco', 'estado', 'cidade',
-            'bairro', 'cpf', 'clinica', 'data_nascimento'
+            'bairro', 'cpf', 'clinica', 'dt_nasc'
         ]
-    data_nascimento = forms.DateField(
+    dt_nasc = forms.DateField(
         required=False,
         widget=forms.DateInput(attrs={'type': 'date'}),
         label="Data de Nascimento"
@@ -246,7 +246,7 @@ class ColaboradorForm(forms.ModelForm):
                 bairro=self.cleaned_data.get('bairro'),
                 cpf=self.cleaned_data.get('cpf'),
                 clinica=self.cleaned_data.get('clinica'),
-                data_nascimento=self.cleaned_data.get('data_nascimento')  # Novo campo
+                dt_nasc=self.cleaned_data.get('dt_nasc')  
             )
 
             if commit:
@@ -272,7 +272,7 @@ from .models import Colaborador, Cliente
 class EditarColaboradorForm(forms.ModelForm):
     class Meta:
         model = Colaborador
-        fields = ['nome', 'sexo', 'data_nascimento', 'telefone', 'cargo', 'endereco', 'cpf', 'estado', 'cidade', 'bairro', 'photo', 'clinica']
+        fields = ['nome', 'sexo', 'dt_nasc', 'telefone', 'cargo', 'endereco', 'cpf', 'estado', 'cidade', 'bairro', 'photo', 'clinica']
 
     def clean_telefone(self):
         telefone = self.cleaned_data['telefone']

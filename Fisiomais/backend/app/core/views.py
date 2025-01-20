@@ -95,8 +95,6 @@ def agendar(request):
 
 
 
-
-
 def get_servicos(request):
     # Buscar todos os serviços cadastrados
     servicos = Servico.objects.all()
@@ -322,7 +320,7 @@ def remarcar_agendamento(request, agendamento_id):
     agendamento = get_object_or_404(Agendamento, id=agendamento_id)
     agendamento.status = 'Remarcado'    
     agendamento.save()
-    return redirect('detalhes_agendamento', agendamento_id=agendamento.id)
+    return redirect('agendar')
 
 @login_required
 def excluir_agendamento(request, agendamento_id):

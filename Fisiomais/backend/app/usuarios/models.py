@@ -48,7 +48,7 @@ class Colaborador(models.Model):
         null=True,
         blank=True
     )  # Sexo do cliente
-    data_nascimento = models.DateField(null=True, blank=True, verbose_name="Data de Nascimento")
+    dt_nasc = models.DateField(null=True, blank=True, verbose_name="Data de Nascimento")
     telefone = models.CharField(max_length=20, unique=True, null=True, blank=True)
     cargo = models.CharField(max_length=100)  # Cargo do colaborador
     endereco = models.CharField(max_length=255, null=True, blank=True)

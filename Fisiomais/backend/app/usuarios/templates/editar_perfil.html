@@ -1,24 +1,96 @@
 {% extends 'base.html' %}
+{% load widget_tweaks %}
 
 {% block title %}Editar Perfil{% endblock %}
 
 {% block content %}
-<div class="container">
+<div class="container my-5">
     <div class="card shadow">
         <div class="card-header">
-            <h2 class="text-center text-primary">Editar perfil</h2>
+            <h2 class="text-center text-primary">Editar Perfil</h2>
         </div>
-        {% if form.photo.value %}
-        <div>
-            <label>Foto atual:</label>
-            <img src="{{ form.photo.value.url }}" alt="Foto do colaborador" style="width: 50px; height: 50px; object-fit: cover;">
+        <div class="card-body">
+            {% if form.photo.value %}
+            <div class="text-center mb-3">
+                <label class="form-label">Foto Atual:</label><br>
+                <img src="{{ form.photo.value.url }}" alt="Foto do perfil" class="rounded-circle border" 
+                     style="width: 100px; height: 100px; object-fit: cover;">
+            </div>
+            {% endif %}
+            <form method="POST" enctype="multipart/form-data">
+                {% csrf_token %}
+
+                <div class="row mb-3">
+                    <div class="col-md-4">
+                        <label for="id_nome" class="form-label text-secondary">Nome*</label>
+                        {{ form.nome|add_class:"form-control" }}
+                    </div>
+                    <div class="col-md-2">
+                        <label for="id_sexo" class="form-label text-secondary">Sexo*</label>
+                        {{ form.sexo|add_class:"form-control" }}
+                    </div>
+                    <div class="col-md-3">
+                        <label for="id_dt_nasc" class="form-label text-secondary">Data de Nascimento*</label>
+                        {{ form.dt_nasc|add_class:"form-control" }}
+                    </div>
+                    <div class="col-md-3">
+                        <label for="id_telefone" class="form-label text-secondary">Telefone*</label>
+                        {{ form.telefone|add_class:"form-control" }}
+                    </div>
+                </div>
+
+                <div class="row mb-3">
+                    {% if request.session.role == "colaborador" %}
+                    <div class="col-md-4">
+                        <label for="id_cargo" class="form-label text-secondary">Cargo*</label>
+                        {{ form.cargo|add_class:"form-control" }}
+                    </div>
+                    {% endif %}
+                    <div class="col-md-4">
+                        <label for="id_cpf" class="form-label text-secondary">CPF*</label>
+                        {{ form.cpf|add_class:"form-control" }}
+                    </div>
+                    <div class="col-md-4">
+                        <label for="id_photo" class="form-label text-secondary">Foto</label>
+                        {{ form.photo|add_class:"form-control" }}
+                    </div>
+                </div>
+
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label for="id_endereco" class="form-label text-secondary">Endereço*</label>
+                        {{ form.endereco|add_class:"form-control" }}
+                    </div>
+                    <div class="col-md-3">
+                        <label for="id_bairro" class="form-label text-secondary">Bairro*</label>
+                        {{ form.bairro|add_class:"form-control" }}
+                    </div>
+                    {% if request.session.role == "colaborador" %}
+                    <div class="col-md-3">
+                        <label for="id_clinica" class="form-label text-secondary">Clínica*</label>
+                        {{ form.clinica|add_class:"form-control" }}
+                    </div>
+                    {% endif %}
+                </div>
+
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label for="id_estado" class="form-label text-secondary">Estado*</label>
+                        {{ form.estado|add_class:"form-control" }}
+                    </div>
+                    <div class="col-md-6">
+                        <label for="id_cidade" class="form-label text-secondary">Cidade*</label>
+                        {{ form.cidade|add_class:"form-control" }}
+                    </div>
+                </div>
+
+                <div class="text-center">
+                    <button type="submit" class="btn btn-signup">
+                        <i class="bi bi-save"></i> Salvar Alterações
+                    </button>
+                </div>
+            </form>
         </div>
-    {% endif %}
-    <form method="POST" enctype="multipart/form-data">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit" class="btn btn-primary">Salvar Alterações</button>
-    </form>
-</div>
+    </div>
 </div>
 {% endblock %}
