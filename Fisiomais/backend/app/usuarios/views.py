@@ -213,45 +213,39 @@ def editar_perfil(request):
     user = request.user
     perfil = None
 
-    # Debug: Verificar o tipo de usuário e perfil associado
-    print(f"DEBUG: Usuário logado -> {user}")
     try:
         perfil = user.colaborador  # ou user.cliente dependendo do caso
-        print(f"DEBUG: Perfil identificado como colaborador -> {perfil}")
     except Exception as e:
-        print(f"DEBUG: Erro ao identificar colaborador -> {e}")
-        try:
-            perfil = user.cliente
-            print(f"DEBUG: Perfil identificado como cliente -> {perfil}")
-        except Exception as e:
-            print(f"DEBUG: Erro ao identificar cliente -> {e}")
-            perfil = None
+        perfil = user.cliente
+
+    estado_atual = perfil.estado if perfil else None
+    cidade_atual = perfil.cidade if perfil else None
+
 
     if request.method == 'POST':
-        print(f"DEBUG: Dados recebidos no POST -> {request.POST}")
-        print(f"DEBUG: Arquivos recebidos no POST -> {request.FILES}")
-        
         if isinstance(perfil, Colaborador):
             form = EditarColaboradorForm(request.POST, request.FILES, instance=perfil)
-            print(f"DEBUG: Formulário de colaborador criado -> {form}")
         else:
             form = EditarClienteForm(request.POST, request.FILES, instance=perfil)
-            print(f"DEBUG: Formulário de cliente criado -> {form}")
 
         if form.is_valid():
-            print(f"DEBUG: Formulário válido. Dados limpos -> {form.cleaned_data}")
             form.save()
             messages.success(request, "Perfil atualizado com sucesso!")
-            return redirect('editar_perfil')  # Ajuste conforme necessário
+            return redirect('editar_perfil')
         else:
-            print(f"DEBUG: Formulário inválido. Erros -> {form.errors}")
+            messages.error(request, "Erro ao atualizar perfil. Por favor, tente novamente.")
     else:
         if isinstance(perfil, Colaborador):
             form = EditarColaboradorForm(instance=perfil)
-            print(f"DEBUG: Formulário de colaborador inicializado com dados -> {form.initial}")
         else:
             form = EditarClienteForm(instance=perfil)
-            print(f"DEBUG: Formulário de cliente inicializado com dados -> {form.initial}")
 
-    return render(request, 'editar_perfil.html', {'form': form})
+    return render(request, 'editar_perfil.html', {
+        'form': form,
+        'estado_atual': estado_atual,
+        'cidade_atual': cidade_atual
+    })
+
+
+
 

@@ -10,87 +10,235 @@
             <h2 class="text-center text-primary">Editar Perfil</h2>
         </div>
         <div class="card-body">
-            {% if form.photo.value %}
             <div class="text-center mb-3">
-                <label class="form-label">Foto Atual:</label><br>
-                <img src="{{ form.photo.value.url }}" alt="Foto do perfil" class="rounded-circle border" 
-                     style="width: 100px; height: 100px; object-fit: cover;">
+                {% if messages %}
+                <div>
+                    {% for message in messages %}
+                    {% if message.tags == 'success' %}
+                    <div class="alert alert-success">{{ message }}</div>
+                    {% else %}
+                    <div class="alert alert-danger">{{ message }}</div>
+                    {% endif %}
+                    {% endfor %}
+                </div>
+                {% endif %}
+                <form method="POST" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <!-- Exibe a foto atual ou ícone padrão, dependendo de ter foto ou não -->
+                    <div class="d-flex justify-content-center">
+                        {% if form.photo.value %}
+                            <img id="profile-image" src="{{ form.photo.value.url }}" 
+                                 alt="Foto do perfil" class="rounded-circle border" 
+                                 style="width: 250px; height: 225px; object-fit: cover;">
+                        {% else %}
+                            <i class="bi bi-person-circle" id="profile-image" 
+                               style="font-size: 9rem; width: 250px; height: 225px; 
+                                      display: flex; align-items: center; justify-content: center; 
+                                      border-radius: 50%; border: 1px solid #ddd;">
+                            </i>
+                        {% endif %}
+                    </div>
+                    <br>
+                
+                    <!-- Ocultar o campo de input de arquivo -->
+                    <div class="mt-3">
+                        <label for="id_photo" class="btn btn-secondary">
+                            Alterar Foto
+                        </label>
+                        <input type="file" name="photo" id="id_photo" class="form-control d-none"
+                               onchange="previewImage(event)" />
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-4">
+                            <label for="id_nome" class="form-label text-secondary">Nome*</label>
+                            {{ form.nome|add_class:"form-control" }}
+                        </div>
+                        <div class="col-md-2">
+                            <label for="id_sexo" class="form-label text-secondary">Sexo*</label>
+                            {{ form.sexo|add_class:"form-control" }}
+                        </div>
+                        <div class="col-md-3">
+                            <label for="id_dt_nasc" class="form-label text-secondary">Data de Nascimento*</label>
+                            {{ form.dt_nasc|add_class:"form-control" }}
+                        </div>
+                        <div class="col-md-3">
+                            <label for="id_telefone" class="form-label text-secondary">Telefone*</label>
+                            {{ form.telefone|add_class:"form-control" }}
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        {% if request.session.role != "cliente" %}
+                        <div class="col-md-4">
+                            <label for="id_cargo" class="form-label text-secondary">Cargo*</label>
+                            {{ form.cargo|add_class:"form-control" }}
+                        </div>
+                        {% endif %}
+                        <div class="col-md-4">
+                            <label for="id_cpf" class="form-label text-secondary">CPF*</label>
+                            {{ form.cpf|add_class:"form-control" }}
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label for="id_endereco" class="form-label text-secondary">Lougradouro*</label>
+                            {{ form.endereco|add_class:"form-control" }}
+                        </div>
+                        <div class="col-md-3">
+                            <label for="id_bairro" class="form-label text-secondary">Bairro*</label>
+                            {{ form.bairro|add_class:"form-control" }}
+                        </div>
+                        {% if request.session.role != "cliente" %}
+                        <div class="col-md-3">
+                            <label for="id_clinica" class="form-label text-secondary">Clínica*</label>
+                            {{ form.clinica|add_class:"form-control" }}
+                        </div>
+                        {% endif %}
+                        <div class="col-md-2">
+                            <label for="id_estado" class="form-label text-secondary">Estado:</label>
+                            <select id="id_estado" class="form-control" name="estado">
+                                <option value="">Selecione um Estado</option>
+                                {% for estado in estados %}
+                                    <option value="{{ estado.sigla }}" {% if estado.sigla == estado_atual %}selected{% endif %}>{{ estado.nome }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-md-2">
+                            <label for="id_cidade" class="form-label text-secondary">Cidade:</label>
+                            <select id="id_cidade" class="form-control" name="cidade">
+                                <option value="">Selecione uma Cidade</option>
+                                {% for cidade in cidades %}
+                                    <option value="{{ cidade.nome }}" {% if cidade.nome == cidade_atual %}selected{% endif %}>{{ cidade.nome }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        
+                    </div>
+                    
+                    <div class="text-center">
+                        <button type="submit" class="btn btn-signup">
+                            <i class="bi bi-save"></i> Salvar Alterações
+                        </button>
+                    </div>
+                </form>
             </div>
-            {% endif %}
-            <form method="POST" enctype="multipart/form-data">
-                {% csrf_token %}
-
-                <div class="row mb-3">
-                    <div class="col-md-4">
-                        <label for="id_nome" class="form-label text-secondary">Nome*</label>
-                        {{ form.nome|add_class:"form-control" }}
-                    </div>
-                    <div class="col-md-2">
-                        <label for="id_sexo" class="form-label text-secondary">Sexo*</label>
-                        {{ form.sexo|add_class:"form-control" }}
-                    </div>
-                    <div class="col-md-3">
-                        <label for="id_dt_nasc" class="form-label text-secondary">Data de Nascimento*</label>
-                        {{ form.dt_nasc|add_class:"form-control" }}
-                    </div>
-                    <div class="col-md-3">
-                        <label for="id_telefone" class="form-label text-secondary">Telefone*</label>
-                        {{ form.telefone|add_class:"form-control" }}
-                    </div>
-                </div>
-
-                <div class="row mb-3">
-                    {% if request.session.role == "colaborador" %}
-                    <div class="col-md-4">
-                        <label for="id_cargo" class="form-label text-secondary">Cargo*</label>
-                        {{ form.cargo|add_class:"form-control" }}
-                    </div>
-                    {% endif %}
-                    <div class="col-md-4">
-                        <label for="id_cpf" class="form-label text-secondary">CPF*</label>
-                        {{ form.cpf|add_class:"form-control" }}
-                    </div>
-                    <div class="col-md-4">
-                        <label for="id_photo"  class="form-label text-secondary">Foto</label>
-                        {{ form.photo|add_class:"form-control" }}
-                    </div>
-                </div>
-
-                <div class="row mb-3">
-                    <div class="col-md-6">
-                        <label for="id_endereco" class="form-label text-secondary">Endereço*</label>
-                        {{ form.endereco|add_class:"form-control" }}
-                    </div>
-                    <div class="col-md-3">
-                        <label for="id_bairro" class="form-label text-secondary">Bairro*</label>
-                        {{ form.bairro|add_class:"form-control" }}
-                    </div>
-                    {% if request.session.role == "colaborador" %}
-                    <div class="col-md-3">
-                        <label for="id_clinica" class="form-label text-secondary">Clínica*</label>
-                        {{ form.clinica|add_class:"form-control" }}
-                    </div>
-                    {% endif %}
-                </div>
-
-                <div class="row mb-3">
-                    <div class="col-md-6">
-                        <label for="id_estado" class="form-label text-secondary">Estado*</label>
-                        {{ form.estado|add_class:"form-control" }}
-                    </div>
-                    <div class="col-md-6">
-                        <label for="id_cidade" class="form-label text-secondary">Cidade*</label>
-                        {{ form.cidade|add_class:"form-control" }}
-                    </div>
-                </div>
-
-                <div class="text-center">
-                    <button type="submit" class="btn btn-signup">
-                        <i class="bi bi-save"></i> Salvar Alterações
-                    </button>
-                </div>
-            </form>
         </div>
     </div>
-</div>
-{% endblock %}
+       {% load static %}
+    <script >        
+// Definindo as variáveis de estado e cidade como variáveis JavaScript
+const estadoAtual = "{{ estado_atual }}";
+const cidadeAtual = "{{ cidade_atual }}";
+
+console.log("Estado Atual:", estadoAtual);
+console.log("Cidade Atual:", cidadeAtual);
+
+// Função para carregar os estados
+function loadEstados() {
+    fetch('/usuarios/estados/')
+        .then(response => response.json())
+        .then(data => {
+            const estadoSelect = document.getElementById("id_estado");
+            if (Array.isArray(data)) {
+                estadoSelect.innerHTML = '<option value="">Selecione um Estado</option>';
+                data.forEach(estado => {
+                    const option = document.createElement("option");
+                    option.value = estado.sigla;
+                    option.textContent = estado.nome;
+                    if (estado.sigla === estadoAtual) {
+                        option.selected = true;  // Preenche o estado selecionado
+                    }
+                    estadoSelect.appendChild(option);
+                });
+            }
+        })
+        .catch(error => {
+            console.error("Erro ao carregar estados:", error);
+        });
+}
+
+// Função para carregar as cidades com base no estado selecionado
+function loadCidades(estado) {
+    // Corrigindo a URL para usar o valor real de 'estadoAtual'
+    const url = `/usuarios/cidades/${estado}/`;
+    fetch(url)
+        .then(response => response.json())
+        .then(data => {
+            const cidadeSelect = document.getElementById("id_cidade");
+            if (Array.isArray(data)) {
+                cidadeSelect.innerHTML = '<option value="">Selecione uma Cidade</option>';
+                data.forEach(cidade => {
+                    const option = document.createElement("option");
+                    option.value = cidade.nome;
+                    option.textContent = cidade.nome;
+                    if (cidade.nome === cidadeAtual) {
+                        option.selected = true;  // Preenche a cidade selecionada
+                    }
+                    cidadeSelect.appendChild(option);
+                });
+            }
+        })
+        .catch(error => {
+            console.error("Erro ao carregar cidades:", error);
+        });
+}
+
+// Carregar estados ao carregar a página
+loadEstados();
+
+// Se o estado já estiver selecionado, carregar as cidades correspondentes
+if (estadoAtual) {
+    loadCidades(estadoAtual);
+}
+
+// Atualizar cidades quando o estado for selecionado
+const estadoSelect = document.getElementById("id_estado");
+estadoSelect.addEventListener("change", function () {
+    const estadoSelecionado = estadoSelect.value;
+    if (estadoSelecionado) {
+        loadCidades(estadoSelecionado);
+    } else {
+        const cidadeSelect = document.getElementById("id_cidade");
+        cidadeSelect.innerHTML = '<option value="">Selecione uma Cidade</option>';
+    }
+});
+
+    </script>
+    
+    
+    
+    <script>
+        function previewImage(event) {
+            const file = event.target.files[0];
+            const profileImage = document.getElementById('profile-image');
+    
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    // Verifica se é uma imagem ou ícone
+                    if (profileImage.tagName.toLowerCase() === 'img') {
+                        // Se for uma imagem, apenas altera o src
+                        profileImage.src = e.target.result;
+                    } else if (profileImage.tagName.toLowerCase() === 'i') {
+                        // Se for um ícone, altera para a imagem selecionada
+                        const newImage = document.createElement('img');
+                        newImage.id = 'profile-image';
+                        newImage.src = e.target.result;
+                        newImage.alt = 'Foto do perfil';
+                        newImage.classList.add('rounded-circle', 'border');
+                        newImage.style.width = '250px';
+                        newImage.style.height = '225px';
+                        newImage.style.objectFit = 'cover';
+    
+                        // Substitui o ícone pelo novo elemento de imagem
+                        profileImage.replaceWith(newImage);
+                    }
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+    </script>
+
+
+    {% endblock %}

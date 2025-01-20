@@ -1,36 +1,36 @@
 {% extends 'base.html' %}
 {% load widget_tweaks %}
+
 {% block content %}
-
-
 <div class="container my-5">
-    
     <div class="card shadow">
         <div class="card-header">
             <h2 class="text-center text-primary">Cadastro</h2>
         </div>
         <div class="card-body">
             {% if messages %}
-                <div>
-                    {% for message in messages %}                    
-                    <div class="alert alert-danger">{{ message }}</div>
-                    {% endfor %}
-                </div>
+            <div>
+                {% for message in messages %}
+                {% if message.tags == 'success' %}
+                <div class="alert alert-success">{{ message }}</div>
+                {% else %}
+                <div class="alert alert-danger">{{ message }}</div>
                 {% endif %}
+                {% endfor %}
+            </div>
+            {% endif %}
             <form method="post" id="cadastrar_cliente" action="{% url 'cadastrar_cliente' %}" enctype="multipart/form-data">
                 {% csrf_token %}
 
                 <div class="row mb-3">
-                    
-                        <div class="col-12 col-md-3 ">
-                            <label for="id_nome" class="form-label text-secondary">Nome*</label>
-                            {{ form.nome|add_class:"form-control" }}
-                        </div>
-                        <div class="col-12 col-md-1 ">
-                            <label for="id_sexo" class="form-label text-secondary">Sexo*</label>
-                            {{ form.sexo|add_class:"form-control" }}
-                        </div>
-                    
+                    <div class="col-12 col-md-3">
+                        <label for="id_nome" class="form-label text-secondary">Nome*</label>
+                        {{ form.nome|add_class:"form-control" }}
+                    </div>
+                    <div class="col-12 col-md-1">
+                        <label for="id_sexo" class="form-label text-secondary">Sexo*</label>
+                        {{ form.sexo|add_class:"form-control" }}
+                    </div>
                     <div class="col-12 col-md-2">
                         <label for="id_username" class="form-label text-secondary">Nome de Usuário*</label>
                         {{ form.username|add_class:"form-control" }}
@@ -39,11 +39,11 @@
                         <label for="id_cpf" class="form-label text-secondary">CPF* <small>(apenas números)</small></label>
                         {{ form.cpf|add_class:"form-control" }}
                     </div>
-                    <div class="col-12 col-md-2 ">
+                    <div class="col-12 col-md-2">
                         <label for="id_email" class="form-label text-secondary">Email*</label>
                         {{ form.email|add_class:"form-control" }}
                     </div>
-                    <div class="col-12 col-md-2 ">
+                    <div class="col-12 col-md-2">
                         <label for="id_confirmarEmail" class="form-label text-secondary">Confirme seu Email*</label>
                         {{ form.email2|add_class:"form-control" }}
                     </div>
@@ -59,40 +59,30 @@
                         {{ form.senha2|add_class:"form-control" }}
                     </div>
                     <div class="col-12 col-md-6 col-lg-3">
-                        <label for="id_dtNasc" class="form-label text-secondary">Data de Nascimento</label>
+                        <label for="id_dtNasc" class="form-label text-secondary">Data de Nascimento*</label>
                         {{ form.dt_nasc|add_class:"form-control" }}
                     </div>
                     <div class="col-12 col-md-6 col-lg-3">
                         <label for="id_telefone" class="form-label text-secondary">Telefone*</label>
                         {{ form.telefone|add_class:"form-control" }}
                     </div>
-                    
-                    
                 </div>
 
-                <div class="row mb-3">                    
-                    <div class="col-12 col-md-6 col-lg-4">
-                        <label for="id_endereco" class="form-label text-secondary">Logradouro</label>
-                        {{ form.endereco|add_class:"form-control" }}
+                <div class="row mb-3">
+                    <div class="col-md-2">
+                        <label for="id_estado_cadastro_cliente" class="form-label text-secondary">Estado*</label>
+                        <select id="id_estado_cadastro_cliente" class="form-control" name="estado_cliente">
+                            <option value="">Selecione um Estado</option>
+                        </select>
                     </div>
-                    <div class="col-12 col-md-4 col-lg-4">
-                        <label for="id_bairro" class="form-label text-secondary">Bairro</label>
-                        {{ form.bairro|add_class:"form-control" }}
+                    <div class="col-md-2">
+                        <label for="id_cidade_cadastro_cliente" class="form-label text-secondary">Cidade*</label>
+                        <select id="id_cidade_cadastro_cliente" class="form-control" name="cidade_cliente">
+                            <option value="">Selecione uma Cidade</option>
+                        </select>
                     </div>
-                    
-                    <div class="col-6 col-md-2">
-                            <label for="id_estado" class="form-label text-secondary">Estado*</label>
-                            {{ form.estado|add_class:"form-control" }}
-                    </div>
-                    
-                    <div class="col-6 col-md-2">
-                        <label for="id_cidade" class="form-label text-secondary">Cidade*</label>
-                        {{ form.cidade|add_class:"form-control" }}
-                    </div>
-                    
-
-
                 </div>
+
                 <div class="row mb-3">
                     <div class="col-12 text-center">
                         <button type="submit" class="btn btn-signup w-auto mx-auto">
@@ -100,50 +90,12 @@
                             Inscrever-se
                         </button>
                     </div>
+                </div>
             </form>
         </div>
     </div>
 </div>
 
-   <script>
-    document.addEventListener("DOMContentLoaded", function() {
-    const estadoField = document.getElementById('id_estado');
-    const cidadeField = document.getElementById('id_cidade');
-
-    estadoField.addEventListener('change', function() {
-        const estado = estadoField.value;
-
-        if (estado) {
-            // Requisição para o backend para obter as cidades do estado selecionado
-            fetch(`/usuarios/cidades/${estado}/`)
-                .then(response => response.json())
-                .then(data => {
-                    // Limpa as opções existentes
-                    cidadeField.innerHTML = '<option value="">Selecione a cidade</option>';
-
-                    // Adiciona as novas opções de cidades
-                    data.forEach(cidade => {
-                        const option = document.createElement('option');
-                        option.value = cidade.nome;
-                        option.textContent = cidade.nome;
-                        cidadeField.appendChild(option);
-                    });
-                })
-                .catch(error => {
-                    console.error('Erro ao carregar as cidades:', error);
-                    cidadeField.innerHTML = '<option value="">Erro ao carregar cidades</option>';
-                });
-        } else {
-            cidadeField.innerHTML = '<option value="">Selecione a cidade</option>';
-        }
-    });
-});
-
-
-
-
-</script>
-
-
-
+{% load static %}
+<script src="{% static 'js/fetch_cidades_estados.js' %}"></script>
 {% endblock %}

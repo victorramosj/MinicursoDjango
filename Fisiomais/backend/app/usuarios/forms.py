@@ -41,9 +41,9 @@ class ClienteForm(forms.ModelForm):
     email2 = forms.EmailField(required=True, label="Confirmar Email")
     senha = forms.CharField(widget=forms.PasswordInput, required=True, label="Senha")
     senha2 = forms.CharField(widget=forms.PasswordInput, required=True, label="Confirmar Senha")
-    estado = forms.ChoiceField(required=True, label="Estado")
-    cidade = forms.CharField(required=True, label="Cidade")
     dt_nasc = forms.DateField(widget=forms.DateInput(attrs={'type': 'date'}), required=True, label="Data de Nascimento")
+
+    
 
     class Meta:
         model = Cliente
@@ -78,36 +78,8 @@ class ClienteForm(forms.ModelForm):
             raise ValidationError("As senhas não coincidem.")
         return senha2
     
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.fields['estado'].choices = self.get_estados()
-        
-    def get_estados(self):
-        try:
-            response = requests.get("https://servicodados.ibge.gov.br/api/v1/localidades/estados")
-            response.raise_for_status()
-            estados = response.json()
-            estados_ordenados = sorted(estados, key=lambda x: x['nome'])
-            return [(estado['sigla'], estado['nome']) for estado in estados_ordenados]
-        except requests.exceptions.RequestException:
-            return [('', 'Erro ao carregar estados')]  # Caso haja um erro na requisição
-    
-    def clean_estado(self):
-        estado = self.cleaned_data.get('estado')
-        if not estado:
-            raise ValidationError("Este campo é obrigatório.")
-        return estado
-
-    def clean_cidade(self):
-        cidade = self.cleaned_data.get('cidade')
-        if not cidade:
-            raise ValidationError("Este campo é obrigatório.")
-        return cidade
-
     def save(self, commit=True):
         try:
-            print("Chamando save do ClienteForm")
-
             # Criação do usuário
             user_data = {
                 'username': self.cleaned_data['username'],
@@ -124,7 +96,7 @@ class ClienteForm(forms.ModelForm):
                 dt_nasc=self.cleaned_data.get('dt_nasc'),
                 estado=self.cleaned_data.get('estado'),
                 cidade=self.cleaned_data.get('cidade'),
-                cpf=self.cleaned_data.get('cpf'),  
+                cpf=self.cleaned_data.get('cpf'),
                 telefone=self.cleaned_data.get('telefone'),
                 endereco=self.cleaned_data.get('endereco'),
                 bairro=self.cleaned_data.get('bairro'),
@@ -133,16 +105,16 @@ class ClienteForm(forms.ModelForm):
             )
 
             if commit:
-                print(f"Cliente salvo: {cliente.nome}, relacionado a {user.username}")
+                return cliente
 
             return cliente
 
         except Exception as e:
-            print(f"Erro ao salvar cliente: {e}")
             # Se o usuário foi criado, apague-o para evitar inconsistências
             if user and user.pk:
                 user.delete()
             raise
+
 
 
 
@@ -154,8 +126,6 @@ class ColaboradorForm(forms.ModelForm):
     email2 = forms.EmailField(required=True, label="Confirmar E-mail")
     senha = forms.CharField(widget=forms.PasswordInput, required=True, label="Senha")
     senha2 = forms.CharField(widget=forms.PasswordInput, required=True, label="Confirmar Senha")
-    estado = forms.ChoiceField(required=True, label="Estado")
-    cidade = forms.CharField(required=True, label="Cidade")
     cpf = forms.CharField(validators=[validar_cpf], required=True, label="CPF")
     clinica = forms.ModelChoiceField(queryset=Clinica.objects.all(), required=True, label="Clínica")
 
@@ -165,11 +135,13 @@ class ColaboradorForm(forms.ModelForm):
             'nome', 'sexo', 'telefone', 'cargo', 'endereco', 'estado', 'cidade',
             'bairro', 'cpf', 'clinica', 'dt_nasc'
         ]
+    
     dt_nasc = forms.DateField(
         required=False,
         widget=forms.DateInput(attrs={'type': 'date'}),
         label="Data de Nascimento"
     )
+
     def clean_username(self):
         username = self.cleaned_data['username']
         if User.objects.filter(username=username).exists():
@@ -195,32 +167,6 @@ class ColaboradorForm(forms.ModelForm):
         if senha != senha2:
             raise ValidationError("As senhas não coincidem.")
         return senha2
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.fields['estado'].choices = self.get_estados()
-
-    def get_estados(self):
-        try:
-            response = requests.get("https://servicodados.ibge.gov.br/api/v1/localidades/estados")
-            response.raise_for_status()
-            estados = response.json()
-            estados_ordenados = sorted(estados, key=lambda x: x['nome'])
-            return [(estado['sigla'], estado['nome']) for estado in estados_ordenados]
-        except requests.exceptions.RequestException:
-            return [('', 'Erro ao carregar estados')]  # Caso haja um erro na requisição
-
-    def clean_estado(self):
-        estado = self.cleaned_data.get('estado')
-        if not estado:
-            raise ValidationError("Este campo é obrigatório.")
-        return estado
-
-    def clean_cidade(self):
-        cidade = self.cleaned_data.get('cidade')
-        if not cidade:
-            raise ValidationError("Este campo é obrigatório.")
-        return cidade
 
     def save(self, commit=True):
         try:
@@ -276,11 +222,8 @@ class EditarColaboradorForm(forms.ModelForm):
         fields = ['nome', 'sexo', 'dt_nasc', 'telefone', 'cargo', 'endereco', 'cpf', 'estado', 'cidade', 'bairro', 'photo', 'clinica']
 
     widgets = {
-            'photo': ClearableFileInput(attrs={
-                'class': 'd-none',  # Esconde o input padrão
-                'id': 'id_photo',
-            }),
-        }
+        'photo': forms.ClearableFileInput(attrs={'class': 'd-none', 'id': 'id_photo'})  # Ocultando o campo de file input
+    }
 
     def clean_telefone(self):
         telefone = self.cleaned_data['telefone']
@@ -308,10 +251,7 @@ class EditarClienteForm(forms.ModelForm):
         fields = ['nome', 'sexo', 'dt_nasc', 'telefone', 'endereco', 'cpf', 'estado', 'cidade', 'bairro', 'photo', 'clinica']
 
     widgets = {
-            'photo': ClearableFileInput(attrs={
-                'class': 'd-none',  # Esconde o input padrão
-                'id': 'id_photo',
-            }),
+            'photo': forms.FileInput(attrs={'id': 'id_photo'}), # Apenas FileInput
         }
 
     def clean_telefone(self):

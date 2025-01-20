@@ -16,16 +16,19 @@
   margin: 0;
 
 }
+.hidden {
+  display: none;
+}
+
 
 p {
   text-indent: 30px;
-  /* Define o recuo do início do parágrafo */
+
 }
 
-/* Remove o recuo dos parágrafos dentro de uma div com a classe 'info' */
 .info p {
   text-indent: 0px;
-  /* Define o recuo do início do parágrafo como 0px */
+ 
 }
 
 .custom-image {

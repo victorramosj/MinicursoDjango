@@ -12,11 +12,16 @@
                 {% csrf_token %}
                 {% if messages %}
                 <div>
-                    {% for message in messages %}                    
+                    {% for message in messages %}
+                    {% if message.tags == 'success' %}
+                    <div class="alert alert-success">{{ message }}</div>
+                    {% else %}
                     <div class="alert alert-danger">{{ message }}</div>
+                    {% endif %}
                     {% endfor %}
                 </div>
                 {% endif %}
+
 
                 <div class="row mb-3">
                     <div class="col-12 col-md-4">
@@ -27,9 +32,10 @@
                         <label for="id_username" class="form-label text-secondary">Nome de Usuário*</label>
                         {{ form.username|add_class:"form-control" }}
                     </div>
-                    
+
                     <div class="col-12 col-md-4">
-                        <label for="id_cpf" class="form-label text-secondary">CPF* <small>(apenas números)</small></label>
+                        <label for="id_cpf" class="form-label text-secondary">CPF* <small>(apenas
+                                números)</small></label>
                         {{ form.cpf|add_class:"form-control" }}
                     </div>
                 </div>
@@ -37,18 +43,19 @@
                 <div class="row mb-3">
                     <div class="col-12 col-md-2">
                         <label for="id_sexo" class="form-label text-secondary">Sexo*</label>
-                    <select id="id_sexo" name="sexo" class="form-control">
-                        <option value="">Selecione o Sexo</option>
-                        {% for value, display in form.sexo.field.choices %}
-                        <option value="{{ value }}" {% if form.sexo.value == value %}selected{% endif %}>{{ display }}</option>
-                        {% endfor %}
-                    </select>
-                </div>
-                <div class="col-12 col-md-2">
-                    <label for="id_dt_nasc" class="form-label text-secondary">Data de Nascimento</label>
-                    {{ form.dt_nasc|add_class:"form-control" }}
-                </div>
-                
+                        <select id="id_sexo" name="sexo" class="form-control">
+                            <option value="">Selecione o Sexo</option>
+                            {% for value, display in form.sexo.field.choices %}
+                            <option value="{{ value }}" {% if form.sexo.value == value %}selected{% endif %}>{{ display }}
+                            </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-12 col-md-2">
+                        <label for="id_dt_nasc" class="form-label text-secondary">Data de Nascimento</label>
+                        {{ form.dt_nasc|add_class:"form-control" }}
+                    </div>
+
                     <div class="col-12 col-md-3">
                         <label for="id_email" class="form-label text-secondary">Email*</label>
                         {{ form.email|add_class:"form-control" }}
@@ -61,7 +68,7 @@
                         <label for="id_clinica" class="form-label text-secondary">Clínica*</label>
                         {{ form.clinica|add_class:"form-control" }}
                     </div>
-                    
+
                 </div>
 
                 <div class="row mb-3">
@@ -73,18 +80,23 @@
                         <label for="id_senha2" class="form-label text-secondary">Confirmar Senha*</label>
                         {{ form.senha2|add_class:"form-control" }}
                     </div>
-                    <div class="col-12 col-md-3">
-                        <label for="id_telefone" class="form-label text-secondary">Telefone*</label>
-                        {{ form.telefone|add_class:"form-control" }}
+                    <div class="col-md-2">
+                        <label for="id_estado_cadastro_colaborador" class="form-label text-secondary">Estado:</label>
+                        <select id="id_estado_cadastro_colaborador" class="form-control" name="estado_colaborador">
+                            <option value="">Selecione um Estado</option>
+                        </select>
                     </div>
-                    <div class="col-6 col-md-3">
-                        <label for="id_estado" class="form-label text-secondary">Estado*</label>
-                        {{ form.estado|add_class:"form-control" }}
+                    <div class="col-md-2">
+                        <label for="id_cidade_cadastro_colaborador" class="form-label text-secondary">Cidade:</label>
+                        <select id="id_cidade_cadastro_colaborador" class="form-control" name="cidade_colaborador">
+                            <option value="">Selecione uma Cidade</option>
+                        </select>
                     </div>
+                </div>
                 </div>
 
                 <div class="row mb-3">
-                    
+
                     <div class="col-12 col-md-3">
                         <label for="id_cargo" class="form-label text-secondary">Cargo*</label>
                         {{ form.cargo|add_class:"form-control" }}
@@ -97,16 +109,13 @@
                         <label for="id_bairro" class="form-label text-secondary">Bairro</label>
                         {{ form.bairro|add_class:"form-control" }}
                     </div>
-                    
-                    
-                    
-                    <div class="col-6 col-md-3">
-                        <label for="id_cidade" class="form-label text-secondary">Cidade*</label>
-                        {{ form.cidade|add_class:"form-control" }}
-                    </div>
-                </div>
 
-                
+
+
+                 
+                    
+
+
 
 
 
@@ -121,46 +130,8 @@
         </div>
     </div>
 </div>
-
-
-<script>
-    document.addEventListener("DOMContentLoaded", function() {
-    const estadoField = document.getElementById('id_estado');
-    const cidadeField = document.getElementById('id_cidade');
-
-    estadoField.addEventListener('change', function() {
-        const estado = estadoField.value;
-
-        if (estado) {
-            // Requisição para o backend para obter as cidades do estado selecionado
-            fetch(`/usuarios/cidades/${estado}/`)
-                .then(response => response.json())
-                .then(data => {
-                    // Limpa as opções existentes
-                    cidadeField.innerHTML = '<option value="">Selecione a cidade</option>';
-
-                    // Adiciona as novas opções de cidades
-                    data.forEach(cidade => {
-                        const option = document.createElement('option');
-                        option.value = cidade.nome;
-                        option.textContent = cidade.nome;
-                        cidadeField.appendChild(option);
-                    });
-                })
-                .catch(error => {
-                    console.error('Erro ao carregar as cidades:', error);
-                    cidadeField.innerHTML = '<option value="">Erro ao carregar cidades</option>';
-                });
-        } else {
-            cidadeField.innerHTML = '<option value="">Selecione a cidade</option>';
-        }
-    });
-});
-
-
-
-
-</script>
+{% load static %}
+<script src="{% static 'js/fetch_cidades_estados.js' %}"></script>
 
 
 {% endblock %}
