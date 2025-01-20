@@ -82,16 +82,18 @@
                     </div>
                     <div class="col-md-2">
                         <label for="id_estado_cadastro_colaborador" class="form-label text-secondary">Estado:</label>
-                        <select id="id_estado_cadastro_colaborador" class="form-control" name="estado_colaborador">
+                        <select id="id_estado_cadastro_colaborador" class="form-control" name="estado">
                             <option value="">Selecione um Estado</option>
                         </select>
                     </div>
                     <div class="col-md-2">
                         <label for="id_cidade_cadastro_colaborador" class="form-label text-secondary">Cidade:</label>
-                        <select id="id_cidade_cadastro_colaborador" class="form-control" name="cidade_colaborador">
+                        <select id="id_cidade_cadastro_colaborador" class="form-control" name="cidade">
                             <option value="">Selecione uma Cidade</option>
                         </select>
                     </div>
+                    
+                    
                 </div>
                 </div>
 
@@ -131,7 +133,7 @@
     </div>
 </div>
 {% load static %}
-<script src="{% static 'js/fetch_cidades_estados.js' %}"></script>
+<script src="{% static 'js/fetch_cidades_estados.js' %}" ></script>
 
 
 {% endblock %}

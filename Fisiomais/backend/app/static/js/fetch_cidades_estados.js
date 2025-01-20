@@ -4,7 +4,7 @@ function loadEstados(estadoSelectId) {
         .then(response => response.json())
         .then(data => {
             const estadoSelect = document.getElementById(estadoSelectId);
-            estadoSelect.innerHTML = '<option value="">Selecione um Estado</option>';  // Limpa qualquer opção anterior
+            estadoSelect.innerHTML = '<option value="">Selecione um Estado</option>'; // Limpa qualquer opção anterior
             if (Array.isArray(data)) {
                 data.forEach(estado => {
                     const option = document.createElement("option");
@@ -13,9 +13,17 @@ function loadEstados(estadoSelectId) {
                     estadoSelect.appendChild(option);
                 });
             }
+            // Log para colaborador
+            if (estadoSelectId === "id_estado_cadastro_colaborador") {
+                console.log("Estados carregados para o cadastro de colaborador:", data);
+            }
         })
         .catch(error => {
             console.error("Erro ao carregar estados:", error);
+            // Log para colaborador
+            if (estadoSelectId === "id_estado_cadastro_colaborador") {
+                console.error("Erro ao carregar estados para o cadastro de colaborador:", error);
+            }
         });
 }
 
@@ -26,7 +34,7 @@ function loadCidades(estado, cidadeSelectId) {
         .then(response => response.json())
         .then(data => {
             const cidadeSelect = document.getElementById(cidadeSelectId);
-            cidadeSelect.innerHTML = '<option value="">Selecione uma Cidade</option>';  // Limpa qualquer opção anterior
+            cidadeSelect.innerHTML = '<option value="">Selecione uma Cidade</option>'; // Limpa qualquer opção anterior
             if (Array.isArray(data)) {
                 data.forEach(cidade => {
                     const option = document.createElement("option");
@@ -35,39 +43,48 @@ function loadCidades(estado, cidadeSelectId) {
                     cidadeSelect.appendChild(option);
                 });
             }
+            // Log para colaborador
+            if (cidadeSelectId === "id_cidade_cadastro_colaborador") {
+                console.log(`Cidades carregadas para o estado ${estado} no cadastro de colaborador:`, data);
+            }
         })
         .catch(error => {
             console.error("Erro ao carregar cidades:", error);
+            // Log para colaborador
+            if (cidadeSelectId === "id_cidade_cadastro_colaborador") {
+                console.error(`Erro ao carregar cidades para o estado ${estado} no cadastro de colaborador:`, error);
+            }
         });
 }
 
 // Carregar os estados ao carregar a página
-document.addEventListener("DOMContentLoaded", function() {
-    // Passa os IDs de estado e cidade para a função para cada página
-    loadEstados("id_estado_cadastro_cliente");  // Exemplo de ID para cadastro de cliente
-    loadEstados("id_estado_cadastro_colaborador");  // Exemplo de ID para cadastro de colaborador
-
-    // Atualizar as cidades quando o estado for selecionado
+document.addEventListener("DOMContentLoaded", function () {
     const estadoSelectCliente = document.getElementById("id_estado_cadastro_cliente");
-    estadoSelectCliente.addEventListener("change", function () {
-        const estadoSelecionado = estadoSelectCliente.value;
-        const cidadeSelectCliente = document.getElementById("id_cidade_cadastro_cliente");
-        if (estadoSelecionado) {
-            loadCidades(estadoSelecionado, "id_cidade_cadastro_cliente");
-        } else {
-            cidadeSelectCliente.innerHTML = '<option value="">Selecione uma Cidade</option>';
-        }
-    });
+    if (estadoSelectCliente) {
+        estadoSelectCliente.addEventListener("change", function () {
+            const estadoSelecionado = estadoSelectCliente.value;
+            const cidadeSelectCliente = document.getElementById("id_cidade_cadastro_cliente");
+            if (estadoSelecionado) {
+                loadCidades(estadoSelecionado, "id_cidade_cadastro_cliente");
+            } else {
+                cidadeSelectCliente.innerHTML = '<option value="">Selecione uma Cidade</option>';
+            }
+        });
+        loadEstados("id_estado_cadastro_cliente");
+    }
 
     const estadoSelectColaborador = document.getElementById("id_estado_cadastro_colaborador");
-    estadoSelectColaborador.addEventListener("change", function () {
-        const estadoSelecionado = estadoSelectColaborador.value;
-        const cidadeSelectColaborador = document.getElementById("id_cidade_cadastro_colaborador");
-        if (estadoSelecionado) {
-            loadCidades(estadoSelecionado, "id_cidade_cadastro_colaborador");
-        } else {
-            cidadeSelectColaborador.innerHTML = '<option value="">Selecione uma Cidade</option>';
-        }
-    });
+    if (estadoSelectColaborador) {
+        estadoSelectColaborador.addEventListener("change", function () {
+            const estadoSelecionado = estadoSelectColaborador.value;
+            const cidadeSelectColaborador = document.getElementById("id_cidade_cadastro_colaborador");
+            if (estadoSelecionado) {
+                loadCidades(estadoSelecionado, "id_cidade_cadastro_colaborador");
+            } else {
+                cidadeSelectColaborador.innerHTML = '<option value="">Selecione uma Cidade</option>';
+            }
+        });
+        loadEstados("id_estado_cadastro_colaborador");
+    }
 });
 

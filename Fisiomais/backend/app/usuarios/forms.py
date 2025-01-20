@@ -42,7 +42,16 @@ class ClienteForm(forms.ModelForm):
     senha = forms.CharField(widget=forms.PasswordInput, required=True, label="Senha")
     senha2 = forms.CharField(widget=forms.PasswordInput, required=True, label="Confirmar Senha")
     dt_nasc = forms.DateField(widget=forms.DateInput(attrs={'type': 'date'}), required=True, label="Data de Nascimento")
-
+    estado = forms.CharField(
+     widget=forms.Select(attrs={'id': 'id_estado_cadastro_colaborador', 'name': 'estado'}),
+     required=True, 
+     label="Estado"
+    )
+    cidade = forms.CharField(
+     widget=forms.Select(attrs={'id': 'id_cidade_cadastro_colaborador', 'name': 'cidade'}),
+     required=True, 
+     label="Cidade"
+    )
     
 
     class Meta:
@@ -51,6 +60,8 @@ class ClienteForm(forms.ModelForm):
             'nome', 'sexo', 'telefone', 'dt_nasc', 'endereco', 'estado', 'cidade',
             'bairro', 'cpf', 'photo', 'clinica'
         ]
+
+    
 
     def clean_username(self):
         username = self.cleaned_data['username']
@@ -118,6 +129,11 @@ class ClienteForm(forms.ModelForm):
 
 
 
+from django import forms
+from django.core.exceptions import ValidationError
+from .models import Colaborador, Clinica
+from django.contrib.auth.models import User
+
 class ColaboradorForm(forms.ModelForm):
     username = forms.CharField(max_length=150, required=True, label="Nome de Usuário")
     nome = forms.CharField(max_length=255, required=True, label="Nome")
@@ -129,18 +145,30 @@ class ColaboradorForm(forms.ModelForm):
     cpf = forms.CharField(validators=[validar_cpf], required=True, label="CPF")
     clinica = forms.ModelChoiceField(queryset=Clinica.objects.all(), required=True, label="Clínica")
 
-    class Meta:
-        model = Colaborador
-        fields = [
-            'nome', 'sexo', 'telefone', 'cargo', 'endereco', 'estado', 'cidade',
-            'bairro', 'cpf', 'clinica', 'dt_nasc'
-        ]
-    
+    estado = forms.CharField(
+     widget=forms.Select(attrs={'id': 'id_estado_cadastro_colaborador', 'name': 'estado'}),
+     required=True, 
+     label="Estado"
+    )
+    cidade = forms.CharField(
+     widget=forms.Select(attrs={'id': 'id_cidade_cadastro_colaborador', 'name': 'cidade'}),
+     required=True, 
+     label="Cidade"
+    )
+
     dt_nasc = forms.DateField(
         required=False,
         widget=forms.DateInput(attrs={'type': 'date'}),
         label="Data de Nascimento"
     )
+
+    class Meta:
+        model = Colaborador
+        fields = [
+            'username', 'nome', 'sexo', 'email', 'email2', 'senha', 'senha2', 
+            'cpf', 'clinica', 'estado', 'cidade', 'telefone', 'cargo', 'endereco', 
+            'bairro', 'dt_nasc'
+        ]
 
     def clean_username(self):
         username = self.cleaned_data['username']
@@ -193,7 +221,7 @@ class ColaboradorForm(forms.ModelForm):
                 bairro=self.cleaned_data.get('bairro'),
                 cpf=self.cleaned_data.get('cpf'),
                 clinica=self.cleaned_data.get('clinica'),
-                dt_nasc=self.cleaned_data.get('dt_nasc')  
+                dt_nasc=self.cleaned_data.get('dt_nasc')
             )
 
             if commit:
@@ -207,6 +235,7 @@ class ColaboradorForm(forms.ModelForm):
             if user and user.pk:
                 user.delete()
             raise
+
 
 
 
