@@ -44,6 +44,7 @@ class Agendamento(models.Model):
     servico = models.ForeignKey(Servico, on_delete=models.CASCADE, related_name='agendamentos')
     plano = models.ForeignKey(Plano, on_delete=models.SET_NULL, null=True, blank=True, related_name='agendamentos')
     status = models.CharField(max_length=20, default='pendente')
+    status_pagamento = models.CharField(max_length=20, default='pendente')
 
     def __str__(self):
         return f'Agendamento {self.id} - {self.status}'
