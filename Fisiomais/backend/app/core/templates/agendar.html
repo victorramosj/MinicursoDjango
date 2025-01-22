@@ -61,12 +61,15 @@
                        
                         <!-- Data -->
                         <div class="row">
+                            
                             <!-- Data -->
-                            <div class="col-md-6 mb-3">
-                                <label for="data" class="form-label">Data</label>
-                                <input type="date" id="data" name="data" class="form-control" required min=""
-                                    onchange="verificarDataValida()">
-                            </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="data" class="form-label">Data</label>
+                            <input type="text" id="data" name="data" class="form-select" readonly required>
+                        </div>
+                        
+                        
+  
 
                             <!-- Hora -->
                             <div class="col-md-6 mb-3">
@@ -122,6 +125,10 @@
     </div>
 </div>
 
+  
+  
+  
+  
 <script>
     document.getElementById('agendar-button').addEventListener('click', async function (event) {
         event.preventDefault();  // Impede o envio padrão do formulário
@@ -178,7 +185,7 @@
 <script src="{% static 'js/fetch_planos.js' %}"></script>
 <script src="{% static 'js/fetch_clientes.js' %}"></script>
 <script src="{% static 'js/atualizar_colaboradores.js' %}"></script>
-
+<script src="{% static 'js/calendario_desabilitador.js' %}"></script>
 <script src="{% static 'js/inicializar.js' %}"></script>
 
 
