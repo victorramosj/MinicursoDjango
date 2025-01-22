@@ -2,7 +2,7 @@ from django.urls import path
 from . import views
 
 urlpatterns = [
-    path('agendar/', views.agendar, name='agendar'),  # Rota para agendar
+    path('agendamentos/agendar/', views.agendar, name='agendar'),  # Rota para agendar
     path('planos/<int:servico_id>/', views.get_planos, name='get_planos'),  # API para buscar planos de um serviço
     path('horarios/<int:colaborador_id>/', views.get_horarios, name='get_horarios'),  # API para buscar horários
     path('dias-permitidos/<int:colaborador_id>/', views.dias_permitidos, name='dias_permitidos'),
@@ -14,5 +14,5 @@ urlpatterns = [
     path('agendamentos/cancelar/<int:agendamento_id>/', views.cancelar_agendamento, name='cancelar_agendamento'),
     path('agendamentos/remarcar/<int:agendamento_id>/', views.remarcar_agendamento, name='remarcar_agendamento'),
     path('excluir_agendamento/<int:agendamento_id>/', views.excluir_agendamento, name='excluir_agendamento'),
-    path('editar_agendamento/<int:agendamento_id>/', views.excluir_agendamento, name='excluir_agendamento'),
+    path('agendamentos/editaragendamento/<int:agendamento_id>/', views.editar_agendamento, name='editar_agendamento'),  # Modificado
 ]

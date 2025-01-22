@@ -71,4 +71,55 @@ class AgendamentoForm(forms.Form):
             
         ]
 
+# forms.py
+from django import forms
+from .models import Agendamento, Cliente, Colaborador, Servico, Plano, Clinica
+
+class AgendamentoEditForm(forms.ModelForm):
+    class Meta:
+        model = Agendamento
+        fields = ['data', 'hora', 'cliente', 'colaborador', 'servico', 'plano', 'status', 'status_pagamento']
+        widgets = {
+            'status': forms.TextInput(attrs={'placeholder': 'Digite o status desejado'}),
+            'status_pagamento': forms.TextInput(attrs={'placeholder': 'Digite o status de pagamento'}),
+        }
+
+    def __init__(self, *args, **kwargs):
+        super(AgendamentoEditForm, self).__init__(*args, **kwargs)
+        
+        # Filtrar os clientes, serviços e planos
+        self.fields['cliente'].queryset = Cliente.objects.all()
+        self.fields['servico'].queryset = Servico.objects.all()
+        self.fields['plano'].queryset = Plano.objects.all()
+
+        # Inicializa o campo colaborador com base na clínica do cliente
+        if 'cliente' in self.data:
+            try:
+                cliente_id = int(self.data.get('cliente'))
+                cliente = Cliente.objects.get(id=cliente_id)
+                self.fields['colaborador'].queryset = Colaborador.objects.filter(clinica=cliente.clinica)
+            except (ValueError, Cliente.DoesNotExist):
+                pass
+        elif self.instance.pk:
+            self.fields['colaborador'].queryset = Colaborador.objects.filter(clinica=self.instance.cliente.clinica)
+
+    # Adicionando validação para garantir que a data e hora estejam em horários válidos
+    def clean(self):
+        cleaned_data = super().clean()
+        data = cleaned_data.get('data')
+        hora = cleaned_data.get('hora')
+
+        if data and hora:
+            data_hora = f"{data} {hora}"
+            try:
+                datetime_obj = datetime.strptime(data_hora, '%Y-%m-%d %H:%M')
+            except ValueError:
+                raise forms.ValidationError("Data ou Hora inválida.")
+        
+        return cleaned_data
+
+
+
+
+
 

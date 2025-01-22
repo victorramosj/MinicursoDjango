@@ -36,7 +36,7 @@
                     <li class="nav-item"><a class="nav-link" href="/especialidades">Especialidades</a></li>
                     <li class="nav-item"><a class="nav-link" href="/contato">Fale Conosco</a></li>
                     {% if user.is_authenticated %}
-                    <li class="nav-item"><a class="nav-link" href="/core/agendar">Agendar</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/core/agendamentos/agendar">Agendar</a></li>
 
 
                     {% if request.session.role == "admin" or request.session.role == "colaborador" %}
@@ -64,7 +64,7 @@
                         </a>
                         <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
                             <li><a class="dropdown-item" href="/usuarios/perfil/editar">Meu Perfil</a></li>
-                            <li><a class="dropdown-item" href="/core/agendar">Agendar Atendimento</a></li>
+                            <li><a class="dropdown-item" href="/core/agendamentos/agendar">Agendar Atendimento</a></li>
                             {% if request.session.role == "admin" %}
                             <li><a class="dropdown-item" href="/admin">Página Administrador</a></li>
                             {% elif request.session.role == "colaborador" %}

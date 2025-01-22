@@ -1,0 +1,133 @@
+{% extends 'base.html' %}
+{% load widget_tweaks %}
+{% block content %}
+    <div class="container py-5 background-gif">
+        <div class="row align-items-center agendamentoback">
+
+            <!-- Form Section -->
+            <div class="col-md-6">
+
+                <div class="card shadow-lg border-0">
+                    <div class="card-header text-center rounded-top">
+                        <h3 class="fw-bold text-primary">Editar Agendamento</h3>
+                    </div>
+                    <div class="card-body p-4">
+                        <form id="agendamento-form" method="post">
+                            {% csrf_token %}
+                            <!-- Campos populados pelo Django -->
+                    
+                            <!-- Clínica -->
+                            <div class="mb-3">
+                                <label for="clinica" class="form-label">Clínica</label>
+                                {{ form.clinica|add_class:"form-select" }}
+                            </div>
+                    
+                            <!-- Serviço -->
+                            <div class="mb-3">
+                                <label for="servico" class="form-label">Serviço</label>
+                                {{ form.servico|add_class:"form-select" }}
+                            </div>
+                    
+                            <!-- Valor do Serviço (apenas para Fisioterapia) -->
+                            <div class="mb-3" id="valor-div" style="display: none;">
+                                <label for="valor" class="form-label">Valor do Serviço</label>
+                                {{ form.valor|add_class:"form-control" }}
+                            </div>
+                    
+                            <!-- Plano (apenas para Pilates) -->
+                            <div class="mb-3" id="planos-div" style="display: none;">
+                                <label for="planos" class="form-label">Plano</label>
+                                {{ form.plano|add_class:"form-select" }}
+                            </div>
+                    
+                            <!-- Colaborador -->
+                            <div class="mb-3">
+                                <label for="colaborador" class="form-label">Colaborador</label>
+                                {{ form.colaborador|add_class:"form-select" }}
+                            </div>
+                    
+                            <!-- Data e Hora -->
+                            <div class="row">
+                                <!-- Data -->
+                                <div class="col-md-6 mb-3">
+                                    <label for="data" class="form-label">Data</label>
+                                    {{ form.data_e_hora|add_class:"form-control" }}
+                                </div>
+                    
+                                <!-- Hora -->
+                                <div class="col-md-6 mb-3">
+                                    <label for="hora" class="form-label">Hora</label>
+                                    {{ form.data_e_hora|add_class:"form-select" }}
+                                </div>
+                            </div>
+                    
+                            <!-- Status -->
+                            <div class="mb-3">
+                                <label for="status" class="form-label">Status</label>
+                                {{ form.status|add_class:"form-control" }}
+                            </div>
+                    
+                            <!-- Status de Pagamento -->
+                            <div class="mb-3">
+                                <label for="status_pagamento" class="form-label">Status de Pagamento</label>
+                                {{ form.status_pagamento|add_class:"form-control" }}
+                            </div>
+                    
+                            <!-- Botão de envio -->
+                            <div class="mb-3 text-center">
+                                <button type="submit" class="btn btn-primary w-100">Atualizar Agendamento</button>
+                            </div>
+                        </form>
+                    </div>
+                    
+                </div>
+            </div>
+
+            <!-- Image Section -->
+            <div class="col-md-6">
+                <div class="row justify-content-start">
+                    <div class="col-md-1 d-flex flex-column flex-md-column flex-sm-row">
+                        <!-- Logo Images -->
+                        <img src="/static/img/logo2.png" alt="Logo 3"
+                            class="animate-subir-descer3 me-2 img-fluid max-size imagens-container">
+                        <img src="/static/img/logo3.png" alt="Logo 3"
+                            class="animate-subir-descer4 me-2 img-fluid max-size imagens-container">
+                        <img src="/static/img/logo1.png" alt="Logo 3"
+                            class="animate-subir-descer2 me-2 img-fluid max-size imagens-container">
+                    </div>
+
+                    <div class="col-md-11 justify-content-start text-align">
+                        <img src="/static/img/smart.gif" alt="Smart" class="img-fluid">
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <hr>
+
+        <!-- Detalhes do Agendamento -->
+        <div class="row">
+            <div class="col-md-6">
+                <div class="card shadow-sm">
+                    <div class="card-header bg-light">
+                        <h5 class="fw-bold">Detalhes do Agendamento</h5>
+                    </div>
+                    <div class="card-body">
+                        <ul class="list-unstyled">
+                            <li><strong>Cliente:</strong> {{ agendamento.cliente }}</li>
+                            <li><strong>Colaborador:</strong> {{ agendamento.colaborador }}</li>
+                            <li><strong>Serviço:</strong> {{ agendamento.servico }}</li>
+                            <li><strong>Plano:</strong> {{ agendamento.plano }}</li>
+                            <li><strong>Data e Hora:</strong> {{ agendamento.data_e_hora }}</li>
+                            <li><strong>Status:</strong> {{ agendamento.status }}</li>
+                            <li><strong>Status de Pagamento:</strong> {{ agendamento.status_pagamento }}</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}
+

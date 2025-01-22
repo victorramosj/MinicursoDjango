@@ -10,7 +10,7 @@ from django.http import JsonResponse
 from django.core.paginator import Paginator
 from django.shortcuts import get_object_or_404
 from django.contrib import messages  # Para exibir mensagens no redirecionamento
-
+from .forms import AgendamentoEditForm
 
 
 # Configuração do logger
@@ -346,3 +346,22 @@ def excluir_agendamento(request, agendamento_id):
     # Redirecionar para a página de visualização de agendamentos
     return redirect('visualizar_agendamentos')
 
+@login_required
+def editar_agendamento(request, agendamento_id):
+    agendamento = get_object_or_404(Agendamento, id=agendamento_id)
+    
+    # Quando o formulário for enviado
+    if request.method == 'POST':
+        form = AgendamentoEditForm(request.POST, instance=agendamento)
+        if form.is_valid():
+            form.save()  # Salva as alterações no agendamento
+            messages.success(request, 'Agendamento atualizado com sucesso!')
+            return redirect('visualizar_agendamentos')  # Redireciona para a página de visualização de agendamentos
+        else:
+            messages.error(request, 'Erro ao atualizar o agendamento. Verifique os dados e tente novamente.')
+    
+    # Se a requisição for GET, exibe o formulário com os dados do agendamento
+    else:
+        form = AgendamentoEditForm(instance=agendamento)
+
+    return render(request, 'agendamentos/editar_agendamento.html', {'form': form, 'agendamento': agendamento})
