@@ -209,43 +209,54 @@ from django.shortcuts import render, redirect
 from django.contrib import messages
 from .forms import EditarColaboradorForm, EditarClienteForm
 
+from django.contrib.auth import update_session_auth_hash
+from django.contrib.auth.decorators import login_required
+from django.contrib import messages
+from django.shortcuts import render, redirect
+
+@login_required
 def editar_perfil(request):
     user = request.user
     perfil = None
 
+    # Determina se o perfil é de um colaborador ou cliente
     try:
         perfil = user.colaborador  # ou user.cliente dependendo do caso
-    except Exception as e:
+    except Exception:
         perfil = user.cliente
 
     estado_atual = perfil.estado if perfil else None
     cidade_atual = perfil.cidade if perfil else None
 
-
     if request.method == 'POST':
+        # Verifica o tipo de perfil e inicializa o formulário correspondente
         if isinstance(perfil, Colaborador):
-            form = EditarColaboradorForm(request.POST, request.FILES, instance=perfil)
+            form = EditarColaboradorForm(request.POST, request.FILES, instance=perfil, user_instance=user)
         else:
-            form = EditarClienteForm(request.POST, request.FILES, instance=perfil)
+            form = EditarClienteForm(request.POST, request.FILES, instance=perfil, user_instance=user)
 
         if form.is_valid():
             form.save()
+
+            # Atualiza a sessão se a senha foi alterada
+            if 'senha' in form.cleaned_data and form.cleaned_data['senha']:
+                update_session_auth_hash(request, user)
+
             messages.success(request, "Perfil atualizado com sucesso!")
             return redirect('editar_perfil')
         else:
-            messages.error(request, "Erro ao atualizar perfil. Por favor, tente novamente.")
+            messages.error(request, "Erro ao atualizar perfil. Por favor, corrija os erros abaixo.")
     else:
+        # Inicializa os formulários em caso de requisição GET
         if isinstance(perfil, Colaborador):
-            form = EditarColaboradorForm(instance=perfil)
+            form = EditarColaboradorForm(instance=perfil, user_instance=user)
         else:
-            form = EditarClienteForm(instance=perfil)
+            form = EditarClienteForm(instance=perfil, user_instance=user)
 
     return render(request, 'editar_perfil.html', {
         'form': form,
         'estado_atual': estado_atual,
-        'cidade_atual': cidade_atual
+        'cidade_atual': cidade_atual,
     })
-
-
 
 

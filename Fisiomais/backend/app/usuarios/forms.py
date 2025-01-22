@@ -241,62 +241,137 @@ class ColaboradorForm(forms.ModelForm):
 
 
 from django import forms
-from django.core.exceptions import ValidationError
 from django.contrib.auth.models import User
-from .models import Colaborador, Cliente
+from django.core.exceptions import ValidationError
+from .models import Cliente, Colaborador
+
 
 class EditarColaboradorForm(forms.ModelForm):
+    username = forms.CharField(label="Nome de usuário", max_length=150, required=True)
+    email = forms.EmailField(label="E-mail", required=True)
+    senha_atual = forms.CharField(label="Senha atual", widget=forms.PasswordInput, required=False)
+    senha = forms.CharField(label="Nova senha", widget=forms.PasswordInput, required=False)
+    confirmar_senha = forms.CharField(label="Confirmar nova senha", widget=forms.PasswordInput, required=False)
+
     class Meta:
         model = Colaborador
-        fields = ['nome', 'sexo', 'dt_nasc', 'telefone', 'cargo', 'endereco', 'cpf', 'estado', 'cidade', 'bairro', 'photo', 'clinica']
+        fields = [
+            'nome', 'sexo', 'dt_nasc', 'telefone', 'cargo', 'endereco', 'cpf', 'estado', 
+            'cidade', 'bairro', 'photo', 'clinica', 'username', 'email', 'senha', 'confirmar_senha'
+        ]
 
-    widgets = {
-        'photo': forms.ClearableFileInput(attrs={'class': 'd-none', 'id': 'id_photo'})  # Ocultando o campo de file input
-    }
+    def __init__(self, *args, **kwargs):
+        user_instance = kwargs.pop('user_instance', None)
+        super().__init__(*args, **kwargs)
+        if user_instance:
+            self.fields['username'].initial = user_instance.username
+            self.fields['email'].initial = user_instance.email
 
-    def clean_telefone(self):
-        telefone = self.cleaned_data['telefone']
-        if Colaborador.objects.filter(telefone=telefone).exclude(id=self.instance.id).exists():
-            raise ValidationError("Este número de telefone já está cadastrado para outro colaborador.")
-        return telefone
-
-    def clean_cpf(self):
-        cpf = self.cleaned_data['cpf']
-        if Colaborador.objects.filter(cpf=cpf).exclude(id=self.instance.id).exists():
-            raise ValidationError("Este CPF já está cadastrado para outro colaborador.")
-        return cpf
-
-    def clean_user(self):
-        user = self.cleaned_data['user']
-        if User.objects.filter(username=user.username).exclude(id=self.instance.user.id).exists():
+    def clean_username(self):
+        username = self.cleaned_data['username']
+        if User.objects.filter(username=username).exclude(id=self.instance.user.id).exists():
             raise ValidationError("Este nome de usuário já está em uso.")
-        return user
-    
+        return username
+
+    def clean_email(self):
+        email = self.cleaned_data['email']
+        if User.objects.filter(email=email).exclude(id=self.instance.user.id).exists():
+            raise ValidationError("Este e-mail já está em uso.")
+        return email
+
+    def clean(self):
+        cleaned_data = super().clean()
+        senha_atual = cleaned_data.get('senha_atual')
+        senha = cleaned_data.get('senha')
+        confirmar_senha = cleaned_data.get('confirmar_senha')
+
+        # Valida a senha atual se uma nova senha for fornecida
+        if senha:
+            if not senha_atual:
+                raise ValidationError("A senha atual é necessária para alterar a senha.")
+            if not self.user_instance.check_password(senha_atual):
+                raise ValidationError("A senha atual está incorreta.")
+            if senha != confirmar_senha:
+                raise ValidationError("As senhas não coincidem.")
+        return cleaned_data
+
+    def save(self, commit=True):
+        instance = super().save(commit=False)
+        user = instance.user
+        user.username = self.cleaned_data['username']
+        user.email = self.cleaned_data['email']
+
+        senha = self.cleaned_data.get('senha')
+        if senha:
+            user.set_password(senha)
+
+        if commit:
+            user.save()
+            instance.save()
+        return instance
 
 
 class EditarClienteForm(forms.ModelForm):
+    username = forms.CharField(label="Nome de usuário", max_length=150, required=True)
+    email = forms.EmailField(label="E-mail", required=True)
+    senha_atual = forms.CharField(label="Senha atual", widget=forms.PasswordInput, required=False)
+    senha = forms.CharField(label="Nova senha", widget=forms.PasswordInput, required=False)
+    confirmar_senha = forms.CharField(label="Confirmar nova senha", widget=forms.PasswordInput, required=False)
+
+
     class Meta:
         model = Cliente
-        fields = ['nome', 'sexo', 'dt_nasc', 'telefone', 'endereco', 'cpf', 'estado', 'cidade', 'bairro', 'photo', 'clinica']
+        fields = [
+            'nome', 'sexo', 'dt_nasc', 'telefone', 'endereco', 'cpf', 'estado', 'cidade', 
+            'bairro', 'photo', 'clinica', 'username', 'email', 'senha', 'confirmar_senha'
+        ]
 
-    widgets = {
-            'photo': forms.FileInput(attrs={'id': 'id_photo'}), # Apenas FileInput
-        }
+    def __init__(self, *args, **kwargs):
+        user_instance = kwargs.pop('user_instance', None)
+        super().__init__(*args, **kwargs)
+        if user_instance:
+            self.fields['username'].initial = user_instance.username
+            self.fields['email'].initial = user_instance.email
 
-    def clean_telefone(self):
-        telefone = self.cleaned_data['telefone']
-        if Cliente.objects.filter(telefone=telefone).exclude(id=self.instance.id).exists():
-            raise ValidationError("Este número de telefone já está cadastrado para outro cliente.")
-        return telefone
-
-    def clean_cpf(self):
-        cpf = self.cleaned_data['cpf']
-        if Cliente.objects.filter(cpf=cpf).exclude(id=self.instance.id).exists():
-            raise ValidationError("Este CPF já está cadastrado para outro cliente.")
-        return cpf
-
-    def clean_user(self):
-        user = self.cleaned_data['user']
-        if User.objects.filter(username=user.username).exclude(id=self.instance.user.id).exists():
+    def clean_username(self):
+        username = self.cleaned_data['username']
+        if User.objects.filter(username=username).exclude(id=self.instance.user.id).exists():
             raise ValidationError("Este nome de usuário já está em uso.")
-        return user
+        return username
+
+    def clean_email(self):
+        email = self.cleaned_data['email']
+        if User.objects.filter(email=email).exclude(id=self.instance.user.id).exists():
+            raise ValidationError("Este e-mail já está em uso.")
+        return email
+
+    def clean(self):
+        cleaned_data = super().clean()
+        senha_atual = cleaned_data.get('senha_atual')
+        senha = cleaned_data.get('senha')
+        confirmar_senha = cleaned_data.get('confirmar_senha')
+
+        # Valida a senha atual se uma nova senha for fornecida
+        if senha:
+            if not senha_atual:
+                raise ValidationError("A senha atual é necessária para alterar a senha.")
+            if not self.user_instance.check_password(senha_atual):
+                raise ValidationError("A senha atual está incorreta.")
+            if senha != confirmar_senha:
+                raise ValidationError("As senhas não coincidem.")
+        return cleaned_data
+
+    def save(self, commit=True):
+        instance = super().save(commit=False)
+        user = instance.user
+        user.username = self.cleaned_data['username']
+        user.email = self.cleaned_data['email']
+
+        senha = self.cleaned_data.get('senha')
+        if senha:
+            user.set_password(senha)
+
+        if commit:
+            user.save()
+            instance.save()
+        return instance

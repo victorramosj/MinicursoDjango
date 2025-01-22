@@ -31,7 +31,7 @@
                                  alt="Foto do perfil" class="rounded-circle border" 
                                  style="width: 250px; height: 225px; object-fit: cover;">
                         {% else %}
-                            <i class="bi bi-person-circle" id="profile-image" 
+                            <i class="bi bi-person-circle text-secondary" id="profile-image" 
                                style="font-size: 9rem; width: 250px; height: 225px; 
                                       display: flex; align-items: center; justify-content: center; 
                                       border-radius: 50%; border: 1px solid #ddd;">
@@ -42,7 +42,7 @@
                 
                     <!-- Ocultar o campo de input de arquivo -->
                     <div class="mt-3">
-                        <label for="id_photo" class="btn btn-secondary">
+                        <label for="id_photo" class="btn btn-login">
                             Alterar Foto
                         </label>
                         <input type="file" name="photo" id="id_photo" class="form-control d-none"
@@ -65,11 +65,33 @@
                             <label for="id_telefone" class="form-label text-secondary">Telefone*</label>
                             {{ form.telefone|add_class:"form-control" }}
                         </div>
+                        <div class="row mb-3">
+                            <div class="col-md-4">
+                                <label for="id_email" class="form-label text-secondary">Email*</label>
+                                {{ form.email|add_class:"form-control" }}
+                            </div>
+                            <div class="col-md-4">
+                                <label for="id_username" class="form-label text-secondary">Nome de Usuário*</label>
+                                {{ form.username|add_class:"form-control" }}
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-md-4">
+                                <label for="id_senha" class="form-label text-secondary">Senha*</label>
+                                {{ form.senha|add_class:"form-control" }}
+                            </div>
+                            <div class="col-md-4">
+                                <label for="id_confirmar_senha" class="form-label text-secondary">Confirmar Senha*</label>
+                                {{ form.confirmar_senha|add_class:"form-control" }}
+                            </div>
+                        </div>
+                       
+                        
                     </div>
 
                     <div class="row mb-3">
                         {% if request.session.role != "cliente" %}
-                        <div class="col-md-4">
+                        <div class="{% if request.session.role == 'cliente' %}col-md-6{% else %}col-md-4{% endif %}">
                             <label for="id_cargo" class="form-label text-secondary">Cargo*</label>
                             {{ form.cargo|add_class:"form-control" }}
                         </div>
@@ -78,23 +100,24 @@
                             <label for="id_cpf" class="form-label text-secondary">CPF*</label>
                             {{ form.cpf|add_class:"form-control" }}
                         </div>
-                    </div>
-
-                    <div class="row mb-3">
-                        <div class="col-md-6">
-                            <label for="id_endereco" class="form-label text-secondary">Lougradouro*</label>
-                            {{ form.endereco|add_class:"form-control" }}
-                        </div>
-                        <div class="col-md-3">
-                            <label for="id_bairro" class="form-label text-secondary">Bairro*</label>
-                            {{ form.bairro|add_class:"form-control" }}
-                        </div>
                         {% if request.session.role != "cliente" %}
-                        <div class="col-md-3">
+                        <div class="{% if request.session.role == 'cliente' %}col-md-6{% else %}col-md-4{% endif %}">
                             <label for="id_clinica" class="form-label text-secondary">Clínica*</label>
                             {{ form.clinica|add_class:"form-control" }}
                         </div>
                         {% endif %}
+                    </div>
+
+                    <div class="row mb-4">
+                        <div class="col-md-5">
+                            <label for="id_endereco" class="form-label text-secondary">Lougradouro*</label>
+                            {{ form.endereco|add_class:"form-control" }}
+                        </div>
+                        <div class="col-md-2">
+                            <label for="id_bairro" class="form-label text-secondary">Bairro*</label>
+                            {{ form.bairro|add_class:"form-control" }}
+                        </div>
+                        
                         <div class="col-md-2">
                             <label for="id_estado" class="form-label text-secondary">Estado:</label>
                             <select id="id_estado" class="form-control" name="estado">
@@ -104,7 +127,7 @@
                                 {% endfor %}
                             </select>
                         </div>
-                        <div class="col-md-2">
+                        <div class="col-md-3">
                             <label for="id_cidade" class="form-label text-secondary">Cidade:</label>
                             <select id="id_cidade" class="form-control" name="cidade">
                                 <option value="">Selecione uma Cidade</option>
