@@ -205,10 +205,9 @@ def get_clientes(request):
     return JsonResponse({'clientes': clientes_data})
 
 
-from django.shortcuts import render, redirect
-from django.contrib import messages
-from .forms import EditarColaboradorForm, EditarClienteForm
 
+
+from .forms import EditarColaboradorForm, EditarClienteForm
 from django.contrib.auth import update_session_auth_hash
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages

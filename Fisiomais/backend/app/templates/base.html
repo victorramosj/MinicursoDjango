@@ -37,8 +37,6 @@
                     <li class="nav-item"><a class="nav-link" href="/contato">Fale Conosco</a></li>
                     {% if user.is_authenticated %}
                     <li class="nav-item"><a class="nav-link" href="/core/agendamentos/agendar">Agendar</a></li>
-
-
                     {% if request.session.role == "admin" or request.session.role == "colaborador" %}
                     <li class="nav-item"><a class="nav-link" href="/admin">Central de Controle</a></li>
                     {% endif %}
@@ -114,7 +112,7 @@
                         {% if form.non_field_errors %}
                         <div class="alert alert-danger text-center py-1" role="alert">
                             {% for error in form.non_field_errors %}
-                            <p>{{ error }}</p>
+                            {{ error }}
                             {% endfor %}
                         </div>
                         {% endif %}

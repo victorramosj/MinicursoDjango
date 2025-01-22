@@ -3,7 +3,7 @@ from .models import Agendamento, Plano
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 import logging
-from .models import Agendamento, Cliente, Colaborador, Servico
+from .models import Agendamento, Cliente, Colaborador, Servico, Clinica
 from django.utils import timezone
 from datetime import datetime
 from django.http import JsonResponse
@@ -22,7 +22,7 @@ def agendar(request):
         print("Recebido POST request com dados:", request.POST)
 
         try:
-            # Extrair os dados diretamente do request.POST
+            # Extrair os dados diretamente do request.POST            
             cliente_id = request.POST.get('cliente')
             colaborador_id = request.POST.get('colaborador')
             servico_id = request.POST.get('servico')
@@ -32,7 +32,8 @@ def agendar(request):
 
             # Imprimir os dados recebidos
             print(f"cliente_id: {cliente_id}, colaborador_id: {colaborador_id}, servico_id: {servico_id}, plano_id: {plano_id}, data: {data}, hora: {hora}")
-
+            
+            plano = None if not plano_id else Plano.objects.get(id=plano_id)
             # Verificar se data ou hora são inválidas
             if not data or not hora:
                 return JsonResponse({'error': 'Data ou hora não fornecida'}, status=400)
@@ -70,11 +71,11 @@ def agendar(request):
             except Servico.DoesNotExist:
                 print("Serviço não encontrado:", servico_id)
                 return JsonResponse({'error': 'Serviço não encontrado'}, status=404)
-
-            plano = None if not plano_id else Plano.objects.get(id=plano_id)
+            
+                    
 
             # Criar o agendamento
-            agendamento = Agendamento.objects.create(
+            agendamento = Agendamento.objects.create(                
                 cliente=cliente,
                 colaborador=colaborador,
                 servico=servico,
@@ -174,7 +175,7 @@ from django.utils import timezone
 from datetime import datetime, timedelta
 from django.http import JsonResponse
 from django.utils.timezone import make_aware, localtime, now
-from core.models import Horario, Agendamento  # Ajuste o import conforme necessário
+from core.models import Horario, Agendamento 
 
 # Função para obter os horários disponíveis para o colaborador
 def obter_horarios_disponiveis(colaborador_id, data_obj):
@@ -257,11 +258,26 @@ def horarios_disponiveis(request, colaborador_id):
         return JsonResponse({"message": f"Erro ao buscar horários disponíveis: {str(e)}"}, status=500)
 
 def visualizar_agendamentos(request):
+    user = request.user  # Usuário logado
     agendamentos = Agendamento.objects.select_related(
         'cliente', 'colaborador', 'servico', 'plano', 'colaborador__clinica'
-    ).all()
-
-    # Filtragem por campos
+    )
+    
+    # Filtra os agendamentos com base no papel do usuário
+    if hasattr(user, 'colaborador') and user.colaborador.is_admin:
+        # Usuário administrador, exibe todos os agendamentos
+        agendamentos = agendamentos.all()
+    elif hasattr(user, 'colaborador'):
+        # Usuário colaborador, exibe apenas os agendamentos atribuídos ao colaborador
+        agendamentos = agendamentos.filter(colaborador=user.colaborador)
+    elif hasattr(user, 'cliente'):
+        # Usuário cliente, exibe apenas os agendamentos do cliente
+        agendamentos = agendamentos.filter(cliente=user.cliente)
+    else:
+        # Caso o usuário não tenha um papel reconhecido
+        from django.http import HttpResponseForbidden
+        return HttpResponseForbidden("Você não tem permissão para acessar esta página.")
+     # Filtragem por campos
     pesquisa_tipo = request.GET.get('pesquisa_tipo', 'agendamento')
     pesquisa_valor = request.GET.get('pesquisa_valor', '')
 
@@ -318,9 +334,27 @@ def cancelar_agendamento(request, agendamento_id):
 
 def remarcar_agendamento(request, agendamento_id):
     agendamento = get_object_or_404(Agendamento, id=agendamento_id)
-    agendamento.status = 'Remarcado'    
-    agendamento.save()
-    return redirect('agendar')
+
+    # Verifica o papel (role) do usuário
+    role = request.session.get('role', 'desconhecido')
+
+    if role in ['colaborador', 'admin']:
+        # Apenas colaboradores e admins podem remarcar diretamente
+        agendamento.status = 'Remarcado'
+        agendamento.save()
+        return redirect('editar_agendamento', agendamento_id)
+    elif role == 'cliente':
+        # Para clientes, solicita reagendamento e redireciona para os detalhes
+        agendamento.status = 'Reagendamento Solicitado'
+        agendamento.save()
+        return redirect('detalhes_agendamento', agendamento_id)
+    else:
+        # Caso o usuário não tenha um papel reconhecido
+        from django.http import HttpResponseForbidden
+
+        # Retorna uma resposta 403 Forbidden com uma mensagem de erro
+        return HttpResponseForbidden("Você não tem permissão para acessar esta funcionalidade.")
+
 
 @login_required
 def excluir_agendamento(request, agendamento_id):

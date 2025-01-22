@@ -150,13 +150,9 @@
   margin-right: 7px;
 }
 
-.nav-item.dropdown { position: relative; }
+.nav-item.dropdown { position: relative; margin-right: 50px; }
 
-navbar-nav.ms-auto { 
-  margin-right: 10px;
-  
-  /* Ajuste para evitar rolagem horizontal */
-}
+
 
 
 

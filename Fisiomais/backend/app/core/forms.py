@@ -71,18 +71,35 @@ class AgendamentoForm(forms.Form):
             
         ]
 
-# forms.py
+
 from django import forms
-from .models import Agendamento, Cliente, Colaborador, Servico, Plano, Clinica
+from .models import Agendamento, Cliente, Colaborador, Servico, Plano
+from datetime import datetime
 
 class AgendamentoEditForm(forms.ModelForm):
     class Meta:
         model = Agendamento
-        fields = ['data', 'hora', 'cliente', 'colaborador', 'servico', 'plano', 'status', 'status_pagamento']
+        fields = ['data_e_hora', 'cliente', 'colaborador', 'servico', 'plano', 'status', 'status_pagamento']
         widgets = {
-            'status': forms.TextInput(attrs={'placeholder': 'Digite o status desejado'}),
-            'status_pagamento': forms.TextInput(attrs={'placeholder': 'Digite o status de pagamento'}),
-        }
+            'data_e_hora': forms.DateTimeInput(attrs={
+            'class': 'form-control',
+            'type': 'datetime-local',
+            'placeholder': 'Selecione a data e hora'
+        }),
+        'status': forms.Select(attrs={'class': 'form-control'}, choices=[
+            ('', 'Selecione o status'),
+            ('pendente', 'Pendente'),
+            ('confirmado', 'Confirmado'),
+            ('finalizado', 'Finalizado'),
+            ('remarcado', 'Remarcado'),
+        ]),
+        'status_pagamento': forms.Select(attrs={'class': 'form-control'}, choices=[
+            ('', 'Selecione o status de pagamento'),
+            ('pendente', 'Pendente'),
+            ('pago', 'Pago'),
+        ]),
+}
+
 
     def __init__(self, *args, **kwargs):
         super(AgendamentoEditForm, self).__init__(*args, **kwargs)
@@ -103,20 +120,17 @@ class AgendamentoEditForm(forms.ModelForm):
         elif self.instance.pk:
             self.fields['colaborador'].queryset = Colaborador.objects.filter(clinica=self.instance.cliente.clinica)
 
-    # Adicionando validação para garantir que a data e hora estejam em horários válidos
+    # Validação de data e hora
     def clean(self):
         cleaned_data = super().clean()
-        data = cleaned_data.get('data')
-        hora = cleaned_data.get('hora')
+        data_e_hora = cleaned_data.get('data_e_hora')
 
-        if data and hora:
-            data_hora = f"{data} {hora}"
-            try:
-                datetime_obj = datetime.strptime(data_hora, '%Y-%m-%d %H:%M')
-            except ValueError:
-                raise forms.ValidationError("Data ou Hora inválida.")
+        if data_e_hora:
+            if data_e_hora < datetime.now():
+                raise forms.ValidationError("A data e hora não podem estar no passado.")
         
         return cleaned_data
+
 
 
 
