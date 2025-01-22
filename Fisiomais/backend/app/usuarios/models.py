@@ -64,7 +64,7 @@ class Colaborador(models.Model):
     )
 
     def __str__(self):
-        return f"{self.user.username} - {self.cargo}"
+        return f"{self.nome} - {self.cargo}"
 
     @property
     def is_admin(self):
@@ -106,7 +106,7 @@ class Cliente(models.Model):
     )
 
     def __str__(self):
-        return f"{self.user.username} - Cliente"
+        return self.nome
     @property
     def role(self):
         """Retorna o role do usuário (cliente)."""

@@ -15,12 +15,8 @@
                         <option value="cliente" {% if pesquisa_tipo == 'cliente' %}selected{% endif %}>Cliente</option>
                         <option value="colaborador" {% if pesquisa_tipo == 'colaborador' %}selected{% endif %}>Colaborador</option>
                         <option value="clinica" {% if pesquisa_tipo == 'clinica' %}selected{% endif %}>Clínica</option>
-                    </select>
-                    
-
+                    </select>                    
                 </div>
-
-
                 <div class="col-md-6">
                     <input type="text" class="form-control py-1" name="pesquisa_valor" value="{{ pesquisa_valor }}"
                         placeholder="Pesquisar...">
@@ -103,6 +99,7 @@
                         </div>
                     </div>
                 </div>
+            </div>
 
                 <script>
                     var excluirLinks = document.querySelectorAll('[data-bs-toggle="modal"]');

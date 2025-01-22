@@ -327,11 +327,12 @@ class EditarClienteForm(forms.ModelForm):
         ]
 
     def __init__(self, *args, **kwargs):
-        user_instance = kwargs.pop('user_instance', None)
+        self.user_instance = kwargs.pop('user_instance', None)  # Salva o valor em um atributo
         super().__init__(*args, **kwargs)
-        if user_instance:
-            self.fields['username'].initial = user_instance.username
-            self.fields['email'].initial = user_instance.email
+        if self.user_instance:
+            self.fields['username'].initial = self.user_instance.username
+            self.fields['email'].initial = self.user_instance.email
+
 
     def clean_username(self):
         username = self.cleaned_data['username']
@@ -355,11 +356,12 @@ class EditarClienteForm(forms.ModelForm):
         if senha:
             if not senha_atual:
                 raise ValidationError("A senha atual é necessária para alterar a senha.")
-            if not self.user_instance.check_password(senha_atual):
+            if not self.user_instance.check_password(senha_atual):  # Agora funciona corretamente
                 raise ValidationError("A senha atual está incorreta.")
             if senha != confirmar_senha:
                 raise ValidationError("As senhas não coincidem.")
         return cleaned_data
+
 
     def save(self, commit=True):
         instance = super().save(commit=False)

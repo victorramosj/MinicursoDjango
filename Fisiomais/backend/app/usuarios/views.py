@@ -244,7 +244,7 @@ def editar_perfil(request):
             messages.success(request, "Perfil atualizado com sucesso!")
             return redirect('editar_perfil')
         else:
-            messages.error(request, "Erro ao atualizar perfil. Por favor, corrija os erros abaixo.")
+            messages.error(request, "Erro ao atualizar perfil.")
     else:
         # Inicializa os formulários em caso de requisição GET
         if isinstance(perfil, Colaborador):

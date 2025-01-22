@@ -48,7 +48,12 @@
                
                 <a href="{% url 'confirmar_agendamento' agendamento.id %}" class="btn btn-success btn-sm mx-2">Confirmar</a>
                 <a href="{% url 'cancelar_agendamento' agendamento.id %}" class="btn btn-danger btn-sm mx-2">Cancelar</a>
-                <a href="{% url 'remarcar_agendamento' agendamento.id %}" class="btn btn-warning btn-sm mx-2">Remarcar</a>
+                {% if request.session.role == 'cliente' %}
+                <a href="{% url 'remarcar_agendamento' agendamento.id %}" class="btn btn-warning btn-sm mx-2">Solicitar Reagendamento</a>
+            {% else %}
+                <a href="{% url 'remarcar_agendamento' agendamento.id %}" class="btn btn-warning btn-sm mx-2">Atualizar Agendamento</a>
+            {% endif %}
+            
                 <a href="{% url 'visualizar_agendamentos'%}" class="btn btn-secondary btn-sm mx-2">Voltar</a>
                 
             </div>

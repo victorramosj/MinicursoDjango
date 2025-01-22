@@ -59,6 +59,13 @@ def agendar(request):
             except Cliente.DoesNotExist:
                 print("Cliente não encontrado:", cliente_id)
                 return JsonResponse({'error': 'Cliente não encontrado'}, status=404)
+            
+              # Verificar se o cliente já tem uma clínica associada
+            if cliente.clinica is None:
+                # Se não tiver clínica, associar a clínica do colaborador
+                cliente.clinica = colaborador.clinica
+                cliente.save()  # Salvar a clínica no cliente
+                print(f"Clinica {colaborador.clinica.nome} associada ao cliente {cliente.nome}")
 
             try:
                 colaborador = Colaborador.objects.get(id=colaborador_id)
@@ -265,22 +272,20 @@ def visualizar_agendamentos(request):
     
     # Filtra os agendamentos com base no papel do usuário
     if hasattr(user, 'colaborador') and user.colaborador.is_admin:
-        # Usuário administrador, exibe todos os agendamentos
         agendamentos = agendamentos.all()
     elif hasattr(user, 'colaborador'):
-        # Usuário colaborador, exibe apenas os agendamentos atribuídos ao colaborador
         agendamentos = agendamentos.filter(colaborador=user.colaborador)
     elif hasattr(user, 'cliente'):
-        # Usuário cliente, exibe apenas os agendamentos do cliente
         agendamentos = agendamentos.filter(cliente=user.cliente)
     else:
-        # Caso o usuário não tenha um papel reconhecido
         from django.http import HttpResponseForbidden
         return HttpResponseForbidden("Você não tem permissão para acessar esta página.")
-     # Filtragem por campos
+    
+    # Filtragem por campos
     pesquisa_tipo = request.GET.get('pesquisa_tipo', 'agendamento')
     pesquisa_valor = request.GET.get('pesquisa_valor', '')
 
+    # Se pesquisa_valor for fornecido, filtra por ID do agendamento
     if pesquisa_tipo == 'agendamento' and pesquisa_valor.isdigit():
         agendamentos = agendamentos.filter(id=pesquisa_valor)
     elif pesquisa_tipo == 'cliente':
@@ -309,6 +314,7 @@ def visualizar_agendamentos(request):
         'sort_key': sort_key,
         'direction': direction,
     })
+
 
 
 def detalhes_agendamento(request, agendamento_id):
@@ -380,22 +386,50 @@ def excluir_agendamento(request, agendamento_id):
     # Redirecionar para a página de visualização de agendamentos
     return redirect('visualizar_agendamentos')
 
+from django.contrib import messages
+from django.shortcuts import render, get_object_or_404, redirect
+from .forms import AgendamentoEditForm
+from .models import Agendamento
+from django.urls import reverse
+from django.http import HttpResponseRedirect
+
+from django.utils.timezone import localtime
+from datetime import datetime
+
 @login_required
 def editar_agendamento(request, agendamento_id):
     agendamento = get_object_or_404(Agendamento, id=agendamento_id)
     
+    print(f"DEBUG: Acessando edição do agendamento com ID {agendamento_id}")  # Debug inicial
+    print(f"DEBUG: Dados do agendamento: {agendamento}")  # Imprimir a instância do agendamento
+
     # Quando o formulário for enviado
     if request.method == 'POST':
+        print(f"DEBUG: Dados POST recebidos: {request.POST}")  # Imprime os dados enviados no formulário
         form = AgendamentoEditForm(request.POST, instance=agendamento)
+        
         if form.is_valid():
+            print(f"DEBUG: Formulário válido. Salvando o agendamento...")  # Debug após validação
             form.save()  # Salva as alterações no agendamento
             messages.success(request, 'Agendamento atualizado com sucesso!')
-            return redirect('visualizar_agendamentos')  # Redireciona para a página de visualização de agendamentos
+            # Redireciona para a página de visualização de agendamentos com o filtro para o agendamento editado
+            return HttpResponseRedirect(f'{reverse("visualizar_agendamentos")}?pesquisa_tipo=agendamento&pesquisa_valor={agendamento.id}')
         else:
+            print(f"DEBUG: Formulário inválido. Erros: {form.errors}")  # Erros do formulário
             messages.error(request, 'Erro ao atualizar o agendamento. Verifique os dados e tente novamente.')
     
     # Se a requisição for GET, exibe o formulário com os dados do agendamento
     else:
+        # Converte a data para o fuso horário local (Brasília)
+        agendamento.data_e_hora = localtime(agendamento.data_e_hora)
+
+        # Formata a data no formato necessário para o campo datetime-local
+        formatted_data = agendamento.data_e_hora.strftime('%Y-%m-%dT%H:%M')
+        
+        # Atualiza o campo de data do formulário com o valor formatado
         form = AgendamentoEditForm(instance=agendamento)
+        form.initial['data_e_hora'] = formatted_data
+        
+        print(f"DEBUG: Carregando formulário para edição com os seguintes dados: {form.initial}")  # Verifica os dados do formulário
 
     return render(request, 'agendamentos/editar_agendamento.html', {'form': form, 'agendamento': agendamento})

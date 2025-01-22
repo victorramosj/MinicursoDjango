@@ -29,10 +29,10 @@
                         {% if form.photo.value %}
                             <img id="profile-image" src="{{ form.photo.value.url }}" 
                                  alt="Foto do perfil" class="rounded-circle border" 
-                                 style="width: 250px; height: 225px; object-fit: cover;">
+                                 style="width: 200px; height: 175px; object-fit: cover;">
                         {% else %}
                             <i class="bi bi-person-circle text-secondary" id="profile-image" 
-                               style="font-size: 9rem; width: 250px; height: 225px; 
+                               style="font-size: 9rem; width: 200px; height: 175px; 
                                       display: flex; align-items: center; justify-content: center; 
                                       border-radius: 50%; border: 1px solid #ddd;">
                             </i>
@@ -57,37 +57,41 @@
                             <label for="id_sexo" class="form-label text-secondary">Sexo*</label>
                             {{ form.sexo|add_class:"form-control" }}
                         </div>
-                        <div class="col-md-3">
+                        <div class="col-md-2">
                             <label for="id_dt_nasc" class="form-label text-secondary">Data de Nascimento*</label>
                             {{ form.dt_nasc|add_class:"form-control" }}
                         </div>
-                        <div class="col-md-3">
+                        <div class="col-md-2">
                             <label for="id_telefone" class="form-label text-secondary">Telefone*</label>
                             {{ form.telefone|add_class:"form-control" }}
                         </div>
-                        <div class="row mb-3">
-                            <div class="col-md-4">
-                                <label for="id_email" class="form-label text-secondary">Email*</label>
-                                {{ form.email|add_class:"form-control" }}
-                            </div>
-                            <div class="col-md-4">
-                                <label for="id_username" class="form-label text-secondary">Nome de Usuário*</label>
-                                {{ form.username|add_class:"form-control" }}
-                            </div>
+                        <div class="col-md-2">
+                            <label for="id_cpf" class="form-label text-secondary">CPF*</label>
+                            {{ form.cpf|add_class:"form-control" }}
                         </div>
-                        <div class="row mb-3">
-                            <div class="col-md-4">
-                                <label for="id_senha" class="form-label text-secondary">Senha*</label>
-                                {{ form.senha|add_class:"form-control" }}
-                            </div>
-                            <div class="col-md-4">
-                                <label for="id_confirmar_senha" class="form-label text-secondary">Confirmar Senha*</label>
-                                {{ form.confirmar_senha|add_class:"form-control" }}
-                            </div>
-                        </div>
-                       
-                        
                     </div>
+                    <div class="row mb-3">
+                        <div class="col-md-3">
+                            <label for="id_email" class="form-label text-secondary">Email*</label>
+                            {{ form.email|add_class:"form-control" }}
+                        </div>
+                        <div class="col-md-3">
+                            <label for="id_username" class="form-label text-secondary">Nome de Usuário*</label>
+                            {{ form.username|add_class:"form-control" }}
+                        </div>
+                        <div class="col-md-2">
+                            <label for="id_senha_atual" class="form-label text-secondary">Senha Atual*</label>
+                            {{ form.senha_atual|add_class:"form-control" }}
+                        </div>
+                        <div class="col-md-2">
+                            <label for="id_senha" class="form-label text-secondary">Senha*</label>
+                            {{ form.senha|add_class:"form-control" }}
+                        </div>
+                        <div class="col-md-2">
+                            <label for="id_confirmar_senha" class="form-label text-secondary">Confirmar Senha*</label>
+                            {{ form.confirmar_senha|add_class:"form-control" }}
+                        </div>
+                    </div>            
 
                     <div class="row mb-3">
                         {% if request.session.role != "cliente" %}
@@ -96,10 +100,7 @@
                             {{ form.cargo|add_class:"form-control" }}
                         </div>
                         {% endif %}
-                        <div class="col-md-4">
-                            <label for="id_cpf" class="form-label text-secondary">CPF*</label>
-                            {{ form.cpf|add_class:"form-control" }}
-                        </div>
+                        
                         {% if request.session.role != "cliente" %}
                         <div class="{% if request.session.role == 'cliente' %}col-md-6{% else %}col-md-4{% endif %}">
                             <label for="id_clinica" class="form-label text-secondary">Clínica*</label>
