@@ -53,6 +53,12 @@ def agendar(request):
             if not cliente_id or not colaborador_id or not servico_id or not data_e_hora:
                 return JsonResponse({'error': 'Faltam dados obrigatórios.'}, status=400)
 
+            try:
+                colaborador = Colaborador.objects.get(id=colaborador_id)
+            except Colaborador.DoesNotExist:
+                print("Colaborador não encontrado:", colaborador_id)
+                return JsonResponse({'error': 'Colaborador não encontrado'}, status=404)
+
             # Buscar objetos relacionados
             try:
                 cliente = Cliente.objects.get(id=cliente_id)
@@ -67,19 +73,13 @@ def agendar(request):
                 cliente.save()  # Salvar a clínica no cliente
                 print(f"Clinica {colaborador.clinica.nome} associada ao cliente {cliente.nome}")
 
-            try:
-                colaborador = Colaborador.objects.get(id=colaborador_id)
-            except Colaborador.DoesNotExist:
-                print("Colaborador não encontrado:", colaborador_id)
-                return JsonResponse({'error': 'Colaborador não encontrado'}, status=404)
-
+            
             try:
                 servico = Servico.objects.get(id=servico_id)
             except Servico.DoesNotExist:
                 print("Serviço não encontrado:", servico_id)
                 return JsonResponse({'error': 'Serviço não encontrado'}, status=404)
-            
-                    
+                               
 
             # Criar o agendamento
             agendamento = Agendamento.objects.create(                
@@ -94,7 +94,7 @@ def agendar(request):
             # Adicionar mensagem de sucesso
             messages.success(request, 'Agendamento realizado com sucesso!')
             # Redirecionar para a página de visualizar agendamentos
-            return redirect('visualizar_agendamentos')
+            return HttpResponseRedirect(f'{reverse("visualizar_agendamentos")}?pesquisa_tipo=agendamento&pesquisa_valor={agendamento.id}')
         except Exception as e:
             print("Erro inesperado ao criar agendamento:", str(e))
             return render(request, 'agendar.html', {'error_message': 'Ocorreu um erro ao criar o agendamento. Por favor, tente novamente.'})

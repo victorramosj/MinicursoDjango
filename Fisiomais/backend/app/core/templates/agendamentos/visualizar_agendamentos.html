@@ -17,13 +17,16 @@
                         <option value="clinica" {% if pesquisa_tipo == 'clinica' %}selected{% endif %}>Clínica</option>
                     </select>                    
                 </div>
-                <div class="col-md-6">
+                <div class="col-md-7">
                     <input type="text" class="form-control py-1" name="pesquisa_valor" value="{{ pesquisa_valor }}"
                         placeholder="Pesquisar...">
                 </div>
-                <div class="col-md-3">
-                    <button type="submit" class="btn btn-primary py-1 w-100">Pesquisar</button>
+                <div class="col-md-2">
+                    <button type="submit" class="btn btn-signup py-2 w-100">
+                        <i class="bi bi-search me-2 "></i> Pesquisar
+                    </button>
                 </div>
+                
             </form>
 
             <table class="table table-striped table-bordered">
@@ -62,7 +65,7 @@
                         <td>{{ agendamento.status }}</td>
                         <td>
                             <a href="{% url 'detalhes_agendamento' agendamento.id %}" class="btn btn-info btn-sm">
-                                <i class="bi bi-info-circle"></i>
+                                <i class="bi bi-info-circle "></i>
                             </a>
                             {% if request.session.role == "admin" or request.session.role == "colaborador" %}
                             
