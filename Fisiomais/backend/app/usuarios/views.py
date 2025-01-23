@@ -84,6 +84,8 @@ def cadastrar_cliente(request):
                 
                 # Realiza o login automático após salvar o cliente
                 login(request, cliente.user)
+                # Define o papel (role) do usuário na sessão
+                request.session['role'] = "cliente"
                 
                 messages.success(request, "Cliente cadastrado com sucesso!")
                 
@@ -114,7 +116,9 @@ def cadastrar_colaborador(request):
                 colaborador = form.save(commit=False)
                 
                 # Faz login automático do colaborador após salvar
-                login(request, colaborador.user)
+                login(request, colaborador.user)                
+                # Define o papel (role) do usuário na sessão
+                request.session['role'] = "colaborador"
                 
                 messages.success(request, "Colaborador cadastrado com sucesso!")
                 return redirect("home")  # Substitua "home" pela URL de destino desejada

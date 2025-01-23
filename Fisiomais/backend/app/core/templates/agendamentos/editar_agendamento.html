@@ -12,17 +12,7 @@
                     <h3 class="fw-bold text-primary">Remarcar agendamento</h3>
                 </div>
                 <div class="card-body p-4">
-                    <!-- Mensagens de Feedback -->
-                    {% if messages %}
-                    <div>
-                        {% for message in messages %}
-                        <div class="alert {{ message.tags }} alert-dismissible alert-success fade show" role="alert">
-                            {{ message }}
-                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                        </div>
-                        {% endfor %}
-                    </div>
-                    {% endif %}
+                    
 
                     <form id="agendamento-form" method="post">
                         {% csrf_token %}
@@ -77,7 +67,7 @@
 
                         <!-- Botão de envio -->
                         <div class="mb-3 text-center">
-                            <button type="submit" class="btn btn-primary w-100">Atualizar Agendamento</button>
+                            <button type="submit" class="btn btn-signup w-100">Atualizar Agendamento</button>
                         </div>
                     </form>
                 </div>

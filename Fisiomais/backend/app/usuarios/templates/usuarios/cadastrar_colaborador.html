@@ -2,7 +2,7 @@
 {% load widget_tweaks %}
 
 {% block content %}
-<div class="container my-5">
+<div class="container my-5 " style="max-width: 800px;">
     <div class="card shadow">
         <div class="card-header">
             <h2 class="text-center text-primary">Cadastrar Colaborador</h2>
@@ -14,9 +14,9 @@
                 <div>
                     {% for message in messages %}
                     {% if message.tags == 'success' %}
-                    <div class="alert alert-success">{{ message }}</div>
+                    <div class="alert alert-success alert-dismissible">{{ message }}</div>
                     {% else %}
-                    <div class="alert alert-danger">{{ message }}</div>
+                    <div class="alert alert-danger alert-dismissible">{{ message }}</div>
                     {% endif %}
                     {% endfor %}
                 </div>
@@ -52,23 +52,19 @@
                         </select>
                     </div>
                     <div class="col-12 col-md-2">
-                        <label for="id_dt_nasc" class="form-label text-secondary">Data de Nascimento</label>
+                        <label for="id_dt_nasc" class="form-label text-secondary text-truncate" style="font-size: 0.8rem;">Data de Nascimento</label>
                         {{ form.dt_nasc|add_class:"form-control" }}
                     </div>
 
-                    <div class="col-12 col-md-3">
+                    <div class="col-12 col-md-4">
                         <label for="id_email" class="form-label text-secondary">Email*</label>
                         {{ form.email|add_class:"form-control" }}
                     </div>
-                    <div class="col-12 col-md-3">
-                        <label for="id_email2" class="form-label text-secondary">Confirmar E-mail*</label>
+                    <div class="col-12 col-md-4">
+                        <label for="id_email2" class="form-label text-secondary text-truncate" style="font-size: 0.8rem;">Confirmar E-mail*</label>
                         {{ form.email2|add_class:"form-control" }}
                     </div>
-                    <div class="col-12 col-md-2">
-                        <label for="id_clinica" class="form-label text-secondary">Clínica*</label>
-                        {{ form.clinica|add_class:"form-control" }}
-                    </div>
-
+                    
                 </div>
 
                 <div class="row mb-3">
@@ -77,40 +73,48 @@
                         {{ form.senha|add_class:"form-control" }}
                     </div>
                     <div class="col-12 col-md-3">
-                        <label for="id_senha2" class="form-label text-secondary">Confirmar Senha*</label>
+                        <label for="id_senha2" class="form-label text-secondary text-truncate" style="font-size: 0.8rem;">Confirmar Senha*</label>
                         {{ form.senha2|add_class:"form-control" }}
                     </div>
-                    <div class="col-md-2">
+                    
+                    <div class="col-12 col-md-3">
+                        <label for="id_cargo" class="form-label text-secondary">Cargo*</label>
+                        {{ form.cargo|add_class:"form-control" }}
+                    </div>
+                    <div class="col-12 col-md-3">
+                        <label for="id_clinica" class="form-label text-secondary">Clínica*</label>
+                        {{ form.clinica|add_class:"form-control" }}
+                    </div>
+
+                </div>
+                <div class="row mb-3">
+                    <div class="col-12 col-md-3">
+                        <label for="id_endereco" class="form-label text-secondary">Lougradouro</label>
+                        {{ form.endereco|add_class:"form-control" }}
+                    </div>
+                    <div class="col-12 col-md-3">
+                        <label for="id_bairro" class="form-label text-secondary">Bairro</label>
+                        {{ form.bairro|add_class:"form-control" }}
+                    </div>
+                    <div class="col-md-3">
                         <label for="id_estado_cadastro_colaborador" class="form-label text-secondary">Estado:</label>
                         <select id="id_estado_cadastro_colaborador" class="form-control" name="estado">
                             <option value="">Selecione um Estado</option>
                         </select>
                     </div>
-                    <div class="col-md-2">
+                    <div class="col-md-3">
                         <label for="id_cidade_cadastro_colaborador" class="form-label text-secondary">Cidade:</label>
                         <select id="id_cidade_cadastro_colaborador" class="form-control" name="cidade">
                             <option value="">Selecione uma Cidade</option>
                         </select>
                     </div>
-                    
-                    
                 </div>
+                
                 </div>
 
                 <div class="row mb-3">
 
-                    <div class="col-12 col-md-3">
-                        <label for="id_cargo" class="form-label text-secondary">Cargo*</label>
-                        {{ form.cargo|add_class:"form-control" }}
-                    </div>
-                    <div class="col-12 col-md-4">
-                        <label for="id_endereco" class="form-label text-secondary">Lougradouro</label>
-                        {{ form.endereco|add_class:"form-control" }}
-                    </div>
-                    <div class="col-12 col-md-2">
-                        <label for="id_bairro" class="form-label text-secondary">Bairro</label>
-                        {{ form.bairro|add_class:"form-control" }}
-                    </div>
+                    
 
 
 
