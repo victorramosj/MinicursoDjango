@@ -109,7 +109,7 @@
       Não perca tempo! Agende uma consulta e aproveite os benefícios dos nossos tratamentos.
     </p>
     <div class="mt-4 text-center">
-        <a href="{% if user.is_authenticated %}/criaragendamento{% else %}/cadastro{% endif %}" class="btn btn-signup gap-2">
+        <a href="{% if user.is_authenticated %}/core/agendamentos/agendar{% else %}/usuarios/escolher_tipo/{% endif %}" class="btn btn-signup gap-2">
           {% if user.is_authenticated %}
             <i class="bi bi-calendar-check"></i> Agendar Sessão
           {% else %}

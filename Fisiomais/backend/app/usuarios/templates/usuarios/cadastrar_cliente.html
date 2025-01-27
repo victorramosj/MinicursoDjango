@@ -1,101 +1,117 @@
-    {% extends 'base.html' %}
-    {% load widget_tweaks %}
+{% extends 'base.html' %}
+{% load widget_tweaks %}
 
-    {% block content %}
-    <div class="container my-5">
-        <div class="card shadow">
-            <div class="card-header">
-                <h2 class="text-center text-primary">Cadastro</h2>
-            </div>
-            <div class="card-body">
-                {% if messages %}
-                <div>
-                    {% for message in messages %}
-                    {% if message.tags == 'success' %}
-                    <div class="alert alert-success">{{ message }}</div>
-                    {% else %}
-                    <div class="alert alert-danger">{{ message }}</div>
-                    {% endif %}
-                    {% endfor %}
-                </div>
+{% block content %}
+<div class="container my-5" style="max-width: 800px;">
+    <div class="card shadow">
+        <div class="card-header">
+            <h2 class="text-center text-primary">Cadastro</h2>
+        </div>
+        <div class="card-body">
+            {% if messages %}
+            <div>
+                {% for message in messages %}
+                {% if message.tags == 'success' %}
+                <div class="alert alert-success">{{ message }}</div>
+                {% else %}
+                <div class="alert alert-danger">{{ message }}</div>
                 {% endif %}
-                <form method="post" id="cadastrar_cliente" action="{% url 'cadastrar_cliente' %}" enctype="multipart/form-data">
-                    {% csrf_token %}
+                {% endfor %}
+            </div>
+            {% endif %}
+            <form method="post" id="cadastrar_cliente" action="{% url 'cadastrar_cliente' %}"
+                enctype="multipart/form-data">
+                {% csrf_token %}
 
-                    <div class="row mb-3">
-                        <div class="col-12 col-md-3">
-                            <label for="id_nome" class="form-label text-secondary">Nome*</label>
-                            {{ form.nome|add_class:"form-control" }}
-                        </div>
-                        <div class="col-12 col-md-1">
-                            <label for="id_sexo" class="form-label text-secondary">Sexo*</label>
-                            {{ form.sexo|add_class:"form-control" }}
-                        </div>
-                        <div class="col-12 col-md-2">
-                            <label for="id_username" class="form-label text-secondary">Nome de Usuário*</label>
-                            {{ form.username|add_class:"form-control" }}
-                        </div>
-                        <div class="col-12 col-md-2">
-                            <label for="id_cpf" class="form-label text-secondary">CPF* <small>(apenas números)</small></label>
-                            {{ form.cpf|add_class:"form-control" }}
-                        </div>
-                        <div class="col-12 col-md-2">
-                            <label for="id_email" class="form-label text-secondary">Email*</label>
-                            {{ form.email|add_class:"form-control" }}
-                        </div>
-                        <div class="col-12 col-md-2">
-                            <label for="id_confirmarEmail" class="form-label text-secondary">Confirme seu Email*</label>
-                            {{ form.email2|add_class:"form-control" }}
-                        </div>
+                <div class="row mb-3">
+                    <div class="col-12 col-md-5">
+                        <label for="id_nome" class="form-label text-secondary">Nome*</label>
+                        {{ form.nome|add_class:"form-control" }}
                     </div>
+                    <div class="col-12 col-md-2">
+                        <label for="id_sexo" class="form-label text-secondary">Sexo*</label>
+                        {{ form.sexo|add_class:"form-control" }}
+                    </div>
+                    <div class="col-12 col-md-5">
+                        <label for="id_username" class="form-label text-secondary">Nome de Usuário*</label>
+                        {{ form.username|add_class:"form-control" }}
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-12 col-md-4">
+                        <label for="id_cpf" class="form-label text-secondary">CPF* <small>(apenas
+                                números)</small></label>
+                        {{ form.cpf|add_class:"form-control" }}
+                    </div>
+                    <div class="col-12 col-md-4">
+                        <label for="id_email" class="form-label text-secondary">Email*</label>
+                        {{ form.email|add_class:"form-control" }}
+                    </div>
+                    <div class="col-12 col-md-4">
+                        <label for="id_confirmarEmail" class="form-label text-secondary">Confirme seu Email*</label>
+                        {{ form.email2|add_class:"form-control" }}
+                    </div>
+                </div>
 
-                    <div class="row mb-3">
-                        <div class="col-12 col-md-6 col-lg-3">
-                            <label for="id_senha" class="form-label text-secondary">Senha*</label>
-                            {{ form.senha|add_class:"form-control" }}
-                        </div>
-                        <div class="col-12 col-md-6 col-lg-3">
-                            <label for="id_confirmarSenha" class="form-label text-secondary">Confirme sua Senha*</label>
-                            {{ form.senha2|add_class:"form-control" }}
-                        </div>
-                        <div class="col-12 col-md-6 col-lg-3">
-                            <label for="id_dtNasc" class="form-label text-secondary">Data de Nascimento*</label>
-                            {{ form.dt_nasc|add_class:"form-control" }}
-                        </div>
-                        <div class="col-12 col-md-6 col-lg-3">
-                            <label for="id_telefone" class="form-label text-secondary">Telefone*</label>
-                            {{ form.telefone|add_class:"form-control" }}
-                        </div>
+                <div class="row mb-3">
+                    <div class="col-12 col-md-3 ">
+                        <label for="id_senha" class="form-label text-secondary">Senha*</label>
+                        {{ form.senha|add_class:"form-control" }}
                     </div>
+                    <div class="col-12 col-md-3 ">
+                        <label for="id_confirmarSenha" class="form-label text-secondary text-truncate" style="font-size: 0.8rem;">Confirme sua Senha*</label>
+                        {{ form.senha2|add_class:"form-control" }}
+                    </div>
+                    <div class="col-12 col-md-3 ">
+                        <label for="id_dtNasc" class="form-label text-secondary text-truncate" style="font-size: 0.8rem;">Data de Nascimento*</label>
+                        {{ form.dt_nasc|add_class:"form-control" }}
+                    </div>
+                    <div class="col-12 col-md-3 ">
+                        <label for="id_telefone" class="form-label text-secondary">Telefone*</label>
+                        {{ form.telefone|add_class:"form-control" }}
+                    </div>
+                    
+                </div>
+                <div class="row mb-3">
+                    <div class="col-12 col-md-4">
+                        <label for="id_endereco" class="form-label text-secondary">Lougradouro</label>
+                        {{ form.endereco|add_class:"form-control" }}
+                    </div>
+                    <div class="col-12 col-md-3">
+                        <label for="id_bairro" class="form-label text-secondary">Bairro</label>
+                        {{ form.bairro|add_class:"form-control" }}
+                    </div>
+                    <div class="col-md-2">
+                        <label for="id_estado_cadastro_cliente" class="form-label text-secondary">Estado*</label>
+                        <select id="id_estado_cadastro_cliente" class="form-control" name="estado">
+                            <option value="">Selecione um Estado</option>
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <label for="id_cidade_cadastro_cliente" class="form-label text-secondary">Cidade*</label>
+                        <select id="id_cidade_cadastro_cliente" class="form-control" name="cidade">
+                            <option value="">Selecione uma Cidade</option>
+                        </select>
 
-                    <div class="row mb-3">
-                        <div class="col-md-2">
-                            <label for="id_estado_cadastro_cliente" class="form-label text-secondary">Estado*</label>
-                            <select id="id_estado_cadastro_cliente" class="form-control" name="estado">
-                                <option value="">Selecione um Estado</option>
-                            </select>
-                        </div>
-                        <div class="col-md-2">
-                            <label for="id_cidade_cadastro_cliente" class="form-label text-secondary">Cidade*</label>
-                            <select id="id_cidade_cadastro_cliente" class="form-control" name="cidade">
-                                <option value="">Selecione uma Cidade</option>
-                            </select>
-                        </div>
                     </div>
+                </div>
+        </div>
 
-                    <div class="row mb-3">
-                        <div class="col-12 text-center">
-                            <button type="submit" class="btn btn-signup w-auto mx-auto">
-                                <i class="bi bi-person-plus"></i>
-                                Inscrever-se
-                            </button>
-                        </div>
-                    </div>
-                </form>
+
+
+        <div class="row mb-3">
+            <div class="col-12 text-center">
+                <button type="submit" class="btn btn-signup w-auto mx-auto">
+                    <i class="bi bi-person-plus"></i>
+                    Inscrever-se
+                </button>
             </div>
         </div>
+        </form>
     </div>
+</div>
+</div>
 
-    {% load static %}
-    <script src="{% static 'js/fetch_cidades_estados.js' %}"></script>
-    {% endblock %}
+{% load static %}
+<script src="{% static 'js/fetch_cidades_estados.js' %}"></script>
+{% endblock %}

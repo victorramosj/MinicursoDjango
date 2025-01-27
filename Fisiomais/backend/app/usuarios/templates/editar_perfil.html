@@ -4,24 +4,33 @@
 {% block title %}Editar Perfil{% endblock %}
 
 {% block content %}
-<div class="container my-5">
+<div class="container ">
     <div class="card shadow">
         <div class="card-header">
             <h2 class="text-center text-primary">Editar Perfil</h2>
         </div>
         <div class="card-body">
             <div class="text-center mb-3">
-                {% if messages %}
-                <div>
-                    {% for message in messages %}
-                    {% if message.tags == 'success' %}
-                    <div class="alert alert-success">{{ message }}</div>
-                    {% else %}
-                    <div class="alert alert-danger">{{ message }}</div>
+                
+                    {% if messages %}
+                    <div class="alert alert-dismissible">
+                        {% for message in messages %}
+                        {% if message.tags == 'success' %}
+                        <div class="alert alert-success alert-dismissible fade show" role="alert">
+                            {{ message }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                        {% else %}
+                        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                            {{ message }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                        {% endif %}
+                        {% endfor %}
+                    </div>
                     {% endif %}
-                    {% endfor %}
-                </div>
-                {% endif %}
+                
+                
                 <form method="POST" enctype="multipart/form-data">
                     {% csrf_token %}
                     <!-- Exibe a foto atual ou ícone padrão, dependendo de ter foto ou não -->
@@ -95,14 +104,14 @@
 
                     <div class="row mb-3">
                         {% if request.session.role != "cliente" %}
-                        <div class="{% if request.session.role == 'cliente' %}col-md-6{% else %}col-md-4{% endif %}">
+                        <div class="col-md-6">
                             <label for="id_cargo" class="form-label text-secondary">Cargo*</label>
                             {{ form.cargo|add_class:"form-control" }}
                         </div>
                         {% endif %}
                         
                         {% if request.session.role != "cliente" %}
-                        <div class="{% if request.session.role == 'cliente' %}col-md-6{% else %}col-md-4{% endif %}">
+                        <div class="col-md-6">
                             <label for="id_clinica" class="form-label text-secondary">Clínica*</label>
                             {{ form.clinica|add_class:"form-control" }}
                         </div>
