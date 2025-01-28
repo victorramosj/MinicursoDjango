@@ -5,7 +5,7 @@
 <div class="container my-5 " style="max-width: 800px;">
     <div class="card shadow">
         <div class="card-header">
-            <h2 class="text-center text-primary">Cadastrar Colaborador</h2>
+            <h2 class="text-center text-primary">Cadastro Colaborador</h2>
         </div>
         <div class="card-body">
             <form method="post" enctype="multipart/form-data" action="{% url 'cadastrar_colaborador' %}">
@@ -24,19 +24,23 @@
 
 
                 <div class="row mb-3">
-                    <div class="col-12 col-md-4">
+                    <div class="col-12 col-md-3">
                         <label for="id_nome" class="form-label text-secondary">Nome*</label>
                         {{ form.nome|add_class:"form-control" }}
                     </div>
-                    <div class="col-12 col-md-4">
+                    <div class="col-12 col-md-3">
                         <label for="id_username" class="form-label text-secondary">Nome de Usuário*</label>
                         {{ form.username|add_class:"form-control" }}
                     </div>
 
-                    <div class="col-12 col-md-4">
+                    <div class="col-12 col-md-3">
                         <label for="id_cpf" class="form-label text-secondary">CPF* <small>(apenas
                                 números)</small></label>
                         {{ form.cpf|add_class:"form-control" }}
+                    </div>
+                    <div class="col-12 col-md-3 ">
+                        <label for="id_telefone" class="form-label text-secondary">Telefone*</label>
+                        {{ form.telefone|add_class:"form-control" }}
                     </div>
                 </div>
 
@@ -112,18 +116,7 @@
                 
                 </div>
 
-                <div class="row mb-3">
-
-                    
-
-
-
-                 
-                    
-
-
-
-
+                <div class="row mb-3">                   
 
                 <div class="row mb-3">
                     <div class="col-12 text-center">
@@ -138,6 +131,15 @@
 </div>
 {% load static %}
 <script src="{% static 'js/fetch_cidades_estados.js' %}" ></script>
+<script>
+    // Aplica a máscara no campo de CPF
+    var cpfInput = document.getElementById("id_cpf");
+    if (cpfInput) {
+        var im = new Inputmask("999.999.999-99"); // Máscara para CPF
+        im.mask(cpfInput);
+    }
+</script>
+
 
 
 {% endblock %}

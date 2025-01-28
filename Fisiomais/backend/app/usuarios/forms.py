@@ -35,7 +35,7 @@ def validar_cpf(value):
 
 class ClienteForm(forms.ModelForm):
     username = forms.CharField(max_length=150, required=True, label="Nome de Usuário")
-    nome = forms.CharField(max_length=255, required=True, label="Nome")
+    nome = forms.CharField(max_length=255, required=True, label="Nome Completo")
     sexo = forms.ChoiceField(choices=[('M', 'Masculino'), ('F', 'Feminino'), ('O', 'Outro')], required=True, label="Sexo")
     email = forms.EmailField(required=True)
     email2 = forms.EmailField(required=True, label="Confirmar Email")
@@ -43,25 +43,22 @@ class ClienteForm(forms.ModelForm):
     senha2 = forms.CharField(widget=forms.PasswordInput, required=True, label="Confirmar Senha")
     dt_nasc = forms.DateField(widget=forms.DateInput(attrs={'type': 'date'}), required=True, label="Data de Nascimento")
     estado = forms.CharField(
-     widget=forms.Select(attrs={'id': 'id_estado_cadastro_colaborador', 'name': 'estado'}),
-     required=True, 
-     label="Estado"
+        widget=forms.Select(attrs={'id': 'id_estado_cadastro_colaborador', 'name': 'estado'}),
+        required=True, 
+        label="Estado"
     )
     cidade = forms.CharField(
-     widget=forms.Select(attrs={'id': 'id_cidade_cadastro_colaborador', 'name': 'cidade'}),
-     required=True, 
-     label="Cidade"
+        widget=forms.Select(attrs={'id': 'id_cidade_cadastro_colaborador', 'name': 'cidade'}),
+        required=True, 
+        label="Cidade"
     )
     
-
     class Meta:
         model = Cliente
         fields = [
             'nome', 'sexo', 'telefone', 'dt_nasc', 'endereco', 'estado', 'cidade',
             'bairro', 'cpf', 'photo', 'clinica'
         ]
-
-    
 
     def clean_username(self):
         username = self.cleaned_data['username']
@@ -88,21 +85,30 @@ class ClienteForm(forms.ModelForm):
         if senha != senha2:
             raise ValidationError("As senhas não coincidem.")
         return senha2
-    
+
+    def clean_nome(self):
+        nome = self.cleaned_data.get('nome')
+        if len(nome.split()) < 2:
+            raise ValidationError("O nome completo deve incluir pelo menos dois nomes (primeiro e último).")
+        return nome
+
     def save(self, commit=True):
         try:
-            # Criação do usuário
+            nome_completo = self.cleaned_data.get('nome')
+            first_name, *middle_names, last_name = nome_completo.split()
+            
             user_data = {
                 'username': self.cleaned_data['username'],
                 'email': self.cleaned_data['email'],
                 'password': self.cleaned_data['senha'],
+                'first_name': first_name,
+                'last_name': last_name
             }
             user = User.objects.create_user(**user_data)
 
-            # Criação do cliente diretamente
             cliente = Cliente.objects.create(
                 user=user,
-                nome=self.cleaned_data.get('nome'),
+                nome=nome_completo,
                 sexo=self.cleaned_data.get('sexo'),
                 dt_nasc=self.cleaned_data.get('dt_nasc'),
                 estado=self.cleaned_data.get('estado'),
@@ -121,10 +127,10 @@ class ClienteForm(forms.ModelForm):
             return cliente
 
         except Exception as e:
-            # Se o usuário foi criado, apague-o para evitar inconsistências
             if user and user.pk:
                 user.delete()
             raise
+
 
 
 
@@ -200,11 +206,15 @@ class ColaboradorForm(forms.ModelForm):
         try:
             print("Chamando save do ColaboradorForm")
 
-            # Criação do usuário
+            nome_completo = self.cleaned_data.get('nome')
+            first_name, *middle_names, last_name = nome_completo.split()
+            
             user_data = {
                 'username': self.cleaned_data['username'],
                 'email': self.cleaned_data['email'],
                 'password': self.cleaned_data['senha'],
+                'first_name': first_name,
+                'last_name': last_name
             }
             user = User.objects.create_user(**user_data)
 
@@ -298,6 +308,13 @@ class EditarColaboradorForm(forms.ModelForm):
     def save(self, commit=True):
         instance = super().save(commit=False)
         user = instance.user
+
+        # Separar primeiro e último nome
+        nome_completo = self.cleaned_data.get('nome')
+        first_name, *middle_names, last_name = nome_completo.split()
+        user.first_name = first_name
+        user.last_name = last_name
+
         user.username = self.cleaned_data['username']
         user.email = self.cleaned_data['email']
 
@@ -366,6 +383,13 @@ class EditarClienteForm(forms.ModelForm):
     def save(self, commit=True):
         instance = super().save(commit=False)
         user = instance.user
+
+        # Separar primeiro e último nome
+        nome_completo = self.cleaned_data.get('nome')
+        first_name, *middle_names, last_name = nome_completo.split()
+        user.first_name = first_name
+        user.last_name = last_name
+
         user.username = self.cleaned_data['username']
         user.email = self.cleaned_data['email']
 

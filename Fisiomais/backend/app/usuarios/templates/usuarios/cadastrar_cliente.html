@@ -5,7 +5,7 @@
 <div class="container my-5" style="max-width: 800px;">
     <div class="card shadow">
         <div class="card-header">
-            <h2 class="text-center text-primary">Cadastro</h2>
+            <h2 class="text-center text-primary">Cadastro Clientes</h2>
         </div>
         <div class="card-body">
             {% if messages %}
@@ -114,4 +114,12 @@
 
 {% load static %}
 <script src="{% static 'js/fetch_cidades_estados.js' %}"></script>
+<script>
+    // Aplica a máscara no campo de CPF
+    var cpfInput = document.getElementById("id_cpf");
+    if (cpfInput) {
+        var im = new Inputmask("999.999.999-99"); // Máscara para CPF
+        im.mask(cpfInput);
+    }
+</script>
 {% endblock %}
