@@ -28,17 +28,17 @@
                         <option value="clinica" {% if pesquisa_tipo == 'clinica' %}selected{% endif %}>Clínica</option>
                     </select>                    
                 </div>
-                <div class="col-md-5">
+                <div class="col-md-6">
                     <input type="text" class="form-control py-2" name="pesquisa_valor" value="{{ pesquisa_valor }}"
                         placeholder="Pesquisar...">
                 </div>
-                <div class="col-md-2">
+                <div class="col-md-1">
                     <button type="submit" class="btn btn-signup py-2">
                         <i class="bi bi-search me-2 "></i> Pesquisar
                     </button>
                     
                 </div>
-                <div class="col-md-2">
+                <div class="col-md-1">
                     <a href="{% url 'calendario_agendamentos' %}" class="btn py-2 btn-login btn-sm">
                         <i class="bi bi-calendar-event me-2"></i> Calendário
                     </a>

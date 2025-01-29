@@ -42,6 +42,9 @@
 {% block extra_css %}
 <!-- Importar FullCalendar CSS -->
 <link href="https://cdn.jsdelivr.net/npm/fullcalendar@5.9.0/main.min.css" rel="stylesheet">
+{% load static %}
+<link rel="stylesheet" href="{% static 'css/fullcalendar.css' %}">
+
 {% endblock %}
 
 
@@ -51,71 +54,94 @@
 <script src='https://cdn.jsdelivr.net/npm/fullcalendar@5.9.0/locales-all.min.js'></script>
 <script>
     document.addEventListener('DOMContentLoaded', function () {
-        var calendarEl = document.getElementById('calendar');
+    var calendarEl = document.getElementById('calendar');
 
-        var calendar = new FullCalendar.Calendar(calendarEl, {
-            locale: 'pt-br',
-            initialView: 'dayGridMonth',
-            headerToolbar: {
-                left: 'prev,next today',
-                center: 'title',
-                right: 'dayGridMonth,timeGridWeek,timeGridDay'
-            },
-            events: function (info, successCallback, failureCallback) {
-                fetch("{% url 'listar_agendamentos' %}")  // URL do backend que retorna os agendamentos
-                    .then(response => response.json())
-                    .then(data => {
-                        // Chama o callback de sucesso com os dados de eventos
-                        successCallback(data);
-                    })
-                    .catch(error => {
-                        // Chama o callback de erro caso a requisição falhe
-                        console.error("Erro ao carregar os eventos:", error);
-                        failureCallback(error);
-                    });
-            },
-            eventClick: function (info) {
-                var event = info.event;
-                var modalBody = document.getElementById("modalDetalhesBody");
+    var calendar = new FullCalendar.Calendar(calendarEl, {
+        locale: 'pt-br',
+        initialView: 'dayGridMonth',
+        headerToolbar: {
+            left: 'prev,next today',
+            center: 'title',
+            right: 'dayGridMonth,timeGridWeek,timeGridDay'
+        },
+        events: function (info, successCallback, failureCallback) {
+            fetch("{% url 'listar_agendamentos' %}")
+                .then(response => response.json())
+                .then(data => {
+                    successCallback(data);
+                })
+                .catch(error => {
+                    console.error("Erro ao carregar os eventos:", error);
+                    failureCallback(error);
+                });
+        },
 
-                // Console logs para depuração
-                console.log("Evento clicado:", event);
-                console.log("Cliente:", event.extendedProps.cliente);
-                console.log("Colaborador:", event.extendedProps.colaborador);
-                console.log("Status:", event.extendedProps.status);
+        editable: true, // Habilita o arrastar e soltar
+        droppable: true, // Permite soltar eventos
+        eventClick: function (info) {
+            var event = info.event;
+            var modalBody = document.getElementById("modalDetalhesBody");
 
-                modalBody.innerHTML = `
-                <p><strong>Serviço:</strong> ${event.title}</p>
-                <p><strong>Cliente:</strong> ${event.extendedProps.cliente || "Não informado"}</p>
-                <p><strong>Colaborador:</strong> ${event.extendedProps.colaborador || "Não informado"}</p>
-                <p><strong>Horário:</strong> ${new Date(event.start).toLocaleString()}</p>
-                <p><strong>Status:</strong> ${event.extendedProps.status || "Não informado"}</p>
-            `;
-                var editarLink = document.getElementById("editar-agendamento");
+            modalBody.innerHTML = `
+            <p><strong>Serviço:</strong> ${event.title}</p>
+            <p><strong>Cliente:</strong> ${event.extendedProps.cliente || "Não informado"}</p>
+            <p><strong>Colaborador:</strong> ${event.extendedProps.colaborador || "Não informado"}</p>
+            <p><strong>Horário:</strong> ${new Date(event.start).toLocaleString()}</p>
+            <p><strong>Status:</strong> ${event.extendedProps.status || "Não informado"}</p>
+        `;
 
-                // Crie a URL para editar o agendamento, incluindo o ID
-                editarLink.href = `/agendamentos/editar/${event.id}/`;  // URL baseada no ID do agendamento
-
-
-
-                var modal = new bootstrap.Modal(document.getElementById('modalDetalhes'));
-                modal.show();
-            },
-
-            eventDataTransform: function (data) {
-                console.log("Eventos carregados:", data);
-                return data;
-            },
-
-            eventError: function (info) {
-                console.error("Erro ao carregar evento:", info);
+            var editarLink = document.getElementById("editar-agendamento");
+            if (editarLink) {
+                editarLink.href = `/agendamentos/editar/${event.id}/`;
+            } else {
+                console.error("Elemento 'editar-agendamento' não encontrado.");
             }
-        });
 
-        console.log("Calendário  renderizado");
+            var modal = new bootstrap.Modal(document.getElementById('modalDetalhes'));
+            modal.show();
+        },
 
-        calendar.render();
+        eventDrop: function (info) {
+            var event = info.event;
+
+            // Obter nova data e horário
+            var nova_data = event.start.toISOString().split('T')[0]; // Formato YYYY-MM-DD
+            var novo_horario = event.start.toISOString().split('T')[1].slice(0, 8); // Formato HH:MM:SS
+
+            // Enviar dados via PUT para editar o agendamento
+            fetch(`/agendamentos/editar/${event.id}/`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    data: nova_data,
+                    horario: novo_horario
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.message === 'Dia e horário do agendamento atualizados com sucesso.') {
+                    alert('Agendamento atualizado com sucesso.');
+                } else {
+                    alert('Erro: ' + data.message);
+                }
+            })
+            .catch(error => {
+                console.error("Erro ao atualizar o agendamento:", error);
+            });
+        },
+
+        
+
+        eventError: function (info) {
+            console.error("Erro ao carregar evento:", info);
+        }
     });
+
+    calendar.render();
+});
+
 
 </script>
 {% endblock %}

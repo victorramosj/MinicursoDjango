@@ -499,8 +499,9 @@ def listar_agendamentos(request):
     eventos = [
         {
             "id": agendamento.id,
-            "title": agendamento.servico.nome_servico if agendamento.servico else 'Serviço não especificado',
-            "start": agendamento.data_e_hora.strftime('%Y-%m-%dT%H:%M:%S'),  # Corrigido para 'data_e_hora'
+            "title" : f"{agendamento.data_e_hora.strftime('%H:%M')}" if agendamento.servico.tipo_servico.tipo == 'pilates' else f"{agendamento.servico.nome_servico} - {agendamento.data_e_hora.strftime('%H:%M')}",
+
+            "start": agendamento.data_e_hora.strftime('%Y-%m-%dT%H:%M:%S'),
             "extendedProps": {
                 "cliente": agendamento.cliente.nome if agendamento.cliente else 'Cliente não informado',
                 "colaborador": agendamento.colaborador.nome if agendamento.colaborador else 'Colaborador não informado',
@@ -514,7 +515,29 @@ def listar_agendamentos(request):
 
 
 
+
+from django.shortcuts import render
+from django.contrib.auth.decorators import login_required
+
+@login_required
 def calendario_agendamentos(request):
-    agendamentos = Agendamento.objects.all()  # Obtendo todos os agendamentos
+    # Obtém o papel do usuário
+    role = request.session.get('role', 'desconhecido')
+    
+    # Filtra os agendamentos com base no papel do usuário
+    if role == 'cliente':
+        # Cliente só vê seus próprios agendamentos
+        agendamentos = Agendamento.objects.filter(cliente=request.user.cliente)
+    elif role == 'colaborador':
+        # Colaborador só vê seus próprios agendamentos
+        agendamentos = Agendamento.objects.filter(colaborador=request.user.colaborador)
+    elif role == 'admin':
+        # Admin vê todos os agendamentos
+        agendamentos = Agendamento.objects.all()
+    else:
+        # Caso o usuário não tenha um papel reconhecido, não mostra nada ou gera um erro
+        agendamentos = Agendamento.objects.none()  # Retorna uma queryset vazia
+    
+    # Retorna o template com os agendamentos filtrados
     return render(request, 'agendamentos/calendario_agendamentos.html', {'agendamentos': agendamentos})
 
