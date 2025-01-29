@@ -37,6 +37,9 @@
                         <i class="bi bi-search me-2 "></i> Pesquisar
                     </button>
                 </div>
+                <a href="{% url 'calendario_agendamentos' %}" class="btn btn-primary btn-sm">
+                    <i class="bi bi-calendar-event"></i>
+                </a>
                 
             </form>
             <div class="table-responsive">
@@ -80,6 +83,8 @@
                             <a href="{% url 'detalhes_agendamento' agendamento.id %}" class="btn btn-info btn-sm">
                                 <i class="bi bi-info-circle "></i>
                             </a>
+                            
+                            
                             {% if request.session.role == "admin" or request.session.role == "colaborador" %}
                             
                             <!-- Botão de excluir agendamento com dados para o modal -->

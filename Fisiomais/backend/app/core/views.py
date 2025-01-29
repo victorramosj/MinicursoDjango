@@ -1,9 +1,8 @@
 
-from .models import Agendamento, Plano
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 import logging
-from .models import Agendamento, Cliente, Colaborador, Servico, Clinica
+from .models import Agendamento, Cliente, Colaborador, Servico, Clinica, Plano
 from django.utils import timezone
 from datetime import datetime
 from django.http import JsonResponse
@@ -386,10 +385,9 @@ def excluir_agendamento(request, agendamento_id):
     # Redirecionar para a página de visualização de agendamentos
     return redirect('visualizar_agendamentos')
 
-from django.contrib import messages
-from django.shortcuts import render, get_object_or_404, redirect
+
+from django.shortcuts import  get_object_or_404
 from .forms import AgendamentoEditForm
-from .models import Agendamento
 from django.urls import reverse
 from django.http import HttpResponseRedirect
 
@@ -433,3 +431,91 @@ def editar_agendamento(request, agendamento_id):
         print(f"DEBUG: Carregando formulário para edição com os seguintes dados: {form.initial}")  # Verifica os dados do formulário
 
     return render(request, 'agendamentos/editar_agendamento.html', {'form': form, 'agendamento': agendamento})
+from django.shortcuts import get_object_or_404
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+from django.utils.timezone import make_aware
+from datetime import datetime
+import json
+
+@csrf_exempt
+def editar_agendamento_dia_horarios(request):
+    if request.method == 'PUT':
+        try:
+            data = json.loads(request.body)  # Dados do frontend
+
+            # Obter dados da requisição
+            id_agendamento = data.get('id_agendamento')
+            nova_data = data.get('data')
+            novo_horario = data.get('horario')
+
+            if not id_agendamento or not nova_data or not novo_horario:
+                return JsonResponse({'message': 'ID do agendamento, data e horário são obrigatórios.'}, status=400)
+
+            # Buscar o agendamento pelo ID
+            agendamento = get_object_or_404(Agendamento, id=id_agendamento)
+
+            # Verificar se o usuário é cliente ou colaborador
+            user = request.user
+            if hasattr(user, 'cliente') and agendamento.cliente == user.cliente:
+                # Solicitar remarcação
+                agendamento.status = 'Pedido de Remarcação'
+                agendamento.data_e_hora = make_aware(datetime.strptime(f"{nova_data} {novo_horario}", "%Y-%m-%d %H:%M:%S"))
+                agendamento.save()
+
+                return JsonResponse({'message': 'Solicitação de remarcação enviada ao administrador.'}, status=200)
+
+            elif hasattr(user, 'colaborador') and (agendamento.colaborador == user.colaborador or user.colaborador.is_admin):
+                # Atualizar o dia e horário diretamente
+                nova_data_horario = make_aware(datetime.strptime(f"{nova_data} {novo_horario}", "%Y-%m-%d %H:%M:%S"))
+
+                # Verificar conflitos de horário
+                conflito = Agendamento.objects.filter(
+                    colaborador=agendamento.colaborador,
+                    data_e_hora=nova_data_horario
+                ).exclude(id=id_agendamento).exists()
+
+                if conflito:
+                    return JsonResponse({'message': 'Já existe um agendamento para este colaborador no horário especificado.'}, status=400)
+
+                agendamento.data_e_hora = nova_data_horario
+                agendamento.status = 'Confirmado'
+                agendamento.save()
+
+                return JsonResponse({'message': 'Dia e horário do agendamento atualizados com sucesso.'}, status=200)
+
+            else:
+                return JsonResponse({'message': 'Usuário não autorizado a editar este agendamento.'}, status=403)
+
+        except Exception as e:
+            return JsonResponse({'message': f'Erro interno no servidor: {str(e)}'}, status=500)
+    else:
+        return JsonResponse({'message': 'Método não permitido.'}, status=405)
+
+from django.http import JsonResponse
+
+
+def listar_agendamentos(request):
+    agendamentos = Agendamento.objects.all()
+    eventos = [
+        {
+            "id": agendamento.id,
+            "title": agendamento.servico.nome_servico if agendamento.servico else 'Serviço não especificado',
+            "start": agendamento.data_e_hora.strftime('%Y-%m-%dT%H:%M:%S'),  # Corrigido para 'data_e_hora'
+            "extendedProps": {
+                "cliente": agendamento.cliente.nome if agendamento.cliente else 'Cliente não informado',
+                "colaborador": agendamento.colaborador.nome if agendamento.colaborador else 'Colaborador não informado',
+                "status": agendamento.status,
+            },
+        }
+        for agendamento in agendamentos
+    ]
+    return JsonResponse(eventos, safe=False)
+
+
+
+
+def calendario_agendamentos(request):
+    # Lógica para enviar dados necessários ao template
+    return render(request, 'agendamentos/calendario_agendamentos.html')
+

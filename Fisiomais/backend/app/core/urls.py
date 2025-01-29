@@ -14,5 +14,12 @@ urlpatterns = [
     path('agendamentos/cancelar/<int:agendamento_id>/', views.cancelar_agendamento, name='cancelar_agendamento'),
     path('agendamentos/remarcar/<int:agendamento_id>/', views.remarcar_agendamento, name='remarcar_agendamento'),
     path('excluir_agendamento/<int:agendamento_id>/', views.excluir_agendamento, name='excluir_agendamento'),
-    path('agendamentos/editaragendamento/<int:agendamento_id>/', views.editar_agendamento, name='editar_agendamento'),  # Modificado
+    
+    
+    path('agendamentos/editar/<int:agendamento_id>/', views.editar_agendamento, name='editar_agendamento'),  # Editar agendamento completo
+    path('agendamentos/editar-horario/<int:agendamento_id>/', views.editar_agendamento_dia_horarios, name='editar_agendamento_dia_horarios'),  # Editar apenas dia e horário
+    path('agendamentos/listar/', views.listar_agendamentos, name='listar_agendamentos'),
+
+    path('calendario/', views.calendario_agendamentos, name='calendario_agendamentos'),
 ]
+

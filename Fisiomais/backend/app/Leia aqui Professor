@@ -10,7 +10,7 @@ admin: admin, senha: ThunderC9@!
 
 colaborador: fisioterapeuta1, senha: 123, ele está num grupo de usuarios chamados fisiotepeutas, 
 pode acessar a pagina de admin para editar horarios, servicos, colaboradores e clientes. Mas não pode adicionar clinicas. 
-Colaboradores só visualizam os agendamentos que ele mesmo fez
+Colaboradores só visualizam os agendamentos que ele mesmo fez, na pagina personalizada de visualizar agendamentos
 
 Cliente: cliente1, senha: ThunderC9@!, pode visualizar os agendamentos que ele mesmo fez, e editar seus dados de perfil pedir reagendamento.
 

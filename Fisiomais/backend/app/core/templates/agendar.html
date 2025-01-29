@@ -125,8 +125,7 @@
     </div>
 </div>
 
-  
-  
+
   
   
 <script>
@@ -172,10 +171,18 @@
 
 
 </script>
-
-
 {% load static %}
+{% block extra_css %}
+<!-- Importar FullCalendar CSS -->
 
+<link rel="stylesheet" href="{% static 'css/CriarAgendamento.css' %}">
+
+{% endblock %} 
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+<script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/pt.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/inputmask/5.0.6/inputmask.min.js"></script>
+{% endblock %} 
 <script src="{% static 'js/fetch_servicos.js' %}"></script>
 <script src="{% static 'js/fetch_clinicas.js' %}"></script>
 <script src="{% static 'js/fetch_colaboradores.js' %}"></script>
