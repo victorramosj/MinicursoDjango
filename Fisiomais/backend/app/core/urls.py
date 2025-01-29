@@ -17,7 +17,7 @@ urlpatterns = [
     
     
     path('agendamentos/editar/<int:agendamento_id>/', views.editar_agendamento, name='editar_agendamento'),  # Editar agendamento completo
-    path('agendamentos/editar-horario/<int:agendamento_id>/', views.editar_agendamento_dia_horarios, name='editar_agendamento_dia_horarios'),  # Editar apenas dia e horário
+     path('agendamentos/editar/<int:agendamento_id>/', views.editar_agendamento_dia_horarios, name='editar_agendamento_dia_horarios'),
     path('agendamentos/listar/', views.listar_agendamentos, name='listar_agendamentos'),
 
     path('calendario/', views.calendario_agendamentos, name='calendario_agendamentos'),

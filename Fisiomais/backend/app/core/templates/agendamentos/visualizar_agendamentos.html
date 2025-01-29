@@ -21,25 +21,29 @@
             {% endif %}
             <form method="get" class="row mb-4">
                 <div class="col-md-3">
-                    <select class="form-select" name="pesquisa_tipo">
+                    <select class="form-select py-2" name="pesquisa_tipo">
                         <option value="agendamento" {% if pesquisa_tipo == 'agendamento' or not pesquisa_tipo %}selected{% endif %}>Nº do Agendamento</option>
                         <option value="cliente" {% if pesquisa_tipo == 'cliente' %}selected{% endif %}>Cliente</option>
                         <option value="colaborador" {% if pesquisa_tipo == 'colaborador' %}selected{% endif %}>Colaborador</option>
                         <option value="clinica" {% if pesquisa_tipo == 'clinica' %}selected{% endif %}>Clínica</option>
                     </select>                    
                 </div>
-                <div class="col-md-7">
-                    <input type="text" class="form-control py-1" name="pesquisa_valor" value="{{ pesquisa_valor }}"
+                <div class="col-md-5">
+                    <input type="text" class="form-control py-2" name="pesquisa_valor" value="{{ pesquisa_valor }}"
                         placeholder="Pesquisar...">
                 </div>
                 <div class="col-md-2">
-                    <button type="submit" class="btn btn-signup py-2 w-100">
+                    <button type="submit" class="btn btn-signup py-2">
                         <i class="bi bi-search me-2 "></i> Pesquisar
                     </button>
+                    
                 </div>
-                <a href="{% url 'calendario_agendamentos' %}" class="btn btn-primary btn-sm">
-                    <i class="bi bi-calendar-event"></i>
-                </a>
+                <div class="col-md-2">
+                    <a href="{% url 'calendario_agendamentos' %}" class="btn py-2 btn-login btn-sm">
+                        <i class="bi bi-calendar-event me-2"></i> Calendário
+                    </a>
+                </div>
+                
                 
             </form>
             <div class="table-responsive">
@@ -80,8 +84,12 @@
                         <td>{{ agendamento.status }}</td>
                         <td>{{ agendamento.status_pagamento }}</td>
                         <td>
+                            <div class="d-flex justify-content-center">
                             <a href="{% url 'detalhes_agendamento' agendamento.id %}" class="btn btn-info btn-sm">
                                 <i class="bi bi-info-circle "></i>
+                            </a>
+                            <a href="{% url 'editar_agendamento' agendamento.id %}" class="btn btn-warning btn-sm">
+                                <i class="bi bi-pencil"></i> 
                             </a>
                             
                             
@@ -94,6 +102,7 @@
                             </a>                            
 
                             {% endif %}
+                            </div>
                         </td>
                     </tr>
                     {% endfor %}

@@ -431,29 +431,28 @@ def editar_agendamento(request, agendamento_id):
         print(f"DEBUG: Carregando formulário para edição com os seguintes dados: {form.initial}")  # Verifica os dados do formulário
 
     return render(request, 'agendamentos/editar_agendamento.html', {'form': form, 'agendamento': agendamento})
-from django.shortcuts import get_object_or_404
+from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
-from django.views.decorators.csrf import csrf_exempt
-from django.utils.timezone import make_aware
+from django.shortcuts import get_object_or_404
 from datetime import datetime
+from django.utils.timezone import make_aware
 import json
 
-@csrf_exempt
-def editar_agendamento_dia_horarios(request):
+@login_required
+def editar_agendamento_dia_horarios(request, agendamento_id):
     if request.method == 'PUT':
         try:
             data = json.loads(request.body)  # Dados do frontend
 
             # Obter dados da requisição
-            id_agendamento = data.get('id_agendamento')
             nova_data = data.get('data')
             novo_horario = data.get('horario')
 
-            if not id_agendamento or not nova_data or not novo_horario:
-                return JsonResponse({'message': 'ID do agendamento, data e horário são obrigatórios.'}, status=400)
+            if not nova_data or not novo_horario:
+                return JsonResponse({'message': 'Data e horário são obrigatórios.'}, status=400)
 
             # Buscar o agendamento pelo ID
-            agendamento = get_object_or_404(Agendamento, id=id_agendamento)
+            agendamento = get_object_or_404(Agendamento, id=agendamento_id)
 
             # Verificar se o usuário é cliente ou colaborador
             user = request.user
@@ -473,7 +472,7 @@ def editar_agendamento_dia_horarios(request):
                 conflito = Agendamento.objects.filter(
                     colaborador=agendamento.colaborador,
                     data_e_hora=nova_data_horario
-                ).exclude(id=id_agendamento).exists()
+                ).exclude(id=agendamento_id).exists()
 
                 if conflito:
                     return JsonResponse({'message': 'Já existe um agendamento para este colaborador no horário especificado.'}, status=400)
@@ -516,6 +515,6 @@ def listar_agendamentos(request):
 
 
 def calendario_agendamentos(request):
-    # Lógica para enviar dados necessários ao template
-    return render(request, 'agendamentos/calendario_agendamentos.html')
+    agendamentos = Agendamento.objects.all()  # Obtendo todos os agendamentos
+    return render(request, 'agendamentos/calendario_agendamentos.html', {'agendamentos': agendamentos})
 
