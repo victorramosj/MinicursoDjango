@@ -154,20 +154,30 @@ class HorariosDisponiveisTestCase(TestCase):
         # Cria um horário para o colaborador
         Horario.objects.create(colaborador=self.colaborador, hora_inicio="08:00", hora_fim="12:00", dia_semana="segunda-feira")
         
-        # Cria um cliente fictício
+        # Cria um usuário para o cliente e associa o e-mail
+        cliente_user = User.objects.create_user(username="cliente_teste", password="password123", email="cliente@teste.com")
+        
+        # Cria um cliente associando o usuário
         cliente = Cliente.objects.create(
+            user=cliente_user,  # Associa o cliente ao usuário com e-mail
             nome="Cliente Teste",
             telefone="9988776655",
             cpf="12345678901",
-            endereco="Rua B, 456",
-            email="cliente@teste.com"  # Agora com o campo email
+            endereco="Rua B, 456"
         )
 
-        
-        # Cria um agendamento para o colaborador e o cliente
+        # Cria o TipoServico (fisioterapia e pilates)
+        tipo_pilates = TipoServico.objects.create(tipo="pilates")
+
+
+        # Cria um serviço fictício com o TipoServico associado
+        servico = Servico.objects.create(nome_servico="Serviço Teste", valor=100.0, tipo_servico=tipo_pilates)
+
+        # Cria um agendamento para o colaborador e o cliente, agora com o serviço associado
         Agendamento.objects.create(
             colaborador=self.colaborador,
             cliente=cliente,  # Associando o cliente
+            servico=servico,  # Associando o serviço
             data_e_hora=datetime(2025, 1, 30, 9, 0)
         )
 
