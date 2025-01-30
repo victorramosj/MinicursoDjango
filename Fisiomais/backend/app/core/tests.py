@@ -1,3 +1,11 @@
+#python manage.py test 
+#python manage.py test core
+#python manage.py test -v 2
+#python manage.py test core.tests.AgendamentoTestCase
+#python manage.py test core.tests.HorariosDisponiveisTestCase
+#python manage.py test core.tests.DiasPermitidosTestCase
+
+
 from django.test import TestCase, Client
 from django.urls import reverse
 from django.utils import timezone
@@ -132,58 +140,71 @@ class DiasPermitidosTestCase(TestCase):
 
 class HorariosDisponiveisTestCase(TestCase):
     def setUp(self):
-        # Cria uma clínica fictícia
-        self.clinica = Clinica.objects.create(nome="Clínica Teste", cnpj="12345678000195")
-
-        # Cria um usuário para associar ao colaborador
-        user = User.objects.create_user(username="colaborador_teste", password="password123")
-        
-        # Cria um colaborador
+        # Criando um colaborador de teste
+        self.user = User.objects.create(username="teste", password="123456")
+        self.clinica = Clinica.objects.create(nome="Clínica Teste", cnpj="12345678000199", telefone="999999999")
         self.colaborador = Colaborador.objects.create(
-            user=user,
+            user=self.user,
             nome="Colaborador Teste",
-            telefone="999999999",
-            cpf="12345678900",
-            endereco="Rua A, 123",
-            clinica=self.clinica
+            clinica=self.clinica  # Definindo a clínica
         )
 
-        # Verificar se o colaborador tem a clínica associada
-        self.assertEqual(self.colaborador.clinica, self.clinica)
 
-        # Cria um horário para o colaborador
-        Horario.objects.create(colaborador=self.colaborador, hora_inicio="08:00", hora_fim="12:00", dia_semana="segunda-feira")
-        
-        # Cria um usuário para o cliente e associa o e-mail
-        cliente_user = User.objects.create_user(username="cliente_teste", password="password123", email="cliente@teste.com")
-        
-        # Cria um cliente associando o usuário
-        cliente = Cliente.objects.create(
-            user=cliente_user,  # Associa o cliente ao usuário com e-mail
-            nome="Cliente Teste",
-            telefone="9988776655",
-            cpf="12345678901",
-            endereco="Rua B, 456"
+        self.fisioterapia = TipoServico.objects.get(id=1)
+        self.pilates = TipoServico.objects.get(id=2)
+
+        # Criando serviço e associando um tipo de serviço existente
+        self.servico = Servico.objects.create(nome_servico="Pilates", tipo_servico=self.pilates)
+
+        # Criando um cliente de teste
+        self.cliente = Cliente.objects.create(nome="Cliente Teste", user=self.user)
+
+        # Criando um horário disponível para segunda-feira
+        self.horario = Horario.objects.create(
+            colaborador=self.colaborador, dia_semana="segunda-feira", hora_inicio="08:00", hora_fim="12:00"
         )
 
-        # Cria o TipoServico (fisioterapia e pilates)
-        tipo_pilates = TipoServico.objects.create(tipo="pilates")
+        # Data de teste para uma segunda-feira futura
+        self.data_teste = (timezone.now() + timedelta(days=(7 - timezone.now().weekday()))).date()
 
-
-        # Cria um serviço fictício com o TipoServico associado
-        servico = Servico.objects.create(nome_servico="Serviço Teste", valor=100.0, tipo_servico=tipo_pilates)
-
-        # Cria um agendamento para o colaborador e o cliente, agora com o serviço associado
-        Agendamento.objects.create(
+        # Criando um agendamento para as 09:00
+        self.agendamento = Agendamento.objects.create(
             colaborador=self.colaborador,
-            cliente=cliente,  # Associando o cliente
-            servico=servico,  # Associando o serviço
-            data_e_hora=datetime(2025, 1, 30, 9, 0)
+            cliente=self.cliente,
+            servico=self.servico,
+            data_e_hora=timezone.make_aware(datetime.combine(self.data_teste, datetime.strptime("09:00", "%H:%M").time()))
         )
 
     def test_horarios_disponiveis(self):
-        colaborador = Colaborador.objects.first()
-        response = self.client.get(reverse('horarios_disponiveis', args=[colaborador.id]), {'data': '2025-01-30'})
+        url = reverse('horarios_disponiveis', args=[self.colaborador.id])
+        response = self.client.get(url, {"data": self.data_teste.strftime("%Y-%m-%d")})
+        
         self.assertEqual(response.status_code, 200)
-        self.assertIn("horarios_disponiveis", response.json())
-        self.assertEqual(len(response.json()['horarios_disponiveis']), 2)  # Deve retornar horários disponíveis excluindo 09:00
+        data = response.json()
+        
+        # Lista de horários esperados (excluindo 09:00 que já foi agendado)
+        horarios_esperados = ["08:00", "10:00", "11:00"]
+        
+        self.assertIn("horarios_disponiveis", data)
+        self.assertListEqual(data["horarios_disponiveis"], horarios_esperados)
+
+    def test_sem_horarios_disponiveis(self):
+        # Criar agendamentos para preencher todos os horários disponíveis
+        for hora in ["08:00", "10:00", "11:00"]:
+            Agendamento.objects.create(
+                colaborador=self.colaborador,
+                cliente=self.cliente,
+                servico=self.servico,
+                data_e_hora=timezone.make_aware(datetime.combine(self.data_teste, datetime.strptime(hora, "%H:%M").time()))
+            )
+        
+        url = reverse('horarios_disponiveis', args=[self.colaborador.id])
+        response = self.client.get(url, {"data": self.data_teste.strftime("%Y-%m-%d")})
+        
+        self.assertEqual(response.status_code, 200)
+        data = response.json()
+        
+        self.assertEqual(data["message"], "Nenhum horário disponível.")
+        
+
+

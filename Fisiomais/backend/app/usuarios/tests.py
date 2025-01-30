@@ -1,5 +1,10 @@
-#python manage.py test 
-#python manage.py test nome_do_app
+# python manage.py test 
+# python manage.py test usuarios
+# python manage.py test -v 2
+# python manage.py test usuarios.tests.UsuarioViewsTestCase
+# python manage.py test usuarios.tests.ClienteFormTest
+# python manage.py test usuarios.tests.TesteFormularioColaborador
+
 from django.test import TestCase, Client
 from django.contrib.auth.models import User
 from django.urls import reverse

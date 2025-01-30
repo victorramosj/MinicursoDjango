@@ -493,24 +493,39 @@ def editar_agendamento_dia_horarios(request, agendamento_id):
 
 from django.http import JsonResponse
 
-
 def listar_agendamentos(request):
     agendamentos = Agendamento.objects.all()
     eventos = [
         {
             "id": agendamento.id,
-            "title" : f"{agendamento.data_e_hora.strftime('%H:%M')}" if agendamento.servico.tipo_servico.tipo == 'pilates' else f"{agendamento.servico.nome_servico} - {agendamento.data_e_hora.strftime('%H:%M')}",
-
+            "title": f"{agendamento.servico.nome_servico} - {agendamento.data_e_hora.strftime('%H:%M')}",
             "start": agendamento.data_e_hora.strftime('%Y-%m-%dT%H:%M:%S'),
             "extendedProps": {
                 "cliente": agendamento.cliente.nome if agendamento.cliente else 'Cliente não informado',
                 "colaborador": agendamento.colaborador.nome if agendamento.colaborador else 'Colaborador não informado',
                 "status": agendamento.status,
             },
+            "backgroundColor": get_cor_por_status(agendamento.status),
+            "textColor": 'white'  # Cor do texto pode ser ajustada conforme necessário
         }
         for agendamento in agendamentos
     ]
     return JsonResponse(eventos, safe=False)
+
+def get_cor_por_status(status):
+    status = status.lower()  # Transforma o status para minúsculas para ignorar maiúsculas e minúsculas
+    if status == 'confirmado':
+        return 'green'  # Confirmado: verde
+    elif status == 'pendente':
+        return 'orange'  # Pendente: laranja
+    elif status == 'cancelado':
+        return 'red'  # Cancelado: vermelho
+    elif status == 'remarcado':
+        return 'blue'  # Remarcado: azul
+    else:
+        return 'gray'  # Cor padrão para status desconhecidos
+
+
 
 
 

@@ -31,7 +31,7 @@ def custom_login(request):
                 user.role = role
                 request.session['role'] = role  # Armazena na sessão caso necessário
 
-                return redirect('/')  # Redireciona para a página inicial
+                return redirect('/')  
             else:
                 form.add_error(None, 'Usuário ou senha incorretos')
                 messages.error(request, 'Usuário ou senha incorretos')  # Usando o sistema de mensagens
