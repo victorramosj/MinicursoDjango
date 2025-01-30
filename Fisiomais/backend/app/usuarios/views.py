@@ -34,8 +34,12 @@ def custom_login(request):
                 return redirect('/')  # Redireciona para a página inicial
             else:
                 form.add_error(None, 'Usuário ou senha incorretos')
+                messages.error(request, 'Usuário ou senha incorretos')  # Usando o sistema de mensagens
+
+                    
         else:
             form.add_error(None, 'Erro no formulário.')
+            messages.error(request, 'Erro no formulário.')
     else:
         form = LoginForm()
 
@@ -81,17 +85,19 @@ def cadastrar_cliente(request):
             try:
                 # Cria o cliente e associa o usuário (feito no save do formulário)
                 cliente = form.save(commit=False)
+                cliente.save()  # Assegura que o cliente é salvo no banco de dados
                 
                 # Realiza o login automático após salvar o cliente
                 login(request, cliente.user)
+                
                 # Define o papel (role) do usuário na sessão
                 request.session['role'] = "cliente"
                 
                 messages.success(request, "Cliente cadastrado com sucesso!")
                 
-                # Passando o tipo de usuário (role) para o template de login
-                role = 'cliente' if hasattr(request.user, 'cliente') else 'admin' if request.user.is_staff else None
-                return render(request, 'home.html', {'role': role})
+                # Redireciona para a página inicial após o cadastro
+                return redirect('home')  # Altere 'home' para o nome da URL desejada após o sucesso
+
             except Exception as e:
                 # Log detalhado do erro
                 logger.error(f"Erro ao cadastrar cliente: {str(e)}", exc_info=True)
@@ -256,10 +262,9 @@ def editar_perfil(request):
         else:
             form = EditarClienteForm(instance=perfil, user_instance=user)
 
-    return render(request, 'editar_perfil.html', {
+    return render(request, 'usuarios/editar_perfil.html', {
         'form': form,
         'estado_atual': estado_atual,
         'cidade_atual': cidade_atual,
     })
-
 

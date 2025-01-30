@@ -80,13 +80,17 @@
                         </div>
                     </div>
                     <div class="row mb-3">
-                        <div class="col-md-3">
+                        <div class="col-md-2">
                             <label for="id_email" class="form-label text-secondary">Email*</label>
                             {{ form.email|add_class:"form-control" }}
                         </div>
-                        <div class="col-md-3">
+                        <div class="col-md-2">
                             <label for="id_username" class="form-label text-secondary">Nome de Usuário*</label>
                             {{ form.username|add_class:"form-control" }}
+                        </div>
+                        <div class="col-md-2">
+                            <label for="id_telefone" class="form-label text-secondary">Telefone*</label>
+                            {{ form.telefone|add_class:"form-control" }}
                         </div>
                         <div class="col-md-2">
                             <label for="id_senha_atual" class="form-label text-secondary">Senha Atual*</label>

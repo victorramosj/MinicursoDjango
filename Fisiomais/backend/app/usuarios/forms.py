@@ -32,16 +32,20 @@ def validar_cpf(value):
         if digit != int(cpf[i]):
             raise ValidationError("CPF inválido")
 
-
+from datetime import date
 class ClienteForm(forms.ModelForm):
     username = forms.CharField(max_length=150, required=True, label="Nome de Usuário")
     nome = forms.CharField(max_length=255, required=True, label="Nome Completo")
     sexo = forms.ChoiceField(choices=[('M', 'Masculino'), ('F', 'Feminino'), ('O', 'Outro')], required=True, label="Sexo")
     email = forms.EmailField(required=True)
     email2 = forms.EmailField(required=True, label="Confirmar Email")
-    senha = forms.CharField(widget=forms.PasswordInput, required=True, label="Senha")
-    senha2 = forms.CharField(widget=forms.PasswordInput, required=True, label="Confirmar Senha")
-    dt_nasc = forms.DateField(widget=forms.DateInput(attrs={'type': 'date'}), required=True, label="Data de Nascimento")
+    senha = forms.CharField(
+        widget=forms.PasswordInput, 
+        required=True, 
+        label="Senha", 
+        min_length=8,  # Validação de comprimento mínimo para a senha
+    )    
+    senha2 = forms.CharField(widget=forms.PasswordInput, required=True, label="Confirmar Senha")   
     estado = forms.CharField(
         widget=forms.Select(attrs={'id': 'id_estado_cadastro_colaborador', 'name': 'estado'}),
         required=True, 
@@ -52,6 +56,7 @@ class ClienteForm(forms.ModelForm):
         required=True, 
         label="Cidade"
     )
+    dt_nasc = forms.DateField(widget=forms.DateInput(attrs={'type': 'date'}), required=True, label="Data de Nascimento")
     
     class Meta:
         model = Cliente
@@ -91,10 +96,40 @@ class ClienteForm(forms.ModelForm):
         if len(nome.split()) < 2:
             raise ValidationError("O nome completo deve incluir pelo menos dois nomes (primeiro e último).")
         return nome
+    def clean_dt_nasc(self):
+        dt_nasc = self.cleaned_data.get('dt_nasc')
+        
+        # Verifica se a data de nascimento não é no futuro
+        if dt_nasc > date.today():
+            raise ValidationError("A data de nascimento não pode ser no futuro.")
+        
+        # Definindo a idade mínima (18 anos)
+        idade_minima = 18
+        hoje = date.today()
+        idade = hoje.year - dt_nasc.year - ((hoje.month, hoje.day) < (dt_nasc.month, dt_nasc.day))
+        
+        # Verifica se a pessoa tem a idade mínima
+        if idade < idade_minima:
+            raise ValidationError(f"A idade mínima para cadastro é de {idade_minima} anos.")
+        
+        return dt_nasc
+    def clean_telefone(self):
+        telefone = self.cleaned_data.get('telefone')
+
+        # Valida o formato do telefone (11 dígitos para Brasil, por exemplo)
+        if not re.match(r'^\d{11}$', telefone):
+            raise ValidationError("O número de telefone deve ter 11 dígitos.")
+        
+        return telefone
+    
 
     def save(self, commit=True):
         try:
             nome_completo = self.cleaned_data.get('nome')
+        
+            # Verifica se o nome completo é válido
+            if not nome_completo:
+                raise ValidationError("O nome completo é obrigatório.")
             first_name, *middle_names, last_name = nome_completo.split()
             
             user_data = {
@@ -143,10 +178,16 @@ from django.contrib.auth.models import User
 class ColaboradorForm(forms.ModelForm):
     username = forms.CharField(max_length=150, required=True, label="Nome de Usuário")
     nome = forms.CharField(max_length=255, required=True, label="Nome")
+    
     sexo = forms.ChoiceField(choices=[('M', 'Masculino'), ('F', 'Feminino'), ('O', 'Outro')], required=True, label="Sexo")
     email = forms.EmailField(required=True)
     email2 = forms.EmailField(required=True, label="Confirmar E-mail")
-    senha = forms.CharField(widget=forms.PasswordInput, required=True, label="Senha")
+    senha = forms.CharField(
+        widget=forms.PasswordInput, 
+        required=True, 
+        label="Senha", 
+        min_length=8,  # Validação de comprimento mínimo para a senha
+    )
     senha2 = forms.CharField(widget=forms.PasswordInput, required=True, label="Confirmar Senha")
     cpf = forms.CharField(validators=[validar_cpf], required=True, label="CPF")
     clinica = forms.ModelChoiceField(queryset=Clinica.objects.all(), required=True, label="Clínica")
@@ -201,12 +242,42 @@ class ColaboradorForm(forms.ModelForm):
         if senha != senha2:
             raise ValidationError("As senhas não coincidem.")
         return senha2
+    def clean_dt_nasc(self):
+        dt_nasc = self.cleaned_data.get('dt_nasc')
+        
+        # Verifica se a data de nascimento não é no futuro
+        if dt_nasc > date.today():
+            raise ValidationError("A data de nascimento não pode ser no futuro.")
+        
+        # Definindo a idade mínima (18 anos)
+        idade_minima = 18
+        hoje = date.today()
+        idade = hoje.year - dt_nasc.year - ((hoje.month, hoje.day) < (dt_nasc.month, dt_nasc.day))
+        
+        # Verifica se a pessoa tem a idade mínima
+        if idade < idade_minima:
+            raise ValidationError(f"A idade mínima para cadastro é de {idade_minima} anos.")
+        
+        return dt_nasc
+    def clean_telefone(self):
+        telefone = self.cleaned_data.get('telefone')
+
+        # Valida o formato do telefone (11 dígitos para Brasil, por exemplo)
+        if not re.match(r'^\d{11}$', telefone):
+            raise ValidationError("O número de telefone deve ter 11 dígitos.")
+        
+        return telefone
+    
 
     def save(self, commit=True):
         try:
             print("Chamando save do ColaboradorForm")
 
             nome_completo = self.cleaned_data.get('nome')
+        
+            # Verifica se o nome completo é válido
+            if not nome_completo:
+                raise ValidationError("O nome completo é obrigatório.")
             first_name, *middle_names, last_name = nome_completo.split()
             
             user_data = {
@@ -332,7 +403,12 @@ class EditarClienteForm(forms.ModelForm):
     username = forms.CharField(label="Nome de usuário", max_length=150, required=True)
     email = forms.EmailField(label="E-mail", required=True)
     senha_atual = forms.CharField(label="Senha atual", widget=forms.PasswordInput, required=False)
-    senha = forms.CharField(label="Nova senha", widget=forms.PasswordInput, required=False)
+    senha = forms.CharField(
+        widget=forms.PasswordInput, 
+        required=True, 
+        label="Senha", 
+        min_length=8,  # Validação de comprimento mínimo para a senha
+    )
     confirmar_senha = forms.CharField(label="Confirmar nova senha", widget=forms.PasswordInput, required=False)
 
 
@@ -366,7 +442,12 @@ class EditarClienteForm(forms.ModelForm):
     def clean(self):
         cleaned_data = super().clean()
         senha_atual = cleaned_data.get('senha_atual')
-        senha = cleaned_data.get('senha')
+        senha = forms.CharField(
+        widget=forms.PasswordInput, 
+        required=True, 
+        label="Senha", 
+        min_length=8,  # Validação de comprimento mínimo para a senha
+    )
         confirmar_senha = cleaned_data.get('confirmar_senha')
 
         # Valida a senha atual se uma nova senha for fornecida

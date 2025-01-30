@@ -57,8 +57,8 @@ def contato(request):
             email = form.cleaned_data['email']
             telefone = form.cleaned_data['telefone']
             mensagem = form.cleaned_data['mensagem']
-            # Aqui você pode processar os dados ou enviar e-mail
-            # Por exemplo, enviar e-mail ou salvar no banco de dados
+            # poderia ser implementado de modo a processar os dados ou enviar e-mail
+            #  enviar e-mail ou salvar no banco de dados, deixei apenas para exemplificar
             return JsonResponse({'success': 'Mensagem enviada com sucesso!'})
         else:
             return JsonResponse({'error': 'Erro ao enviar a mensagem.'}, status=400)
