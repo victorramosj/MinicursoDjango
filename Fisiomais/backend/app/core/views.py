@@ -515,7 +515,7 @@ def listar_agendamentos(request):
 def get_cor_por_status(status):
     status = status.lower()  # Transforma o status para minúsculas para ignorar maiúsculas e minúsculas
     if status == 'confirmado':
-        return 'green'  # Confirmado: verde
+        return '#2ba89a'  # Confirmado: verde
     elif status == 'pendente':
         return 'orange'  # Pendente: laranja
     elif status == 'cancelado':

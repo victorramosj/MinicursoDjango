@@ -49,10 +49,12 @@
 
 
 {% block extra_js %}
+
 <!-- Importar FullCalendar JS -->
 <script src='https://cdn.jsdelivr.net/npm/fullcalendar@5.9.0/main.min.js'></script>
 <script src='https://cdn.jsdelivr.net/npm/fullcalendar@5.9.0/locales-all.min.js'></script>
 <script>
+
     document.addEventListener('DOMContentLoaded', function () {
         var calendarEl = document.getElementById('calendar');
 
@@ -78,7 +80,22 @@
             eventContent: function (arg) {
                 // Personaliza o conteúdo do evento
                 return {
-                    html: `<div style="background-color: ${arg.event.backgroundColor}; color: ${arg.event.textColor}; padding: 2px 5px; border-radius: 3px;">
+                    html: `<div style="
+                               background-color: ${arg.event.backgroundColor};
+                               color: ${arg.event.textColor};
+                               padding: 5px;
+                               border-radius: 5px;
+                               font-size: clamp(0.4rem, 2vw, 0.8rem);
+                               line-height: 1.2;
+                               text-overflow: ellipsis;
+                               overflow: hidden;
+                               white-space: nowrap;
+                               width: 100%;
+                               height: 100%;
+                               display: flex;
+                               align-items: center;
+                               justify-content: center;
+                           ">
                                ${arg.event.title}
                            </div>`
                 };
@@ -88,14 +105,22 @@
             eventClick: function (info) {
                 var event = info.event;
                 var modalBody = document.getElementById("modalDetalhesBody");
+                var modalFooter = document.querySelector("#modalDetalhes .modal-footer");
 
+                // Atualiza o conteúdo do modal-body
                 modalBody.innerHTML = `
-                    <p><strong>Serviço:</strong> ${event.title}</p>
-                    <p><strong>Cliente:</strong> ${event.extendedProps.cliente || "Não informado"}</p>
-                    <p><strong>Colaborador:</strong> ${event.extendedProps.colaborador || "Não informado"}</p>
-                    <p><strong>Dia e Horário:</strong> ${new Date(event.start).toLocaleString()}</p>
-                    <p><strong>Status:</strong> ${event.extendedProps.status || "Não informado"}</p>
-                `;
+        <p><strong>Serviço:</strong> ${event.title}</p>
+        <p><strong>Cliente:</strong> ${event.extendedProps.cliente || "Não informado"}</p>
+        <p><strong>Colaborador:</strong> ${event.extendedProps.colaborador || "Não informado"}</p>
+        <p><strong>Dia e Horário:</strong> ${new Date(event.start).toLocaleString()}</p>
+        <p><strong>Status:</strong> ${event.extendedProps.status || "Não informado"}</p>
+    `;
+
+                // Atualiza o conteúdo do modal-footer
+                modalFooter.innerHTML = `
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+        <a href="{% url 'visualizar_agendamentos' %}?pesquisa_tipo=agendamento&pesquisa_valor=${event.id}" class="btn btn-info me-2"><i class="bi bi-info-circle me-2 "></i>Ver Detalhes</a>
+    `;
 
                 var editarLink = document.getElementById("editar-agendamento");
                 if (editarLink) {
@@ -109,33 +134,62 @@
             },
             eventDrop: function (info) {
                 var event = info.event;
+                var editarHorarioUrl = "{% url 'editar_agendamento_dia_horarios' 0 %}".replace("0", event.id);
 
                 // Obter nova data e horário
                 var nova_data = event.start.toISOString().split('T')[0]; // Formato YYYY-MM-DD
-                var novo_horario = event.start.toISOString().split('T')[1].slice(0, 8); // Formato HH:MM:SS
+                var novo_horario = event.start.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false }); // Formato HH:MM:SS
+
+                // Obter o token CSRF do cookie
+                function getCookie(name) {
+                    let cookieValue = null;
+                    if (document.cookie && document.cookie !== '') {
+                        const cookies = document.cookie.split(';');
+                        for (let i = 0; i < cookies.length; i++) {
+                            const cookie = cookies[i].trim();
+                            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                                break;
+                            }
+                        }
+                    }
+                    return cookieValue;
+                }
+                const csrftoken = getCookie('csrftoken');
 
                 // Enviar dados via PUT para editar o agendamento
-                fetch(`/agendamentos/editar/${event.id}/`, {
+                fetch(editarHorarioUrl, {
                     method: 'PUT',
                     headers: {
                         'Content-Type': 'application/json',
+                        'X-CSRFToken': csrftoken,  // Incluir o token CSRF
+                        // Se estiver usando autenticação por token, inclua o token de autenticação
+                        // 'Authorization': 'Token ' + seuTokenDeAutenticacao
                     },
                     body: JSON.stringify({
                         data: nova_data,
                         horario: novo_horario
                     })
                 })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.message === 'Dia e horário do agendamento atualizados com sucesso.') {
-                        alert('Agendamento atualizado com sucesso.');
-                    } else {
-                        alert('Erro: ' + data.message);
-                    }
-                })
-                .catch(error => {
-                    console.error("Erro ao atualizar o agendamento:", error);
-                });
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Erro ao atualizar o agendamento.');
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        if (data.message === 'Dia e horário do agendamento atualizados com sucesso.') {
+                            // Atualizar o evento no FullCalendar com o novo horário
+                            event.setProp('start', info.event.start); // Atualiza a data e horário do evento
+                            alert('Agendamento atualizado com sucesso.');
+                        } else {
+                            alert('Erro: ' + data.message);
+                        }
+                    })
+                    .catch(error => {
+                        console.error("Erro ao atualizar o agendamento:", error);
+                        alert('Erro ao atualizar o agendamento. Verifique o console para mais detalhes.');
+                    });
             },
             eventError: function (info) {
                 console.error("Erro ao carregar evento:", info);
