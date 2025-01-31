@@ -36,6 +36,9 @@ class AgendamentoEditForm(forms.ModelForm):
         self.fields['servico'].queryset = Servico.objects.all()
         self.fields['plano'].queryset = Plano.objects.all()
 
+        # Exibe todos os colaboradores, sem considerar a clínica
+        self.fields['colaborador'].queryset = Colaborador.objects.all()
+
         # Se o cliente for selecionado (ao editar o agendamento)
         if 'cliente' in self.data:
             try:
@@ -44,20 +47,14 @@ class AgendamentoEditForm(forms.ModelForm):
                 # Verifica se o cliente tem clínica associada
                 if cliente.clinica:
                     self.fields['colaborador'].queryset = Colaborador.objects.filter(clinica=cliente.clinica)
-                    # Se o colaborador atual não estiver na lista de colaboradores válidos, redefinir o valor
-                    if self.instance.colaborador and self.instance.colaborador not in self.fields['colaborador'].queryset:
-                        self.instance.colaborador = None
                 else:
-                    # Se o cliente não tem clínica associada, não mostra colaboradores
-                    self.fields['colaborador'].queryset = Colaborador.objects.none()
+                    # Se o cliente não tem clínica associada, mostra todos os colaboradores
+                    self.fields['colaborador'].queryset = Colaborador.objects.all()
             except (ValueError, Cliente.DoesNotExist):
                 self.fields['colaborador'].queryset = Colaborador.objects.none()
         elif self.instance.pk:  # Quando estamos editando um agendamento
-            # A clínica do cliente deve ser a mesma do colaborador
-            if self.instance.cliente.clinica:
-                self.fields['colaborador'].queryset = Colaborador.objects.filter(clinica=self.instance.cliente.clinica)
-            else:
-                self.fields['colaborador'].queryset = Colaborador.objects.none()
+            # Exibe todos os colaboradores, sem considerar a clínica
+            self.fields['colaborador'].queryset = Colaborador.objects.all()
 
             # Define o valor inicial do colaborador com base no colaborador do agendamento
             self.fields['colaborador'].initial = self.instance.colaborador
@@ -67,7 +64,7 @@ class AgendamentoEditForm(forms.ModelForm):
             self.fields['status'].initial = self.instance.status
             self.fields['status_pagamento'].initial = self.instance.status_pagamento
 
-            # Aqui, ajusta-se para garantir que o campo data_e_hora seja formatado corretamente.
+            # Ajuste do campo data_e_hora
             if self.instance.data_e_hora:
                 aware_data = self.instance.data_e_hora
                 if is_naive(aware_data):

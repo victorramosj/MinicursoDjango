@@ -381,10 +381,11 @@ class EditarColaboradorForm(forms.ModelForm):
         user = instance.user
 
         # Separar primeiro e último nome
-        nome_completo = self.cleaned_data.get('nome')
-        first_name, *middle_names, last_name = nome_completo.split()
-        user.first_name = first_name
-        user.last_name = last_name
+        nome_completo = self.cleaned_data.get('nome', "").strip()
+        nome_partes = nome_completo.split()
+
+        user.first_name = nome_partes[0] if nome_partes else ""
+        user.last_name = nome_partes[1] if len(nome_partes) > 1 else ""
 
         user.username = self.cleaned_data['username']
         user.email = self.cleaned_data['email']
@@ -397,6 +398,7 @@ class EditarColaboradorForm(forms.ModelForm):
             user.save()
             instance.save()
         return instance
+
 
 
 class EditarClienteForm(forms.ModelForm):
@@ -466,10 +468,11 @@ class EditarClienteForm(forms.ModelForm):
         user = instance.user
 
         # Separar primeiro e último nome
-        nome_completo = self.cleaned_data.get('nome')
-        first_name, *middle_names, last_name = nome_completo.split()
-        user.first_name = first_name
-        user.last_name = last_name
+        nome_completo = self.cleaned_data.get('nome', "").strip()
+        nome_partes = nome_completo.split()
+
+        user.first_name = nome_partes[0] if nome_partes else ""
+        user.last_name = nome_partes[1] if len(nome_partes) > 1 else ""
 
         user.username = self.cleaned_data['username']
         user.email = self.cleaned_data['email']
@@ -482,3 +485,4 @@ class EditarClienteForm(forms.ModelForm):
             user.save()
             instance.save()
         return instance
+
